@@ -157,7 +157,11 @@
         </div>
     </main>
 
+    <script src="config.js"></script>
     <script>
+        // Mengambil nilai dari config.js
+        const API_URL = CONFIG.API_BASE_URL;
+
         const forgotPasswordForm = document.getElementById('forgotPasswordForm');
         const errorMessage = document.getElementById('errorMessage');
         const emailStep = document.getElementById('emailStep');
@@ -165,8 +169,9 @@
         const emailSent = document.getElementById('emailSent');
         const resendButton = document.getElementById('resendButton');
 
+        // Fungsi utama untuk fetching kirim email reset
         async function sendResetEmail(email) {
-            const response = await fetch('http://172.16.99.70:8001/api/forgot-password', {
+            const response = await fetch(`${API_URL}/forgot-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -184,15 +189,21 @@
             return result;
         }
 
+        // Event Listener untuk Submit Form
         forgotPasswordForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const email = document.getElementById('email').value;
+            const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
+
             errorMessage.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Mengirim...';
 
             try {
                 await sendResetEmail(email);
 
+                // Jika sukses, pindah ke tampilan Success
                 emailSent.textContent = email;
                 emailStep.classList.add('hidden');
                 successStep.classList.remove('hidden');
@@ -200,9 +211,12 @@
             } catch (error) {
                 errorMessage.textContent = error.message;
                 errorMessage.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Kirim Link Reset';
             }
         });
 
+        // Event Listener untuk Kirim Ulang
         resendButton.addEventListener('click', async function () {
             const email = emailSent.textContent;
 
@@ -212,6 +226,7 @@
             try {
                 await sendResetEmail(email);
                 resendButton.textContent = 'Email Terkirim Ulang!';
+                resendButton.classList.replace('bg-gray-100', 'bg-green-100');
             } catch (error) {
                 alert(error.message);
                 resendButton.textContent = 'Kirim Ulang Email';
@@ -220,7 +235,8 @@
             setTimeout(() => {
                 resendButton.disabled = false;
                 resendButton.textContent = 'Kirim Ulang Email';
-            }, 2000);
+                resendButton.classList.replace('bg-green-100', 'bg-gray-100');
+            }, 3000);
         });
     </script>
 

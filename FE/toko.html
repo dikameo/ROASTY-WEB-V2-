@@ -1,322 +1,904 @@
 <!DOCTYPE html>
-<html lang="id">
+
+<html class="light" lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Roasty - Toko</title>
-
-  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
-  <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
-    href="https://fonts.googleapis.com/css2?display=swap&family=Epilogue%3Awght%40400%3B500%3B700%3B900&family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" />
-  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Roasty - Daftar Produk</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Theme Config -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#f26c0d",
+            "background-light": "#f8f7f5",
+            "background-dark": "#221710",
+          },
+          fontFamily: {
+            "display": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
 </head>
 
-<body>
-  <div class="relative flex h-auto min-h-screen w-full flex-col bg-white group/design-root overflow-x-hidden"
-    style='font-family: Epilogue, "Noto Sans", sans-serif;'>
-    <div class="layout-container flex h-full grow flex-col">
-
-      <header
-        class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f4f2f0] px-10 py-3">
-        <a href="index.html" class="flex items-center gap-4 text-[#181411]">
-          <div class="size-4">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z"
-                fill="currentColor"></path>
-            </svg>
+<body
+  class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+  <!-- Top Navigation -->
+  <header class="sticky top-0 z-50 bg-white dark:bg-[#1a120b] border-b border-gray-200 dark:border-gray-800 shadow-sm">
+    <div class="max-w-[1280px] mx-auto px-4 md:px-8 h-20 flex items-center justify-between gap-8">
+      <!-- Logo -->
+      <a class="flex items-center gap-2 text-primary hover:opacity-90 transition-opacity" href="#">
+        <span class="material-symbols-outlined !text-[32px] fill-1">local_cafe</span>
+        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">Roasty</h1>
+      </a>
+      <!-- Search -->
+      <div class="flex-1 max-w-2xl">
+        <div
+          class="relative flex items-center w-full h-11 rounded-lg border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-gray-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all">
+          <div class="pl-4 pr-2 text-gray-400 dark:text-gray-500 flex items-center justify-center">
+            <span class="material-symbols-outlined">search</span>
           </div>
-          <h2 class="text-[#181411] text-lg font-bold leading-tight tracking-[-0.015em]">Roasty </h2>
-        </a>
-
-        <div class="flex flex-1 justify-end gap-8">
-          <div class="flex items-center gap-9">
-            <a class="text-[#181411] text-sm font-medium leading-normal" href="index.html">Beranda</a>
-            <a class="text-[#181411] text-sm font-medium leading-normal" href="toko.html">Toko</a>
-            <a class="text-[#181411] text-sm font-medium leading-normal" href="kursus.html">Kelas</a>
-            <a class="text-[#181411] text-sm font-medium leading-normal" href="tentang-kami.html">Tentang Kami</a>
-          </div>
-          <div class="flex gap-2">
-            <button
-              class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f4f2f0] text-[#181411] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
-              <div class="text-[#181411]" data-icon="MagnifyingGlass" data-size="20px" data-weight="regular">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor"
-                  viewBox="0 0 256 256">
-                  <path
-                    d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
-                  </path>
-                </svg>
-              </div>
-            </button>
-
-            <a href="keranjang.html"
-              class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f4f2f0] text-[#181411] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
-              <div class="text-[#181411]" data-icon="ShoppingBag" data-size="20px" data-weight="regular">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor"
-                  viewBox="0 0 256 256">
-                  <path
-                    d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z">
-                  </path>
-                </svg>
-              </div>
-            </a>
-          </div>
-          <div class="relative group">
-
-            <!-- FOTO PROFIL (BOLEH DIKLIK) -->
-            <a href="profile.html">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBObuYeumA7R4RwRqg0RuhuW9rkJ7xTq9DhCQhxnCu-6hCwSbjFH_cQbDYG72hIAqVy75yx4PHtLlo1o3SDrnTSZR7CiWZkEuvzhEF6vdcEKwf7xfeU19QppJEXhxHHv8azmy1UOHRwnqNONMQN5-YRpu0JOnrw6cJGW_a2tuOqY9frS0a2bn9NOM_vj0vf5aEjxEYj_J4fRkdWW3ntikqGzA-5F63JsW5Vy2JTFuaGj-mnrJqNcfNjtew1CmQwcolVkWbmrD_iWCk"
-                class="w-10 h-10 rounded-full cursor-pointer transition duration-200
-                         hover:ring-2 hover:ring-[#a47148] hover:ring-offset-2" />
-            </a>
-
-            <!-- DROPDOWN (MUNCUL SAAT HOVER AREA INI) -->
-            <div class="absolute right-0 top-12 w-48 bg-white rounded-xl shadow-lg
-                          border border-[#eee6df] p-3 hidden group-hover:block z-50">
-
-              <p class="text-sm font-semibold text-gray-700">Akun Saya</p>
-
-              <div class="mt-3 space-y-2 text-sm">
-                <a href="profile.html" class="block py-1 hover:text-[#a47148]">Profil</a>
-                <a href="keranjang.html" class="block py-1 hover:text-[#a47148]">Pesanan Saya</a>
-              </div>
-
-              <hr class="my-3 border-[#f0e8df]" />
-
-              <button class="w-full text-left text-sm text-red-600 hover:text-red-700">
-                Keluar
-              </button>
-
-            </div>
-
-          </div>
-
+          <input
+            class="w-full h-full bg-transparent border-none outline-none text-sm text-slate-900 dark:text-white placeholder:text-gray-400 focus:ring-0"
+            placeholder="Cari kopi, alat seduh, atau merchandise..." type="text" />
         </div>
-      </header>
-
-      <main class="px-40 flex flex-1 justify-center py-5">
-        <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-          <div class="flex flex-wrap justify-between gap-3 p-4">
-            <p class="text-[#181411] tracking-light text-[32px] font-bold leading-tight min-w-72">Toko</p>
+      </div>
+      <!-- Actions -->
+      <div class="flex items-center gap-6">
+        <!-- Nav Links -->
+        <nav class="hidden lg:flex items-center gap-6">
+          <a class="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"
+            href="#">Kategori</a>
+          <a class="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"
+            href="#">Promo</a>
+        </nav>
+        <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2 hidden lg:block"></div>
+        <!-- Icons -->
+        <div class="flex items-center gap-3">
+          <button
+            class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+          </button>
+          <button
+            class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">
+            <span class="material-symbols-outlined">notifications</span>
+          </button>
+          <button
+            class="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all">
+            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden" data-alt="User avatar profile picture">
+              <img alt="Profile" class="w-full h-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvVXeJqRSs_-kPVTGupkFknUHy1euGdz0DuFV3MdqimEGOUDURW13gSPHW0FMOGGOTPRQnIdIqhWjhlRvS6CKGM9Em_Ob-krTXzm8nAX6zanIbDct-KplZqKBcK2B38Am6-OZ2BuNLbAfC5iGqCiUbm5PYwLgu0A0X4q8_hTsYWicVEJdiZy0XoiLGN8ebFzcIQhpJwEMfs0BavhzJgz7fwO0xr3Ydbc4w1ccuuzrSeG-o5brNi-dnWZnOPbDvqreFO1KF0ouJtw" />
+            </div>
+            <span class="text-sm font-medium hidden sm:block">Akbar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- Main Content -->
+  <main class="flex-grow w-full max-w-[1280px] mx-auto px-4 md:px-8 py-6">
+    <!-- Breadcrumbs -->
+    <nav class="flex mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <ol class="flex items-center gap-2">
+        <li><a class="hover:text-primary" href="#">Home</a></li>
+        <li><span class="material-symbols-outlined text-[16px]">chevron_right</span></li>
+        <li><a class="hover:text-primary" href="#">Kopi</a></li>
+        <li><span class="material-symbols-outlined text-[16px]">chevron_right</span></li>
+        <li class="font-semibold text-slate-900 dark:text-white">Biji Kopi</li>
+      </ol>
+    </nav>
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Sidebar Filters -->
+      <aside class="w-full lg:w-64 flex-shrink-0 space-y-8">
+        <!-- Filter Group: Category -->
+        <div class="bg-white dark:bg-[#1a120b] p-5 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-4">Kategori</h3>
+          <ul class="space-y-3 text-sm">
+            <li>
+              <a class="font-bold text-primary flex justify-between items-center group" href="#">
+                Biji Kopi
+                <span class="material-symbols-outlined text-[18px] opacity-100">check</span>
+              </a>
+            </li>
+            <li><a class="text-gray-600 dark:text-gray-400 hover:text-primary block" href="#">Kopi Bubuk</a></li>
+            <li><a class="text-gray-600 dark:text-gray-400 hover:text-primary block" href="#">Drip Bag</a></li>
+            <li><a class="text-gray-600 dark:text-gray-400 hover:text-primary block" href="#">Cold Brew</a></li>
+            <li><a class="text-gray-600 dark:text-gray-400 hover:text-primary block" href="#">Green Bean</a></li>
+          </ul>
+        </div>
+        <!-- Filter Group: Location -->
+        <div class="bg-white dark:bg-[#1a120b] p-5 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-4">Lokasi</h3>
+          <div class="space-y-3">
+            <label class="flex items-center gap-3 cursor-pointer group">
+              <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary" type="checkbox" />
+              <span
+                class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-slate-900 dark:group-hover:text-white">Jabodetabek</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer group">
+              <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary" type="checkbox" />
+              <span
+                class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-slate-900 dark:group-hover:text-white">Jawa
+                Barat</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer group">
+              <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary" type="checkbox" />
+              <span
+                class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-slate-900 dark:group-hover:text-white">Jawa
+                Timur</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer group">
+              <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary" type="checkbox" />
+              <span
+                class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-slate-900 dark:group-hover:text-white">Bali</span>
+            </label>
+            <button class="text-primary text-sm font-semibold hover:underline mt-2">Lihat Selengkapnya</button>
           </div>
-
-          <div class="pb-3">
-            <div class="flex border-b border-[#e6e0db] px-4 gap-8">
-              <a class="flex flex-col items-center justify-center border-b-[3px] border-b-[#181411] text-[#181411] pb-[13px] pt-4"
-                href="#">
-                <p class="text-[#181411] text-sm font-bold leading-normal tracking-[0.015em]">Biji Kopi</p>
-              </a>
-              <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#897461] pb-[13px] pt-4"
-                href="#">
-                <p class="text-[#897461] text-sm font-bold leading-normal tracking-[0.015em]">Peralatan</p>
-              </a>
-              <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#897461] pb-[13px] pt-4"
-                href="#">
-                <p class="text-[#897461] text-sm font-bold leading-normal tracking-[0.015em]">Merchandise</p>
-              </a>
+        </div>
+        <!-- Filter Group: Price -->
+        <div class="bg-white dark:bg-[#1a120b] p-5 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-4">Harga</h3>
+          <div class="space-y-3">
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">Rp</span>
+              <input
+                class="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary dark:bg-gray-800 dark:text-white"
+                placeholder="Harga Minimum" type="text" />
+            </div>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">Rp</span>
+              <input
+                class="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary dark:bg-gray-800 dark:text-white"
+                placeholder="Harga Maksimum" type="text" />
             </div>
           </div>
-
-          <div class="px-4 py-3">
-            <label class="flex flex-col min-w-40 h-12 w-full">
-              <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
-                <div
-                  class="text-[#897461] flex border-none bg-[#f4f2f0] items-center justify-center pl-4 rounded-l-lg border-r-0"
-                  data-icon="MagnifyingGlass" data-size="24px" data-weight="regular">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor"
-                    viewBox="0 0 256 256">
-                    <path
-                      d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
-                    </path>
-                  </svg>
-                </div>
-                <input placeholder="Cari produk"
-                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#181411] focus:outline-0 focus:ring-0 border-none bg-[#f4f2f0] focus:border-none h-full placeholder:text-[#897461] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                  value="" />
+        </div>
+        <!-- Filter Group: Rating -->
+        <div class="bg-white dark:bg-[#1a120b] p-5 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-4">Rating</h3>
+          <div class="space-y-3">
+            <label class="flex items-center gap-3 cursor-pointer group">
+              <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary" type="checkbox" />
+              <div class="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+                <span class="material-symbols-outlined text-[18px] text-yellow-400 fill-1"
+                  style="font-variation-settings: 'FILL' 1;">star</span>
+                4 Ke atas
               </div>
             </label>
           </div>
-
-          <div class="flex gap-3 p-3 flex-wrap pr-4">
-            <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#f4f2f0] pl-4 pr-4">
-              <p class="text-[#181411] text-sm font-medium leading-normal">Semua</p>
+        </div>
+      </aside>
+      <!-- Product Grid Area -->
+      <section class="flex-1">
+        <!-- Page Title & Sort -->
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Biji Kopi Pilihan</h2>
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#1a120b] p-3 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm">
+            <div class="text-sm text-gray-500 dark:text-gray-400 px-2">
+              Menampilkan <span class="font-bold text-slate-900 dark:text-white">1 - 24</span> dari <span
+                class="font-bold text-slate-900 dark:text-white">3.450</span> produk
             </div>
-            <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#f4f2f0] pl-4 pr-4">
-              <p class="text-[#181411] text-sm font-medium leading-normal">Asal</p>
-            </div>
-            <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#f4f2f0] pl-4 pr-4">
-              <p class="text-[#181411] text-sm font-medium leading-normal">Profil Roasting</p>
-            </div>
-            <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#f4f2f0] pl-4 pr-4">
-              <p class="text-[#181411] text-sm font-medium leading-normal">Rasa</p>
+            <!-- Sort Chips -->
+            <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 hide-scrollbar">
+              <span class="text-sm font-medium text-gray-500 whitespace-nowrap mr-1">Urutkan:</span>
+              <button
+                class="px-4 py-1.5 rounded-full bg-primary/10 text-primary border border-primary text-sm font-bold whitespace-nowrap transition-colors">
+                Paling Sesuai
+              </button>
+              <button
+                class="px-4 py-1.5 rounded-full bg-background-light dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-transparent hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium whitespace-nowrap transition-colors">
+                Terbaru
+              </button>
+              <button
+                class="px-4 py-1.5 rounded-full bg-background-light dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-transparent hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium whitespace-nowrap transition-colors">
+                Terlaris
+              </button>
+              <button
+                class="px-4 py-1.5 rounded-full bg-background-light dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-transparent hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium whitespace-nowrap transition-colors">
+                Harga
+                <span class="material-symbols-outlined text-[16px] align-middle ml-1">unfold_more</span>
+              </button>
             </div>
           </div>
-
-          <div id="productGrid" class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4">
-            <div class="flex flex-col gap-3 pb-3">
-              <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCxhYjWioQIFgpISl751vjHT78adpHmiUp7JVAJYFjAKNGAZFpSda7zF8u_o447m9dyGIToG3AtOOtE9eqNs2IFgH9z7rZBtpQEUoHOTO7AmMGtpBQmlHLiVPbsGQFA9Yy5hdexy5d4EJ8_CT5zQ3UNojrTaJdDeyarnEXc1quPpiSKuMploG4sl-6ehqhn3RYQI5pNcGcZyupF_ZvK5uFD1sz8Uu5QpiQQwzEfy76jaP2webtpkmchn3Yb-4Za6viLPPWtVanwP4k");'>
-              </div>
-              <div>
-                <p class="text-[#181411] text-base font-medium leading-normal">Biji Kopi Arabika</p>
-                <p class="text-[#897461] text-sm font-normal leading-normal">Kopi Arabika dengan rasa buah dan sedikit
-                  asam</p>
+        </div>
+        <!-- Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+          <!-- Product Card 1 -->
+          <div
+            class="group bg-white dark:bg-[#1a120b] rounded-lg border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+            <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800"
+              data-alt="Packaging of Arabica Gayo coffee beans with artistic label">
+              <img alt="Kopi Gayo"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR8fb5vzDgs1phUNO3QxFh1frpBy278Z73bi-kFMUwFjso9mDnCB4quCkdygHOHuj_kS0wcB6ddNDGBcudVqLxdV4p3UpWkIBvG4Cf-3gc88OGnM1F2cTyiqlwBXnOWs1Mtqxdl-tSpjuzn75cT_19__A9dSiSD7lVPyU1F_G7LHM1Qw2Y8hSw75Hjaz9yHOiL0AQfW2YhTDB-3A_zT7Dr_5W0cVwHZlaLXuCW8fZ7ua0_bw8kcLRJx_o9zaYvLGzWQA44hEdOwg" />
+              <div
+                class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">
+                10% OFF</div>
+            </div>
+            <div class="p-3 flex flex-col flex-1">
+              <h3
+                class="text-sm font-medium text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+                Arabika Gayo Wine Process - 200g - Roasty Originals</h3>
+              <div class="mt-auto">
+                <p class="text-lg font-bold text-slate-900 dark:text-white">Rp 85.000</p>
+                <p class="text-xs text-gray-400 line-through mb-1">Rp 95.000</p>
+                <div class="flex items-center gap-1 mb-2">
+                  <span
+                    class="px-1 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold rounded">Official</span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400 truncate ml-1">Jakarta Selatan</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="material-symbols-outlined text-[14px] text-yellow-400 fill-1"
+                    style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-slate-900 dark:text-white font-medium">4.8</span>
+                  <span>|</span>
+                  <span>Terjual 100+</span>
+                </div>
               </div>
             </div>
-            <div class="flex flex-col gap-3 pb-3">
-              <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD6ZS8gWbWr4DyQ6qQRRZEp8tLe_tvPAhdtwClRdilGF0Fxiv--e_OZWACkec1I1mAT21QlEfRVi7zq-TTLQcHo8hFU_wEfa0iaJ27ZVdXlg_tQqXYxQwzMMC19BbR_FRcIoS2IoAR-n9-cPfIk0j9amWK1MpkdoCsHl243HuDnPd2EbtYhsv2ohOEwFLnI4pV_raEvDfi2oLtt1T8nRcvfYUMBQc8RFgdpxA5XVHC6lu3QzqW2nAxGu8Ulya5MOtZhh_qlVDMNdeA");'>
-              </div>
-              <div>
-                <p class="text-[#181411] text-base font-medium leading-normal">Biji Kopi Robusta</p>
-                <p class="text-[#897461] text-sm font-normal leading-normal">Kopi Robusta dengan rasa pahit dan kuat</p>
+          </div>
+          <!-- Product Card 2 -->
+          <div
+            class="group bg-white dark:bg-[#1a120b] rounded-lg border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+            <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800"
+              data-alt="Brown bag of Robusta coffee beans on wooden table">
+              <img alt="Kopi Robusta"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMyCAdc4g6JDz4EYGxKe3rSyRkmaeXR2c8GcJtndErfSV_Ac5VnCWhqI36bnx6ca7v24oKAQCRsweFF8Sn3Axtd9Wb2BGUpf7DVoShLffddVe9GN1lVs82jZrdaWwoedANzr2HvOD6CrrWTySE2xZp7mLUDxRilPmXJb_RGs0AcR725L8_ronoSAZjXcIudsp8FVn5REJQ1twWh2HXBFE_DCW6Ok63hg-g3tlbm217xXCd1KNXpL0_VuZDFI8HWpNk_1cTj71C9g" />
+            </div>
+            <div class="p-3 flex flex-col flex-1">
+              <h3
+                class="text-sm font-medium text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+                Robusta Dampit Malang Premium Grade 1kg</h3>
+              <div class="mt-auto">
+                <p class="text-lg font-bold text-slate-900 dark:text-white">Rp 120.000</p>
+                <div class="h-4 mb-1"></div> <!-- Spacer for alignment -->
+                <div class="flex items-center gap-1 mb-2">
+                  <span
+                    class="px-1 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-[10px] font-bold rounded">Star+</span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400 truncate ml-1">Malang</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="material-symbols-outlined text-[14px] text-yellow-400 fill-1"
+                    style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-slate-900 dark:text-white font-medium">4.9</span>
+                  <span>|</span>
+                  <span>Terjual 500+</span>
+                </div>
               </div>
             </div>
-            <div class="flex flex-col gap-3 pb-3">
-              <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCasu0LZUVvmUxiQlinV2XPk5vCE6VfXTE0hibGOFhCGf4QWnyouHBLl6Y_6kAcJz8qriwRnBej4DfCgTBYL5UiK5o-yEcHu-sF5uEekRtDEHFO9v2cU2rB-dEJ4B36hVJdW9resCjbBH8LGRzFmBiSjCUI-Eg3buTRq2cjRUZPicfDhzg47S3JSSJkM1F20QZeG3BemOuQnLuCM_YlPt3o2OCfMP6GW_NGNauaMlyGwLGJyRT7wA5l2yieG9OmbUQ2ZT_OtbD9AGg");'>
-              </div>
-              <div>
-                <p class="text-[#181411] text-base font-medium leading-normal">Biji Kopi Liberika</p>
-                <p class="text-[#897461] text-sm font-normal leading-normal">Kopi Liberika dengan aroma bunga dan rasa
-                  unik</p>
+          </div>
+          <!-- Product Card 3 -->
+          <div
+            class="group bg-white dark:bg-[#1a120b] rounded-lg border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+            <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800"
+              data-alt="Coffee server glass carafe with coffee inside">
+              <img alt="V60 Server"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTBdo5gtsecPglstyJEvVMVAAuDPKCQ04K13enOz_2O_Nz37zFSNfocoDIP4JRpdURe0w6Kl2NHJe5vSv9NBUEjTstd6N1TN_aNoIMurWGpAgGKmr2_Gb8j38zhSTfQyVxJvmD9OSD57RTU6iT6_BByWCGxBxAP2VyJWkZSr76DZMW2fvjU93cA7R2QfWtpgtxL8hYfpPNCRVlgbdSbi9CykvjDNfEKvv9AiXPgQS_WtTDcBQ9MJF50phZD5TwCOSv7MgFZjPWPw" />
+            </div>
+            <div class="p-3 flex flex-col flex-1">
+              <h3
+                class="text-sm font-medium text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+                Hario V60 Glass Server 600ml - Olive Wood Handle</h3>
+              <div class="mt-auto">
+                <p class="text-lg font-bold text-slate-900 dark:text-white">Rp 450.000</p>
+                <div class="h-4 mb-1"></div>
+                <div class="flex items-center gap-1 mb-2">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 truncate ml-1">Jakarta Pusat</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="material-symbols-outlined text-[14px] text-yellow-400 fill-1"
+                    style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-slate-900 dark:text-white font-medium">5.0</span>
+                  <span>|</span>
+                  <span>Terjual 30</span>
+                </div>
               </div>
             </div>
-            <div class="flex flex-col gap-3 pb-3">
-              <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB75KL6GGGUyHjRi7lUNgseVZjAnKT-a9H77Kwms_2wUXzk7cQ1hrsxJ6Y3PffW9170kQSNFep3zRsjaAG22wCgzXaidEmAas4PPV7YuW0HbNVBEKqAifhCsSiFog65TN9umdQBad8tDp-QbOF1vzjRaNA9jqCzrVIACfLXxk11YZqLZfcJrhZSU-TCKenXGYEdJpLkFVRL9xfIrzFpKo_ir_TJUclekS_roPwzxrMG6ivyNqxHknllbXusc1xKGCS-TFyCH9bKxFc");'>
-              </div>
-              <div>
-                <p class="text-[#181411] text-base font-medium leading-normal">Biji Kopi Excelsa</p>
-                <p class="text-[#897461] text-sm font-normal leading-normal">Kopi Excelsa dengan rasa asam dan sedikit
-                  manis</p>
+          </div>
+          <!-- Product Card 4 -->
+          <div
+            class="group bg-white dark:bg-[#1a120b] rounded-lg border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+            <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800"
+              data-alt="Close up of roasted coffee beans texture">
+              <img alt="Espresso Blend"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHoxgFcuk5IbKmzrGfMNIBCIZog-Q7MHh9BE2ETtTEzsKcSbS6o33fDR5tBX1W4wX9I2Mdl9Di0N31X_DXr1JVyVqvfobOUAHGpruOsJ9ZSV7oaeDgCRa2yqoyhveNojtfoMRj8EMfphUtf15p5Z-jZoLr87MhpE8YEFYIVxpYxoX2QNEUoU-wXwwqOETHiTLY1GNQfaBaVAktrdr48YB65uqxIGZqF7KRq944b2SnTNvEs2XdVMYm5fUk1ny5VXkXIYJEW6zbow" />
+            </div>
+            <div class="p-3 flex flex-col flex-1">
+              <h3
+                class="text-sm font-medium text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+                House Blend Espresso 1kg - 70/30 Arabica Robusta</h3>
+              <div class="mt-auto">
+                <p class="text-lg font-bold text-slate-900 dark:text-white">Rp 165.000</p>
+                <div class="h-4 mb-1"></div>
+                <div class="flex items-center gap-1 mb-2">
+                  <span
+                    class="px-1 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold rounded">Official</span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400 truncate ml-1">Bandung</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="material-symbols-outlined text-[14px] text-yellow-400 fill-1"
+                    style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-slate-900 dark:text-white font-medium">4.7</span>
+                  <span>|</span>
+                  <span>Terjual 2rb+</span>
+                </div>
               </div>
             </div>
-            <div class="flex flex-col gap-3 pb-3">
-              <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBPeduNz9W5HSzwkfoz-xA4PyU8WAolZD1qdVJ5HREBs5Y44v8mhwbTJsYiLYiQAU-WWDJhDePqay2DQT2p6NR7T1KazeVHh5O6KuYqctjkiN80rIRi24SRoms8qBnBoO_hwL63kfpcNNYZExa2HKLc_HnBSPDZ-vYja6WuSwNbQAoKo_2ThMqhmJf_puDMTZm9EGakRwWl_teHh5iD7orLQhXhIvpCEARIS65ZxwQFUIi1m06D4qOJUKymuQLB4h6TYe7jtA3K_So");'>
+          </div>
+          <!-- Product Card 5 -->
+          <div
+            class="group bg-white dark:bg-[#1a120b] rounded-lg border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+            <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800"
+              data-alt="Manual coffee grinder on marble surface">
+              <img alt="Manual Grinder"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAg-iZgkqw6eokI-aGcC_b9MDNN_zd5C_aY83p2q8pgRnsippvP0_WLnrVHuWUA53BbGPS8ulWI-6HcLeTdU0WqCo81M4NdtT3WITLYisMBT6bOdWQVMUnkyEgMCC0Y42Q-89cyGRTk4-OHv-Ht50u2AESmgxXE--c5Yds0qBixQE6r0jYlteH6E0KunduRp33SSTb509Oc58EG8mx5S1MpksicT2XMa6pMeQtRdeVw7Ap7XwIFxUDdMui082H4eMX7PtpcpzqaAw" />
+              <div
+                class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">
+                25% OFF</div>
+            </div>
+            <div class="p-3 flex flex-col flex-1">
+              <h3
+                class="text-sm font-medium text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+                Timemore C2 Chestnut Manual Grinder - Black</h3>
+              <div class="mt-auto">
+                <p class="text-lg font-bold text-slate-900 dark:text-white">Rp 650.000</p>
+                <p class="text-xs text-gray-400 line-through mb-1">Rp 850.000</p>
+                <div class="flex items-center gap-1 mb-2">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 truncate ml-1">Jakarta Barat</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="material-symbols-outlined text-[14px] text-yellow-400 fill-1"
+                    style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-slate-900 dark:text-white font-medium">4.9</span>
+                  <span>|</span>
+                  <span>Terjual 850</span>
+                </div>
               </div>
-              <div>
-                <p class="text-[#181411] text-base font-medium leading-normal">Biji Kopi Blend</p>
-                <p class="text-[#897461] text-sm font-normal leading-normal">Campuran biji kopi dengan berbagai rasa</p>
+            </div>
+          </div>
+          <!-- Product Card 6 -->
+          <div
+            class="group bg-white dark:bg-[#1a120b] rounded-lg border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+            <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800"
+              data-alt="Box of drip coffee bags">
+              <img alt="Drip Bag"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqiVVHoenDkHcyiW2DbCUkgukEHyYC4kI-j6GjjhpNpcw-H47T0gco9LAifS9YVxV5ybje8pEGPfnGskesi3g6SB5Le67--uH9y_g0OsnF9KcW-xBj9FxYe892cVjG4qGnxm7xJu3tkUE5-chBjQCy2HCq9IbdZYrjHyI3ZV14IzBUU6j2gsyrq09Ikcfu5T_6OHrDDktwKZDLY4gDQjFa9YwsuATvryI7_bl537kIYZ0Xy36sOK6VoGcy5cSgSii5PINldnzolA" />
+            </div>
+            <div class="p-3 flex flex-col flex-1">
+              <h3
+                class="text-sm font-medium text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+                Roasty Daily Drip Bag Coffee - Isi 10 Sachet</h3>
+              <div class="mt-auto">
+                <p class="text-lg font-bold text-slate-900 dark:text-white">Rp 89.000</p>
+                <div class="h-4 mb-1"></div>
+                <div class="flex items-center gap-1 mb-2">
+                  <span
+                    class="px-1 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold rounded">Official</span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400 truncate ml-1">Jakarta Selatan</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="material-symbols-outlined text-[14px] text-yellow-400 fill-1"
+                    style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-slate-900 dark:text-white font-medium">4.8</span>
+                  <span>|</span>
+                  <span>Terjual 5rb+</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Product Card 7 -->
+          <div
+            class="group bg-white dark:bg-[#1a120b] rounded-lg border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+            <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800"
+              data-alt="Ceramic coffee mug with latte art">
+              <img alt="Ceramic Mug"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmlb489bZ30t3PaVfNzIzK1W5evIo8Psux4lLhpAlu3cW1fh3Yvn_d81Zjaeo0P0y8HIT0yGGi724Qjl-OwcHRW5weyqZyUgs4FKqvYayUUh0fpsdEH_UnVoTBTvHDvU6gz8rbiW9mdGqMKmuSFFKqK0ja0IYJUbNGtbpa_DaXO2peblJMC8eOrLXn_hu6w7CmB9USB43ueRuBif51b7gHdr2tRyrdRlOkngtYTMsjR4pP_lDwjcRnxMAc9GmSj6F_XCZIaaIQrg" />
+            </div>
+            <div class="p-3 flex flex-col flex-1">
+              <h3
+                class="text-sm font-medium text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+                Kintamani Ceramic Mug - 300ml Handmade</h3>
+              <div class="mt-auto">
+                <p class="text-lg font-bold text-slate-900 dark:text-white">Rp 125.000</p>
+                <div class="h-4 mb-1"></div>
+                <div class="flex items-center gap-1 mb-2">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 truncate ml-1">Bali</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="material-symbols-outlined text-[14px] text-yellow-400 fill-1"
+                    style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-slate-900 dark:text-white font-medium">4.6</span>
+                  <span>|</span>
+                  <span>Terjual 45</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Product Card 8 -->
+          <div
+            class="group bg-white dark:bg-[#1a120b] rounded-lg border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+            <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800"
+              data-alt="French press coffee maker on wooden background">
+              <img alt="French Press"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_w45UGRGfjNp2woghUhLy1iEMUvJaLpF2Yfd1ayJTffHuaUQjYXGJgCm3C1pa_W20w08ACAUOzItcoFmQLzh5eo829mN6XarQZ2UcKQX4oOEYxlvKMVyzk1IASt4Qg90tY75MdyKsrk7uY16b71jBMxNeYeIG2VxsSmXo0fKJABVJHMLevqB0DxCXGGATwEyXUQLevr8k67joFUkyALLXPaRgCgUlQ0K_1R5saaAX_GIPRwGpIAR0Qo_OLLgf8R2GBcasUWzmjA" />
+            </div>
+            <div class="p-3 flex flex-col flex-1">
+              <h3
+                class="text-sm font-medium text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+                French Press Coffee Maker Stainless Steel 350ml</h3>
+              <div class="mt-auto">
+                <p class="text-lg font-bold text-slate-900 dark:text-white">Rp 75.000</p>
+                <div class="h-4 mb-1"></div>
+                <div class="flex items-center gap-1 mb-2">
+                  <span
+                    class="px-1 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-[10px] font-bold rounded">Star+</span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400 truncate ml-1">Surabaya</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="material-symbols-outlined text-[14px] text-yellow-400 fill-1"
+                    style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-slate-900 dark:text-white font-medium">4.5</span>
+                  <span>|</span>
+                  <span>Terjual 1.2rb</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </main>
-
-      <footer class="flex justify-center">
-        <div class="flex max-w-[960px] flex-1 flex-col">
-          <footer class="flex flex-col gap-6 px-5 py-10 text-center @container">
-            <div class="flex flex-wrap items-center justify-center gap-6 @[480px]:flex-row @[480px]:justify-around">
-              <a class="text-[#897461] text-base font-normal leading-normal min-w-40" href="#">Tentang Kami</a>
-              <a class="text-[#897461] text-base font-normal leading-normal min-w-40" href="#">Kontak</a>
-              <a class="text-[#897461] text-base font-normal leading-normal min-w-40" href="#">Kebijakan Privasi</a>
-              <a class="text-[#897461] text-base font-normal leading-normal min-w-40" href="#">Syarat dan Ketentuan</a>
-            </div>
-            <div class="flex flex-wrap justify-center gap-4">
-              <a href="#">
-                <div class="text-[#897461]" data-icon="InstagramLogo" data-size="24px" data-weight="regular">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor"
-                    viewBox="0 0 256 256">
-                    <path
-                      d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160ZM176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24Zm40,152a40,40,0,0,1-40,40H80a40,40,0,0,1-40-40V80A40,40,0,0,1,80,40h96a40,40,0,0,1,40,40ZM192,76a12,12,0,1,1-12-12A12,12,0,0,1,192,76Z">
-                    </path>
-                  </svg>
-                </div>
-              </a>
-              <a href="#">
-                <div class="text-[#897461]" data-icon="TwitterLogo" data-size="24px" data-weight="regular">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor"
-                    viewBox="0 0 256 256">
-                    <path
-                      d="M247.39,68.94A8,8,0,0,0,240,64H209.57A48.66,48.66,0,0,0,168.1,40a46.91,46.91,0,0,0-33.75,13.7A47.9,47.9,0,0,0,120,88v6.09C79.74,83.47,46.81,50.72,46.46,50.37a8,8,0,0,0-13.65,4.92c-4.31,47.79,9.57,79.77,22,98.18a110.93,110.93,0,0,0,21.88,24.2c-15.23,17.53-39.21,26.74-39.47,26.84a8,8,0,0,0-3.85,11.93c.75,1.12,3.75,5.05,11.08,8.72C53.51,229.7,65.48,232,80,232c70.67,0,129.72-54.42,135.75-124.44l29.91-29.9A8,8,0,0,0,247.39,68.94Zm-45,29.41a8,8,0,0,0-2.32,5.14C196,166.58,143.28,216,80,216c-10.56,0-18-1.4-23.22-3.08,11.51-6.25,27.56-17,37.88-32.48A8,8,0,0,0,92,169.08c-.47-.27-43.91-26.34-44-96,16,13,45.25,33.17,78.67,38.79A8,8,0,0,0,136,104V88a32,32,0,0,1,9.6-22.92A30.94,30.94,0,0,1,167.9,56c12.66.16,24.49,7.88,29.44,19.21A8,8,0,0,0,204.67,80h16Z">
-                    </path>
-                  </svg>
-                </div>
-              </a>
-              <a href="#">
-                <div class="text-[#897461]" data-icon="FacebookLogo" data-size="24px" data-weight="regular">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor"
-                    viewBox="0 0 256 256">
-                    <path
-                      d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z">
-                    </path>
-                  </svg>
-                </div>
-              </a>
-            </div>
-            <p class="text-[#897461] text-base font-normal leading-normal">@2024 Roasty . All rights reserved.</p>
-          </footer>
+        <!-- Pagination -->
+        <div class="mt-12 flex justify-center">
+          <div class="flex items-center gap-2">
+            <button
+              class="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-400 hover:border-primary hover:text-primary transition-colors disabled:opacity-50">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button
+              class="w-10 h-10 rounded-lg bg-primary text-white font-bold flex items-center justify-center shadow-md shadow-primary/30">1</button>
+            <button
+              class="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-700 text-slate-900 dark:text-white font-medium flex items-center justify-center hover:border-primary hover:text-primary transition-colors">2</button>
+            <button
+              class="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-700 text-slate-900 dark:text-white font-medium flex items-center justify-center hover:border-primary hover:text-primary transition-colors">3</button>
+            <span class="text-gray-400">...</span>
+            <button
+              class="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-700 text-slate-900 dark:text-white font-medium flex items-center justify-center hover:border-primary hover:text-primary transition-colors">10</button>
+            <button
+              class="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-slate-900 dark:text-white hover:border-primary hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
         </div>
-      </footer>
-
+      </section>
     </div>
-  </div>
+  </main>
+  <!-- Footer Simple -->
+  <footer class="bg-white dark:bg-[#1a120b] border-t border-gray-200 dark:border-gray-800 mt-12 py-8">
+    <div class="max-w-[1280px] mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-2 text-primary">
+        <span class="material-symbols-outlined !text-[24px] fill-1">local_cafe</span>
+        <span class="text-xl font-bold text-slate-900 dark:text-white">Roasty</span>
+      </div>
+      <p class="text-sm text-gray-500">© 2024 Roasty Marketplace. All rights reserved.</p>
+    </div>
+  </footer>
+
   <script src="config.js"></script>
   <script>
-    const productGrid = document.getElementById('productGrid');
+    const API_URL = CONFIG.API_BASE_URL;
+    let allProducts = [];
 
-    async function fetchProducts() {
+    // Update user profile display
+    async function updateUserProfile() {
       try {
-        const response = await fetch(`${CONFIG.API_BASE_URL}/products`, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
+        const token = localStorage.getItem('token');
+        if (!token) return;
 
-        if (!response.ok) {
-          throw new Error('Gagal mengambil data produk');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        // Update user name di header
+        const userNameElement = document.querySelector('button.flex.items-center.gap-2.p-1 span.hidden');
+        if (userNameElement && user.name) {
+          userNameElement.textContent = user.name;
         }
-
-        const result = await response.json();
-        // Handle different response structures
-        const products = Array.isArray(result.data) ? result.data : 
-                        (result.data && Array.isArray(result.data.data) ? result.data.data : 
-                        (Array.isArray(result) ? result : []));
-
-        productGrid.innerHTML = '';
-
-        products.forEach(product => {
-          productGrid.innerHTML += `
-              <div class="flex flex-col gap-3 pb-3 cursor-pointer hover:scale-[1.02] transition">
-                
-                <div
-                  class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg"
-                  style="background-image: url('${product.image_url ?? 'https://via.placeholder.com/300'}')">
-                </div>
-    
-                <div>
-                  <p class="text-[#181411] text-base font-medium leading-normal">
-                    ${product.name}
-                  </p>
-                  <p class="text-[#897461] text-sm font-normal leading-normal">
-                    ${product.description ?? ''}
-                  </p>
-                  <p class="text-[#a47148] text-sm font-semibold mt-1">
-                    Rp ${Number(product.price).toLocaleString('id-ID')}
-                  </p>
-                </div>
-    
-              </div>
-            `;
-        });
-
-      } catch (error) {
-        console.error(error);
-        productGrid.innerHTML = `
-            <p class="text-red-600 text-sm">
-              Gagal memuat produk. Silakan coba lagi.
-            </p>
-          `;
+      } catch (err) {
+        console.error('Error updating user profile:', err);
       }
     }
 
-    fetchProducts();
+    // Load products from backend
+    async function loadProducts() {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_URL}/products`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error('Gagal memuat produk');
+
+        const data = await res.json();
+        console.log('API Response full structure:', data);
+
+        // Handle paginated response from Laravel
+        // API returns: { success, message, data: { data: [...], meta, links } }
+        let productArray = [];
+
+        if (data.data) {
+          if (Array.isArray(data.data)) {
+            // data.data is array directly
+            productArray = data.data;
+          } else if (data.data.data && Array.isArray(data.data.data)) {
+            // data.data is pagination object with nested .data array
+            productArray = data.data.data;
+          }
+        } else if (Array.isArray(data)) {
+          productArray = data;
+        }
+
+        allProducts = productArray;
+        console.log('Parsed products array:', allProducts);
+        console.log('Sample product IDs:', allProducts.slice(0, 3).map(p => ({ id: p.id, name: p.name })));
+
+        // Render products ke halaman
+        renderProducts(allProducts);
+
+        // Setup event listeners setelah render selesai
+        // Gunakan requestAnimationFrame untuk tunggu DOM update
+        requestAnimationFrame(() => {
+          setupExistingProductCards();
+        });
+
+      } catch (err) {
+        console.error('Error loading products:', err);
+        alert('Gagal memuat produk. Silakan refresh halaman.');
+      }
+    }
+
+    // Render products to the page
+    function renderProducts(products) {
+      // Find the grid container - look for grid with gap-4 class
+      // QuerySelector doesn't support Tailwind's : so we use a simpler selector
+      let productGrid = document.querySelector('div.grid.gap-4');
+
+      // If not found, try finding parent main and then grid inside
+      if (!productGrid) {
+        const main = document.querySelector('main');
+        if (main) {
+          productGrid = main.querySelector('div.grid.gap-4');
+        }
+      }
+
+      if (!productGrid) {
+        console.error('Product grid container not found. Trying alternative method...');
+        // Last resort: find by finding all grids and taking the one with most direct grid-cols
+        const grids = document.querySelectorAll('div.grid');
+        console.log('Found grids:', grids.length);
+        for (let grid of grids) {
+          if (grid.className.includes('gap-4')) {
+            productGrid = grid;
+            break;
+          }
+        }
+      }
+
+      if (!productGrid) {
+        console.error('Product grid container not found after all attempts');
+        return;
+      }
+
+      console.log('Found product grid:', productGrid);
+
+      // If we have products from API, replace all cards
+      if (products && products.length > 0) {
+        // Log first product structure to debug
+        console.log('First product structure:', products[0]);
+        console.log('Product ID values:', products.map(p => ({ id: p.id, name: p.name })));
+
+        // CLEAR ALL existing cards completely
+        productGrid.innerHTML = '';
+
+        console.log('Cleared grid, now rendering', products.length, 'products');
+
+        // Create new cards from API data
+        products.forEach((product, index) => {
+          const card = document.createElement('div');
+          card.className = 'group bg-white dark:bg-[#1a120b] rounded-lg border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full';
+
+          // Set data attribute BEFORE setting innerHTML
+          card.setAttribute('data-product-id', String(product.id));
+
+          const price = parseInt(product.price);
+          const originalPrice = Math.floor(price * 1.2); // Assume 20% discount
+          const discount = Math.round(((originalPrice - price) / originalPrice) * 100);
+
+          // Get image from image_urls array
+          const imageUrl = (product.image_urls && product.image_urls.length > 0)
+            ? product.image_urls[0]
+            : 'https://via.placeholder.com/200?text=' + encodeURIComponent(product.name);
+
+          card.innerHTML = `
+                <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
+                    <img alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                         src="${imageUrl}">
+                </div>
+                <div class="p-3 flex flex-col flex-1">
+                    <h3 class="text-sm font-medium text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+                        ${product.name}
+                    </h3>
+                    <div class="mt-auto">
+                        <p class="text-lg font-bold text-slate-900 dark:text-white">Rp ${price.toLocaleString('id-ID')}</p>
+                        <p class="text-xs text-gray-400 line-through mb-1">Rp ${originalPrice.toLocaleString('id-ID')}</p>
+                        <div class="flex items-center gap-1 mb-2">
+                            <span class="px-1 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-bold rounded">Official</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400 truncate ml-1">${product.category || 'Kopi'}</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                            <span class="material-symbols-outlined text-[14px] text-yellow-400 fill-1" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="text-slate-900 dark:text-white font-medium">4.8</span>
+                            <span>|</span>
+                            <span>Terjual 100+</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+          productGrid.appendChild(card);
+        });
+
+        console.log(`Rendered ${products.length} products from API`);
+      }
+    }
+
+    // Setup product cards in grid to be clickable
+    function setupExistingProductCards() {
+      // Find the grid container first - use selector without :
+      let productGrid = document.querySelector('div.grid.gap-4');
+
+      if (!productGrid) {
+        const main = document.querySelector('main');
+        if (main) {
+          productGrid = main.querySelector('div.grid.gap-4');
+        }
+      }
+
+      if (!productGrid) {
+        // Fallback: find by looking for grid with gap-4
+        const grids = document.querySelectorAll('div.grid');
+        for (let grid of grids) {
+          if (grid.className.includes('gap-4')) {
+            productGrid = grid;
+            break;
+          }
+        }
+      }
+
+      if (!productGrid) {
+        console.error('Product grid not found in setupExistingProductCards');
+        return;
+      }
+
+      // Find product cards only within the grid
+      const productCards = productGrid.querySelectorAll('div.group.bg-white');
+
+      console.log('setupExistingProductCards: Found', productCards.length, 'cards');
+      console.log('setupExistingProductCards: allProducts has', allProducts.length, 'items');
+
+      productCards.forEach((card, index) => {
+        const productId = card.getAttribute('data-product-id');
+        console.log(`Card ${index}: data-product-id = "${productId}"`);
+
+        if (!productId) {
+          console.warn(`Card ${index} has no data-product-id attribute, skipping...`);
+          return;
+        }
+
+        card.style.cursor = 'pointer';
+        console.log(`Setting up click listener for card ${index} with product ID: ${productId}`);
+
+        card.addEventListener('click', function (e) {
+          // Don't navigate if clicking button or link
+          if (e.target.closest('button') || e.target.closest('a')) {
+            return;
+          }
+
+          e.preventDefault();
+
+          const clickedProductId = this.getAttribute('data-product-id');
+          console.log('Product clicked, ID:', clickedProductId);
+
+          if (!clickedProductId) {
+            console.error('No product ID in clicked card');
+            alert('Produk tidak ditemukan');
+            return;
+          }
+
+          // Save to sessionStorage
+          sessionStorage.setItem('selectedProductId', clickedProductId);
+
+          // Also find and store full product data
+          const product = allProducts.find(p => String(p.id) === String(clickedProductId));
+          if (product) {
+            sessionStorage.setItem('currentProduct', JSON.stringify(product));
+            console.log('Stored product data:', product);
+          }
+
+          // Navigate to detail page
+          window.location.href = 'halaman.detail.produk.html';
+        });
+      });
+    }
+
+    // Setup all header and navigation buttons
+    function setupAllButtons() {
+      console.log('Setting up buttons...');
+
+      // Check auth
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // ===== SEARCH BUTTON =====
+      const searchInput = document.querySelector('input[placeholder*="Cari"]');
+
+      if (searchInput) {
+        searchInput.addEventListener('keypress', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            if (query) {
+              sessionStorage.setItem('searchQuery', query);
+              location.reload();
+            }
+          }
+        });
+      }
+
+      // ===== HEADER - Cart, Notifications, Profile Buttons =====
+      // Find the flex container with gap-3 that contains icon buttons
+      const iconButtonContainer = document.querySelector('div.flex.items-center.gap-3');
+
+      if (iconButtonContainer) {
+        const buttons = iconButtonContainer.querySelectorAll('button');
+        console.log('Header buttons found:', buttons.length);
+
+        buttons.forEach((btn, idx) => {
+          const icon = btn.querySelector('.material-symbols-outlined');
+          const iconText = icon ? icon.textContent.trim() : '';
+
+          console.log(`Button ${idx}: ${iconText}`);
+
+          if (iconText === 'shopping_cart') {
+            btn.addEventListener('click', function (e) {
+              e.preventDefault();
+              console.log('Cart clicked');
+              window.location.href = 'halaman.keranjang.belanja.html';
+            });
+          } else if (iconText === 'notifications') {
+            btn.addEventListener('click', function (e) {
+              e.preventDefault();
+              console.log('Notifications clicked');
+              alert('Tidak ada notifikasi baru');
+            });
+          }
+        });
+
+        // Profile button - find the button with flex and gap-2 that has an image
+        const profileBtn = iconButtonContainer.querySelector('button.flex.items-center.gap-2');
+        if (profileBtn) {
+          profileBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            console.log('Profile clicked');
+            window.location.href = 'halaman.profil.html';
+          });
+        }
+      }
+
+      // ===== LOGO BUTTON =====
+      const logoBtn = document.querySelector('header a.flex.items-center.gap-2');
+      if (logoBtn) {
+        logoBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          console.log('Logo clicked');
+          window.location.href = 'Halaman.beranda.html';
+        });
+      }
+
+      // ===== NAVIGATION LINKS (Kategori, Promo) =====
+      const navLinks = document.querySelectorAll('nav.hidden a[href="#"]');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          console.log('Nav link clicked');
+          window.location.href = 'halaman.daftar.produk.html';
+        });
+      });
+
+      // ===== BREADCRUMB LINKS =====
+      const breadcrumbs = document.querySelectorAll('nav.flex.mb-6 a');
+      breadcrumbs.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const text = link.textContent.trim();
+          console.log('Breadcrumb clicked:', text);
+
+          if (text.toLowerCase() === 'home') {
+            window.location.href = 'Halaman.beranda.html';
+          } else {
+            window.location.href = 'halaman.daftar.produk.html';
+          }
+        });
+      });
+
+      // ===== SIDEBAR CATEGORY LINKS =====
+      const sidebarLinks = document.querySelectorAll('aside a[href="#"]');
+      console.log('Sidebar links found:', sidebarLinks.length);
+
+      sidebarLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const categoryName = link.textContent.trim();
+          console.log('Category clicked:', categoryName);
+
+          if (categoryName && !categoryName.includes('Lihat')) {
+            sessionStorage.setItem('selectedCategory', categoryName);
+          }
+        });
+      });
+
+      console.log('Button setup complete');
+    }
+
+    // Jalankan saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('Page loaded');
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.log('No token, redirecting to login');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Load data and setup
+      setTimeout(() => {
+        updateUserProfile();
+        loadProducts();
+        setupAllButtons();
+      }, 100);
+    });
+  </script>
   </script>
 
 </body>
