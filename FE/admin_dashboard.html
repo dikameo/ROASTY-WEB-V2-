@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Roasty Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;900&display=swap"
+  />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#f6f5f3]" style="font-family: Epilogue, sans-serif">
+
+<div class="flex min-h-screen">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="w-64 bg-white border-r border-[#eee6df] flex flex-col">
+    <div class="px-6 py-5 border-b font-black text-xl text-[#181411]">
+       Roasty Admin
+    </div>
+
+    <nav class="flex-1 px-4 py-6 space-y-2 text-sm">
+      <a href="admin_dashboard.html" class="block px-4 py-2 rounded-lg bg-[#d46c11] text-white font-semibold">
+        Dashboard
+      </a>
+      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-[#f4f2f0]">
+        Produk Kopi
+      </a>
+      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-[#f4f2f0]">
+        Pesanan
+      </a>
+      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-[#f4f2f0]">
+        User
+      </a>
+      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-[#f4f2f0]">
+        Laporan
+      </a>
+    </nav>
+
+    <div class="px-4 py-4 border-t">
+      <button id="logoutButton"
+        class="w-full py-2 rounded-lg bg-red-100 text-red-600 font-semibold">
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="flex-1 p-8">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-2xl font-black text-[#181411]">
+        Dashboard Admin
+      </h1>
+
+      <div class="flex items-center gap-3">
+        <img id="profileAvatar"
+          src="https://via.placeholder.com/40"
+          class="w-10 h-10 rounded-full" />
+        <span id="profileName" class="font-semibold text-sm">
+          Admin
+        </span>
+      </div>
+    </div>
+
+    <!-- ================= STAT CARD ================= -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+
+      <div class="bg-white rounded-xl p-5 shadow-sm">
+        <p class="text-sm text-gray-500">Total Produk</p>
+        <h2 id="totalProducts" class="text-2xl font-black">-</h2>
+      </div>
+
+      <div class="bg-white rounded-xl p-5 shadow-sm">
+        <p class="text-sm text-gray-500">Pesanan Hari Ini</p>
+        <h2 id="todayOrders" class="text-2xl font-black">-</h2>
+      </div>
+
+      <div class="bg-white rounded-xl p-5 shadow-sm">
+        <p class="text-sm text-gray-500">Total User</p>
+        <h2 id="totalUsers" class="text-2xl font-black">-</h2>
+      </div>
+
+      <div class="bg-white rounded-xl p-5 shadow-sm">
+        <p class="text-sm text-gray-500">Pendapatan</p>
+        <h2 id="totalRevenue" class="text-2xl font-black">-</h2>
+      </div>
+
+    </div>
+
+    <!-- ================= TABLE PRODUK ================= -->
+    <div class="bg-white rounded-xl shadow-sm mb-10">
+      <div class="px-6 py-4 border-b flex justify-between items-center">
+        <h2 class="font-bold text-lg">Produk Kopi</h2>
+        <button id="addProductBtn" class="px-4 py-2 bg-[#d46c11] text-white rounded-lg text-sm font-semibold">
+          + Tambah Produk
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-[#f4f2f0] text-left">
+            <tr>
+              <th class="px-6 py-3">Nama</th>
+              <th class="px-6 py-3">Kategori</th>
+              <th class="px-6 py-3">Harga</th>
+              <th class="px-6 py-3">Stok</th>
+              <th class="px-6 py-3">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody">
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                Memuat data produk...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================= PESANAN TERBARU ================= -->
+    <div class="bg-white rounded-xl shadow-sm">
+      <div class="px-6 py-4 border-b">
+        <h2 class="font-bold text-lg">Pesanan Terbaru</h2>
+      </div>
+
+      <ul id="ordersListBody" class="divide-y">
+        <li class="px-6 py-8 text-center text-gray-500">
+          Memuat data pesanan...
+        </li>
+      </ul>
+    </div>
+
+  </main>
+</div>
+
+<!-- ================= MODAL ADD/EDIT PRODUK ================= -->
+<div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+    <div class="px-6 py-4 border-b flex justify-between items-center">
+      <h3 id="modalTitle" class="font-bold text-lg">Tambah Produk</h3>
+      <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">✕</button>
+    </div>
+    
+    <form id="productForm" class="px-6 py-4 space-y-4">
+      <input type="hidden" id="productId" />
+      
+      <div>
+        <label class="block text-sm font-semibold mb-1">Nama Produk</label>
+        <input type="text" id="productName" required
+          class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d46c11]" />
+      </div>
+      
+      <div>
+        <label class="block text-sm font-semibold mb-1">Kategori</label>
+        <input type="text" id="productCategory" required
+          class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d46c11]" />
+      </div>
+      
+      <div>
+        <label class="block text-sm font-semibold mb-1">Harga (Rp)</label>
+        <input type="number" id="productPrice" required
+          class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d46c11]" />
+      </div>
+      
+      <div>
+        <label class="block text-sm font-semibold mb-1">Stok</label>
+        <input type="number" id="productStock" required
+          class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d46c11]" />
+      </div>
+      
+      <div>
+        <label class="block text-sm font-semibold mb-1">Deskripsi</label>
+        <textarea id="productDescription" rows="3"
+          class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d46c11]"></textarea>
+      </div>
+      
+      <div class="flex gap-3 pt-4">
+        <button type="button" id="cancelBtn"
+          class="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50">
+          Batal
+        </button>
+        <button type="submit"
+          class="flex-1 px-4 py-2 bg-[#d46c11] text-white rounded-lg font-semibold">
+          Simpan
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const API_URL = 'http://localhost:8000/api';
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    window.location.href = 'login.html';
+  }
+
+  // ================= FETCH PROFILE ================= 
+  async function fetchProfile() {
+    try {
+      const res = await fetch(`${API_URL}/profile`, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!res.ok) throw new Error('Unauthorized');
+
+      const json = await res.json();
+      const profile = json.data || json;
+      
+      document.getElementById('profileName').textContent = profile.name || 'Admin';
+      
+      if (profile.avatar_url) {
+        document.getElementById('profileAvatar').src = profile.avatar_url;
+      }
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    }
+  }
+
+  // ================= FETCH DASHBOARD STATS ================= 
+  async function fetchDashboardStats() {
+    try {
+      // Fetch products count
+      const productsRes = await fetch(`${API_URL}/products`, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (productsRes.ok) {
+        const productsData = await productsRes.json();
+        const products = productsData.data || productsData;
+        document.getElementById('totalProducts').textContent = 
+          Array.isArray(products) ? products.length : 0;
+      }
+
+      // Fetch orders
+      const ordersRes = await fetch(`${API_URL}/orders`, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (ordersRes.ok) {
+        const ordersData = await ordersRes.json();
+        const orders = ordersData.data || ordersData;
+        
+        if (Array.isArray(orders)) {
+          // Today's orders
+          const today = new Date().toDateString();
+          const todayOrders = orders.filter(order => {
+            const orderDate = new Date(order.created_at).toDateString();
+            return orderDate === today;
+          });
+          
+          document.getElementById('todayOrders').textContent = todayOrders.length;
+          
+          // Total revenue
+          const totalRevenue = orders.reduce((sum, order) => {
+            return sum + (parseFloat(order.total_amount) || 0);
+          }, 0);
+          
+          document.getElementById('totalRevenue').textContent = 
+            'Rp ' + totalRevenue.toLocaleString('id-ID');
+        }
+      }
+
+      // Fetch users (if endpoint exists)
+      try {
+        const usersRes = await fetch(`${API_URL}/users`, {
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (usersRes.ok) {
+          const usersData = await usersRes.json();
+          const users = usersData.data || usersData;
+          document.getElementById('totalUsers').textContent = 
+            Array.isArray(users) ? users.length : '-';
+        }
+      } catch (err) {
+        document.getElementById('totalUsers').textContent = '-';
+      }
+
+    } catch (err) {
+      console.error('Error fetching dashboard stats:', err);
+    }
+  }
+
+  // ================= FETCH PRODUCTS ================= 
+  async function fetchProducts() {
+    try {
+      const res = await fetch(`${API_URL}/products`, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch products');
+
+      const data = await res.json();
+      const products = data.data || data;
+
+      const tbody = document.getElementById('productsTableBody');
+      
+      if (!Array.isArray(products) || products.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+              Belum ada produk. Klik "Tambah Produk" untuk menambahkan.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = products.map(product => `
+        <tr class="border-t">
+          <td class="px-6 py-3">${product.name || '-'}</td>
+          <td class="px-6 py-3">${product.category || '-'}</td>
+          <td class="px-6 py-3">Rp ${parseInt(product.price || 0).toLocaleString('id-ID')}</td>
+          <td class="px-6 py-3">${product.stock || 0}</td>
+          <td class="px-6 py-3 space-x-2">
+            <button onclick="editProduct(${product.id})" class="text-blue-600 hover:underline">Edit</button>
+            <button onclick="deleteProduct(${product.id})" class="text-red-600 hover:underline">Hapus</button>
+          </td>
+        </tr>
+      `).join('');
+
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      document.getElementById('productsTableBody').innerHTML = `
+        <tr>
+          <td colspan="5" class="px-6 py-8 text-center text-red-500">
+            Gagal memuat data produk. Silakan refresh halaman.
+          </td>
+        </tr>
+      `;
+    }
+  }
+
+  // ================= FETCH ORDERS ================= 
+  async function fetchOrders() {
+    try {
+      const res = await fetch(`${API_URL}/orders`, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch orders');
+
+      const data = await res.json();
+      const orders = data.data || data;
+
+      const ordersBody = document.getElementById('ordersListBody');
+      
+      if (!Array.isArray(orders) || orders.length === 0) {
+        ordersBody.innerHTML = `
+          <li class="px-6 py-8 text-center text-gray-500">
+            Belum ada pesanan.
+          </li>
+        `;
+        return;
+      }
+
+      // Show only latest 5 orders
+      const latestOrders = orders.slice(0, 5);
+
+      ordersBody.innerHTML = latestOrders.map(order => {
+        const statusColors = {
+          'pending': 'text-yellow-600',
+          'processing': 'text-blue-600',
+          'shipped': 'text-purple-600',
+          'delivered': 'text-green-600',
+          'cancelled': 'text-red-600'
+        };
+
+        const statusLabels = {
+          'pending': 'Menunggu',
+          'processing': 'Diproses',
+          'shipped': 'Dikirim',
+          'delivered': 'Selesai',
+          'cancelled': 'Dibatalkan'
+        };
+
+        const statusColor = statusColors[order.status] || 'text-gray-600';
+        const statusLabel = statusLabels[order.status] || order.status;
+
+        return `
+          <li class="px-6 py-4 flex justify-between items-center">
+            <div>
+              <span class="font-semibold">#${order.id} – ${order.user_name || 'Customer'}</span>
+              <span class="text-sm text-gray-500 ml-2">
+                Rp ${parseInt(order.total_amount || 0).toLocaleString('id-ID')}
+              </span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="font-semibold ${statusColor}">${statusLabel}</span>
+              <button onclick="updateOrderStatus(${order.id})" 
+                class="px-3 py-1 text-sm bg-[#d46c11] text-white rounded hover:bg-[#b85a0d]">
+                Proses
+              </button>
+            </div>
+          </li>
+        `;
+      }).join('');
+
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      document.getElementById('ordersListBody').innerHTML = `
+        <li class="px-6 py-8 text-center text-red-500">
+          Gagal memuat data pesanan.
+        </li>
+      `;
+    }
+  }
+
+  // ================= ADD PRODUCT ================= 
+  document.getElementById('addProductBtn').onclick = () => {
+    document.getElementById('modalTitle').textContent = 'Tambah Produk';
+    document.getElementById('productForm').reset();
+    document.getElementById('productId').value = '';
+    document.getElementById('productModal').classList.remove('hidden');
+  };
+
+  // ================= EDIT PRODUCT ================= 
+  async function editProduct(id) {
+    try {
+      const res = await fetch(`${API_URL}/products/${id}`, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch product');
+
+      const data = await res.json();
+      const product = data.data || data;
+
+      document.getElementById('modalTitle').textContent = 'Edit Produk';
+      document.getElementById('productId').value = product.id;
+      document.getElementById('productName').value = product.name || '';
+      document.getElementById('productCategory').value = product.category || '';
+      document.getElementById('productPrice').value = product.price || '';
+      document.getElementById('productStock').value = product.stock || '';
+      document.getElementById('productDescription').value = product.description || '';
+      
+      document.getElementById('productModal').classList.remove('hidden');
+
+    } catch (err) {
+      console.error('Error fetching product:', err);
+      alert('Gagal memuat data produk');
+    }
+  }
+
+  // ================= DELETE PRODUCT ================= 
+  async function deleteProduct(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus produk ini?')) return;
+
+    try {
+      const res = await fetch(`${API_URL}/products/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!res.ok) throw new Error('Failed to delete product');
+
+      alert('Produk berhasil dihapus');
+      fetchProducts();
+      fetchDashboardStats();
+
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      alert('Gagal menghapus produk');
+    }
+  }
+
+  // ================= SUBMIT PRODUCT FORM ================= 
+  document.getElementById('productForm').onsubmit = async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById('productId').value;
+    const productData = {
+      name: document.getElementById('productName').value,
+      category: document.getElementById('productCategory').value,
+      price: parseFloat(document.getElementById('productPrice').value),
+      stock: parseInt(document.getElementById('productStock').value),
+      description: document.getElementById('productDescription').value
+    };
+
+    try {
+      const url = id ? `${API_URL}/products/${id}` : `${API_URL}/products`;
+      const method = id ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method: method,
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(productData)
+      });
+
+      if (!res.ok) throw new Error('Failed to save product');
+
+      alert(id ? 'Produk berhasil diupdate' : 'Produk berhasil ditambahkan');
+      document.getElementById('productModal').classList.add('hidden');
+      fetchProducts();
+      fetchDashboardStats();
+
+    } catch (err) {
+      console.error('Error saving product:', err);
+      alert('Gagal menyimpan produk');
+    }
+  };
+
+  // ================= UPDATE ORDER STATUS ================= 
+  async function updateOrderStatus(orderId) {
+    const newStatus = prompt('Ubah status pesanan:\npending, processing, shipped, delivered, cancelled', 'processing');
+    
+    if (!newStatus) return;
+
+    const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+    if (!validStatuses.includes(newStatus.toLowerCase())) {
+      alert('Status tidak valid');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/orders/${orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus.toLowerCase() })
+      });
+
+      if (!res.ok) throw new Error('Failed to update order');
+
+      alert('Status pesanan berhasil diupdate');
+      fetchOrders();
+      fetchDashboardStats();
+
+    } catch (err) {
+      console.error('Error updating order:', err);
+      alert('Gagal mengupdate status pesanan');
+    }
+  }
+
+  // ================= MODAL CONTROLS ================= 
+  document.getElementById('closeModalBtn').onclick = () => {
+    document.getElementById('productModal').classList.add('hidden');
+  };
+
+  document.getElementById('cancelBtn').onclick = () => {
+    document.getElementById('productModal').classList.add('hidden');
+  };
+
+  // ================= LOGOUT ================= 
+  document.getElementById('logoutButton').onclick = () => {
+    localStorage.removeItem('token');
+    window.location.href = 'login.html';
+  };
+
+  // ================= INITIALIZE ================= 
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchProfile();
+    fetchDashboardStats();
+    fetchProducts();
+    fetchOrders();
+  });
+
+  // Make functions globally accessible
+  window.editProduct = editProduct;
+  window.deleteProduct = deleteProduct;
+  window.updateOrderStatus = updateOrderStatus;
+</script>
+
+</body>
+</html>
