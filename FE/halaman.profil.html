@@ -127,6 +127,11 @@
 <span class="material-symbols-outlined text-[20px] text-text-sub-light dark:text-text-sub-dark group-hover:text-primary">settings</span>
 <span class="text-sm font-medium">Pengaturan</span>
 </a>
+<div class="my-2 border-t border-border-light dark:border-border-dark"></div>
+<button id="logoutBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-main-light dark:text-text-main-dark hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors group cursor-pointer border-0 bg-transparent">
+<span class="material-symbols-outlined text-[20px] text-red-500 group-hover:text-red-600">logout</span>
+<span class="text-sm font-medium text-red-500 group-hover:text-red-600">Logout</span>
+</button>
 </div>
 </div>
 </aside>
@@ -582,6 +587,26 @@ function setupNavigation() {
     }
 }
 
+// Setup Logout
+function setupLogout() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                // Hapus token dari localStorage
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('cart');
+                
+                // Redirect ke halaman login
+                window.location.href = 'login.html';
+            }
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Check authentication
     const token = localStorage.getItem('token');
@@ -594,6 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupSaveButton();
     setupCancelButton();
     setupNavigation();
+    setupLogout();
 });
 </script>
 

@@ -564,9 +564,21 @@ function updateCartDisplayWithControls(products) {
 
 // Update user avatar
 function updateUserAvatar(userData) {
-    const avatarEl = document.querySelector('div.bg-center.bg-no-repeat.bg-cover.rounded-full.size-9');
-    if (avatarEl && userData.profile_image) {
-        avatarEl.style.backgroundImage = `url('${userData.profile_image}')`;
+    try {
+        const avatarEl = document.querySelector('div.bg-center.bg-no-repeat.bg-cover.rounded-full.size-9');
+        if (!avatarEl) {
+            console.warn('Avatar element not found');
+            return;
+        }
+        
+        if (userData && userData.profile_image) {
+            avatarEl.style.backgroundImage = `url('${userData.profile_image}')`;
+            console.log('✓ Avatar updated');
+        } else {
+            console.warn('No profile image found in user data');
+        }
+    } catch (err) {
+        console.error('Error updating avatar:', err);
     }
 }
 
@@ -722,11 +734,26 @@ async function loadPaymentData() {
         
         const userData = await userRes.json();
         const user = userData.data || userData;
+        
+        // Validate user data
+        if (!user) {
+            throw new Error('Invalid user data received from API');
+        }
+        
+        console.log('Raw user data from API:', user);
         paymentState.userData = user;
         console.log('✓ User data loaded:', user);
         
-        // Use profile from user data as address
-        const primaryAddress = user.profile;
+        // Use profile from user data as address - ensure it exists
+        let primaryAddress = user.profile;
+        if (!primaryAddress) {
+            console.warn('User profile not found, creating fallback');
+            primaryAddress = {
+                name: user.name || 'User',
+                phone: user.phone || '',
+                address: 'Alamat tidak tersedia'
+            };
+        }
         console.log('✓ Using user profile as address:', primaryAddress);
         
         // Fetch cart items details
@@ -800,21 +827,53 @@ async function loadPaymentData() {
         
         // Update UI
         console.log('Using address for display:', primaryAddress);
-        updateAddressDisplay(primaryAddress);
-        updateCartDisplayWithControls(products);
         
-        const totals = calculateTotals();
-        updateSummaryDisplay(totals);
-        updateUserAvatar(user);
+        try {
+            updateAddressDisplay(primaryAddress);
+        } catch (err) {
+            console.error('Error updating address display:', err);
+        }
+        
+        try {
+            updateCartDisplayWithControls(products);
+        } catch (err) {
+            console.error('Error updating cart display:', err);
+        }
+        
+        try {
+            const totals = calculateTotals();
+            updateSummaryDisplay(totals);
+        } catch (err) {
+            console.error('Error updating summary display:', err);
+        }
+        
+        try {
+            updateUserAvatar(user);
+        } catch (err) {
+            console.error('Error updating avatar:', err);
+        }
         
         console.log('✓ All UI updated successfully');
         
         // Setup payment button
-        setupPaymentButton();
+        try {
+            setupPaymentButton();
+        } catch (err) {
+            console.error('Error setting up payment button:', err);
+        }
         
         // Setup shipping and payment UI
-        setupShippingMethodUI();
-        setupPaymentMethodUI();
+        try {
+            setupShippingMethodUI();
+        } catch (err) {
+            console.error('Error setting up shipping UI:', err);
+        }
+        
+        try {
+            setupPaymentMethodUI();
+        } catch (err) {
+            console.error('Error setting up payment method UI:', err);
+        }
         
         console.log('✓ Payment page fully loaded!');
         
@@ -849,6 +908,13 @@ function setupPaymentButton() {
                 // Get selected payment method
                 const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'bca';
                 
+                // Get shipping address from user profile
+                let shippingAddress = 'Alamat tidak tersedia';
+                if (paymentState.userData) {
+                    const profile = paymentState.userData.profile || paymentState.userData;
+                    shippingAddress = profile.full_address || profile.address || 'Alamat tidak tersedia';
+                }
+                
                 // Create order
                 const orderItems = paymentState.products.map(prod => ({
                     product_id: prod.id,
@@ -865,13 +931,11 @@ function setupPaymentButton() {
                     },
                     body: JSON.stringify({
                         items: orderItems,
-                        total_price: totals.total,
+                        shipping_address: shippingAddress,
+                        subtotal: totals.subtotal,
                         shipping_cost: totals.shippingCost,
-                        insurance_cost: totals.insuranceCost,
-                        service_fee: totals.serviceCost,
-                        discount: totals.discount,
-                        payment_method: paymentMethod,
-                        notes: ''
+                        total: totals.total,
+                        payment_method: paymentMethod
                     })
                 });
                 

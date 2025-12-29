@@ -754,29 +754,54 @@ function setupAddToCart() {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                console.log('Buy now clicked, productId:', productId);
-                console.log('Quantity:', currentQuantity);
+                console.log('=== Beli Langsung (Buy Now) Clicked ===');
+                console.log('Product ID:', productId);
+                console.log('Current Quantity:', currentQuantity);
                 
-                // Add to cart first dengan quantity yang benar
-                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-                const existingItem = cart.find(item => item.id == productId);
-                
-                if (existingItem) {
-                    existingItem.quantity += currentQuantity;
-                } else {
-                    cart.push({
-                        id: productId,
-                        quantity: currentQuantity
-                    });
+                if (!productId) {
+                    alert('Error: Product ID not found');
+                    console.error('Product ID is empty or undefined');
+                    return;
                 }
                 
-                localStorage.setItem('cart', JSON.stringify(cart));
-                console.log('Cart updated for direct purchase:', cart);
+                // Validate quantity
+                if (!currentQuantity || currentQuantity < 1) {
+                    alert('Jumlah barang harus minimal 1');
+                    return;
+                }
                 
-                // Redirect to payment
-                setTimeout(() => {
-                    window.location.href = 'halaman.pembayaran.html';
-                }, 300);
+                try {
+                    // Add to cart dengan quantity yang benar
+                    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    console.log('Current cart before update:', cart);
+                    
+                    const existingItem = cart.find(item => item.id == productId);
+                    
+                    if (existingItem) {
+                        console.log('Item sudah ada di cart, updating quantity');
+                        existingItem.quantity += currentQuantity;
+                    } else {
+                        console.log('Item baru, menambahkan ke cart');
+                        cart.push({
+                            id: productId,
+                            quantity: currentQuantity
+                        });
+                    }
+                    
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    console.log('✓ Cart updated successfully:', cart);
+                    
+                    // Show confirmation
+                    console.log('Redirecting to payment page in 300ms...');
+                    
+                    // Redirect to payment
+                    setTimeout(() => {
+                        window.location.href = 'halaman.pembayaran.html';
+                    }, 300);
+                } catch (err) {
+                    console.error('Error in Beli Langsung:', err);
+                    alert('Error: ' + err.message);
+                }
             });
         }
     }
