@@ -14,7 +14,8 @@ class ProfileController extends Controller
      */
     public function show(Request $request)
     {
-        $profile = Profile::find($request->user()->id);
+        $user = $request->user();
+        $profile = $user->profile;
 
         if (!$profile) {
             return response()->json([
@@ -39,7 +40,8 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
-        $profile = Profile::find($request->user()->id);
+        $user = $request->user();
+        $profile = $user->profile;
 
         if (!$profile) {
             return response()->json([
@@ -53,8 +55,12 @@ class ProfileController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|string|max:255',
+            'first_name' => 'sometimes|string|max:255',
+            'last_name' => 'sometimes|string|max:255',
             'phone' => 'nullable|string|max:20',
+            'birth_date' => 'nullable|date',
+            'gender' => 'nullable|in:male,female',
         ]);
 
         if ($validator->fails()) {
@@ -68,19 +74,40 @@ class ProfileController extends Controller
             ], 422);
         }
 
-        $profile->update($request->only(['name', 'phone']));
+        // Update profile with phone and other fields
+        $profileData = [];
+        if ($request->has('phone')) {
+            $profileData['phone'] = $request->phone;
+        }
+        if ($request->has('birth_date')) {
+            $profileData['birth_date'] = $request->birth_date;
+        }
+        if ($request->has('gender')) {
+            $profileData['gender'] = $request->gender;
+        }
 
-        // Also update user's name if provided
+        if (!empty($profileData)) {
+            $profile->update($profileData);
+        }
+
+        // Update user's name if provided
         if ($request->has('name')) {
-            $user = $request->user();
             $user->name = $request->name;
+            $user->save();
+        } elseif ($request->has('first_name') || $request->has('last_name')) {
+            $firstName = $request->first_name ?: explode(' ', $user->name)[0];
+            $lastName = $request->last_name ?: '';
+            $user->name = trim($firstName . ' ' . $lastName);
             $user->save();
         }
 
         return response()->json([
             'success' => true,
             'message' => 'Profile updated successfully',
-            'data' => $profile->fresh()
+            'data' => [
+                'user' => $user->fresh()->load('profile'),
+                'profile' => $profile->fresh()
+            ]
         ]);
     }
 }

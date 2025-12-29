@@ -41,6 +41,49 @@
             },
         }
     </script>
+<!-- Custom Styles for Animations -->
+<style>
+    /* Shipping method animation */
+    label[name="shipping"] {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    label[name="shipping"].active {
+        transform: scale(1.02);
+    }
+
+    /* Payment method animation */
+    .payment-method-item {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .payment-method-item.active {
+        box-shadow: 0 4px 12px rgba(242, 108, 13, 0.25);
+    }
+
+    /* Quantity control animation */
+    .qty-minus, .qty-plus {
+        transition: all 0.2s ease;
+    }
+
+    .qty-minus:active, .qty-plus:active {
+        transform: scale(0.95);
+    }
+
+    /* Content expand animation for payment methods */
+    [class*="border-t"] {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+    }
+
+    [class*="border-t"].active {
+        max-height: 300px;
+        opacity: 1;
+        overflow: visible;
+    }
+</style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark font-display antialiased min-h-screen flex flex-col">
 <!-- Header -->
@@ -124,46 +167,12 @@
 <th class="pb-2 font-medium w-16">Produk</th>
 <th class="pb-2 font-medium">Detail</th>
 <th class="pb-2 font-medium text-right hidden sm:table-cell">Harga Satuan</th>
+<th class="pb-2 font-medium text-right">Jumlah</th>
 <th class="pb-2 font-medium text-right w-24">Total</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-border-light dark:divide-border-dark">
-<!-- Item 1 -->
-<tr>
-<td class="py-4 align-top">
-<div class="size-16 rounded-lg bg-gray-100 dark:bg-gray-800 bg-cover bg-center border border-border-light dark:border-border-dark" data-alt="Bag of Arabica coffee beans" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBXpQhyMzEOi8iELcx-1DFX3cw8Wxj7bcwQ2ezKuZk9P5omeNXSTKpd61_0HK_ZOX8LArzYQI58BzNGM4ORI5JlCXbKk-GgALDjMO42bT8D8LRQh55AC4AVzCW3xKgOaVcc3nTBmpMxxwGd_FrD8H1k1bKBHtAsG1QcPquAg7EN1exBPs5X5N5ZjkgpCmBT9HeFYHnav5bnldT6_B4V7Yuqj2Ov1mcr9nfp1QMIkIDM-cs-qK-Ab6TsUpdRl6CoQw1MOyAXZsqqUg");'>
-</div>
-</td>
-<td class="py-4 px-3 align-top">
-<p class="font-bold text-sm text-text-main-light dark:text-text-main-dark line-clamp-2">Kopi Arabika Gayo Aceh - 250g Whole Bean</p>
-<p class="text-xs text-text-sec-light dark:text-text-sec-dark mt-1">Varian: Biji Utuh</p>
-<p class="text-xs text-text-sec-light dark:text-text-sec-dark">Jumlah: 2</p>
-</td>
-<td class="py-4 align-top text-right hidden sm:table-cell">
-<p class="text-sm font-medium">Rp 85.000</p>
-</td>
-<td class="py-4 align-top text-right">
-<p class="text-sm font-bold text-primary">Rp 170.000</p>
-</td>
-</tr>
-<!-- Item 2 -->
-<tr>
-<td class="py-4 align-top">
-<div class="size-16 rounded-lg bg-gray-100 dark:bg-gray-800 bg-cover bg-center border border-border-light dark:border-border-dark" data-alt="Box of drip coffee bags" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDudHxBagbt6yZwHf_GiE1hiyIF-MICPv8G_isLVKOyYNyj_qErIKiqiublNDomPsYse1AHFHYxB53WBkBJhE3Cs1SfTcDnswLCrN9jb92vswfgL4vZGi4ii5L4XRl2v23qAoRJVLkySPrrnJEqDi_rDbH-iXr0L0ZYhEqZGAGgylZjODbImXa0K-o5DHtFa8g40EfA1dYGmhWbYbX7spdlbDxV1_4keEvAzIq4u9tFIDy5Uw_9hnWNX9lIDCFC1NA5-T9HM0ErOw");'>
-</div>
-</td>
-<td class="py-4 px-3 align-top">
-<p class="font-bold text-sm text-text-main-light dark:text-text-main-dark line-clamp-2">Roasty Drip Bag Box Set (Isi 5)</p>
-<p class="text-xs text-text-sec-light dark:text-text-sec-dark mt-1">Varian: Mix Flavor</p>
-<p class="text-xs text-text-sec-light dark:text-text-sec-dark">Jumlah: 1</p>
-</td>
-<td class="py-4 align-top text-right hidden sm:table-cell">
-<p class="text-sm font-medium">Rp 60.000</p>
-</td>
-<td class="py-4 align-top text-right">
-<p class="text-sm font-bold text-primary">Rp 60.000</p>
-</td>
-</tr>
+<tbody class="divide-y divide-border-light dark:divide-border-dark" id="cartItemsTable">
+<!-- Items akan di-generate oleh JavaScript -->
 </tbody>
 </table>
 </div>
@@ -317,6 +326,10 @@
 </div>
 <p class="text-xs text-text-sec-light dark:text-text-sec-dark text-right">Termasuk PPN jika berlaku</p>
 </div>
+<div class="mb-6 p-4 bg-primary/10 rounded-lg border border-primary/30">
+<p class="text-xs text-text-sec-light dark:text-text-sec-dark mb-2">TOTAL HARGA</p>
+<p class="text-2xl font-bold text-primary">Rp 238.000</p>
+</div>
 <button class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-primary/30 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
 <span class="material-symbols-outlined">lock</span>
                             Bayar Sekarang
@@ -343,11 +356,335 @@
 <script src="config.js"></script>
 <script>
 const API_URL = CONFIG.API_BASE_URL;
+let paymentState = {
+    cart: [],
+    products: [],
+    userData: null,
+    shippingCost: 15000,
+    insuranceCost: 2000,
+    serviceCost: 1000,
+    discount: 0
+};
 
-// Load cart data for payment
+// Format currency
+function formatCurrency(amount) {
+    return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
+}
+
+// Calculate totals
+function calculateTotals() {
+    const subtotal = paymentState.products.reduce((sum, prod) => sum + (prod.price * prod.quantity), 0);
+    const total = subtotal + paymentState.shippingCost + paymentState.insuranceCost + paymentState.serviceCost - paymentState.discount;
+    
+    return {
+        subtotal,
+        shippingCost: paymentState.shippingCost,
+        insuranceCost: paymentState.insuranceCost,
+        serviceCost: paymentState.serviceCost,
+        discount: paymentState.discount,
+        total
+    };
+}
+
+// Update address display
+function updateAddressDisplay(profile) {
+    const addressCard = document.querySelector('div.relative.overflow-hidden.rounded-xl');
+    if (!addressCard) {
+        console.warn('Address card not found in DOM');
+        return;
+    }
+    
+    if (!profile) {
+        console.warn('No profile/address data provided');
+        // Show default values
+        const nameEl = addressCard.querySelector('h3.text-xl.font-bold');
+        if (nameEl) nameEl.textContent = 'User';
+        return;
+    }
+    
+    // Handle both UserAddress and Profile models
+    const fullName = profile.user?.name || profile.name || 'User';
+    const phone = profile.phone_number || profile.phone || profile.phone || '+62 8xx xxxx xxxx';
+    const address = profile.full_address || profile.address || 'Alamat tidak tersedia';
+    
+    console.log('Updating address display:', { fullName, phone, address });
+    
+    // Update name
+    const nameEl = addressCard.querySelector('h3.text-xl.font-bold');
+    if (nameEl) nameEl.textContent = fullName;
+    
+    // Update phone
+    const phoneEl = addressCard.querySelector('p.text-white\\/90:first-of-type');
+    if (phoneEl) phoneEl.textContent = phone;
+    
+    // Update address
+    const addressEl = addressCard.querySelector('p.text-white\\/90.leading-relaxed.max-w-lg');
+    if (addressEl) addressEl.textContent = address;
+}
+
+// Update summary display
+function updateSummaryDisplay(totals) {
+    const summaryContainer = document.querySelector('div.bg-surface-light.rounded-xl.border.border-border-light.dark\\:bg-surface-dark.dark\\:border-border-dark.p-6.shadow-lg');
+    if (!summaryContainer) return;
+    
+    const itemCount = paymentState.products.reduce((sum, p) => sum + p.quantity, 0);
+    
+    // Update summary items
+    const summaryText = summaryContainer.querySelector('div.space-y-3.mb-6');
+    if (summaryText) {
+        summaryText.innerHTML = `
+            <div class="flex justify-between text-sm">
+                <span class="text-text-sec-light dark:text-text-sec-dark">Total Harga (${itemCount} Barang)</span>
+                <span class="font-medium">${formatCurrency(totals.subtotal)}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-text-sec-light dark:text-text-sec-dark">Total Ongkos Kirim</span>
+                <span class="font-medium">${formatCurrency(totals.shippingCost)}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-text-sec-light dark:text-text-sec-dark">Biaya Asuransi</span>
+                <span class="font-medium">${formatCurrency(totals.insuranceCost)}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-text-sec-light dark:text-text-sec-dark">Biaya Layanan</span>
+                <span class="font-medium">${formatCurrency(totals.serviceCost)}</span>
+            </div>
+            ${totals.discount > 0 ? `
+                <div class="flex justify-between text-sm text-primary">
+                    <span class="font-medium">Diskon Ongkir</span>
+                    <span class="font-bold">-${formatCurrency(totals.discount)}</span>
+                </div>
+            ` : ''}
+        `;
+    }
+    
+    // Update total tagihan
+    const totalEl = summaryContainer.querySelector('span.text-xl.font-bold.text-primary');
+    if (totalEl) {
+        totalEl.textContent = formatCurrency(totals.total);
+    }
+    
+    // Update total harga display (new section above button)
+    const totalHargaSection = summaryContainer.querySelector('div.bg-primary\\/10.rounded-lg.border.border-primary\\/30');
+    if (totalHargaSection) {
+        const totalHargaEl = totalHargaSection.querySelector('p.text-2xl.font-bold.text-primary');
+        if (totalHargaEl) {
+            totalHargaEl.textContent = formatCurrency(totals.total);
+        }
+    }
+}
+
+// Update cart items display
+
+// Update cart items with quantity controls
+function updateCartDisplayWithControls(products) {
+    const tableBody = document.getElementById('cartItemsTable');
+    if (!tableBody) {
+        console.error('Cart table body not found!');
+        return;
+    }
+    
+    console.log('Updating cart display with products:', products);
+    tableBody.innerHTML = '';
+    
+    if (products.length === 0) {
+        console.warn('No products to display!');
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Tidak ada barang di keranjang</td></tr>';
+        return;
+    }
+    
+    products.forEach((product, index) => {
+        const row = document.createElement('tr');
+        const itemTotal = product.price * product.quantity;
+        
+        row.innerHTML = `
+            <td class="py-4 align-top">
+                <div class="size-16 rounded-lg bg-gray-100 dark:bg-gray-800 bg-cover bg-center border border-border-light dark:border-border-dark" style="background-image: url('${product.image_url || 'https://via.placeholder.com/64'}');"></div>
+            </td>
+            <td class="py-4 px-3 align-top">
+                <p class="font-bold text-sm text-text-main-light dark:text-text-main-dark line-clamp-2">${product.name}</p>
+                <p class="text-xs text-text-sec-light dark:text-text-sec-dark mt-1">Stok: Tersedia</p>
+            </td>
+            <td class="py-4 align-top text-right hidden sm:table-cell">
+                <p class="text-sm font-medium">${formatCurrency(product.price)}</p>
+            </td>
+            <td class="py-4 align-top text-right">
+                <div class="flex items-center gap-2 justify-end">
+                    <button class="qty-minus size-8 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded border border-border-light dark:border-border-dark hover:bg-primary hover:text-white transition-all duration-200" data-index="${index}">
+                        <span class="material-symbols-outlined text-lg">remove</span>
+                    </button>
+                    <span class="qty-display w-8 text-center font-medium">${product.quantity}</span>
+                    <button class="qty-plus size-8 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded border border-border-light dark:border-border-dark hover:bg-primary hover:text-white transition-all duration-200" data-index="${index}">
+                        <span class="material-symbols-outlined text-lg">add</span>
+                    </button>
+                </div>
+            </td>
+            <td class="py-4 align-top text-right">
+                <p class="text-sm font-bold text-primary item-total">${formatCurrency(itemTotal)}</p>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+        console.log(`Added product ${product.id} (${product.name}) with quantity ${product.quantity}`);
+        
+        // Setup quantity controls
+        const minusBtn = row.querySelector('.qty-minus');
+        const plusBtn = row.querySelector('.qty-plus');
+        
+        if (!minusBtn || !plusBtn) {
+            console.error('Buttons not found for product:', product);
+            return;
+        }
+        
+        minusBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (product.quantity > 1) {
+                product.quantity--;
+                console.log(`Decreased quantity for ${product.name} to ${product.quantity}`);
+                const totals = calculateTotals();
+                updateSummaryDisplay(totals);
+                updateCartDisplayWithControls(paymentState.products);
+            }
+        });
+        
+        plusBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            product.quantity++;
+            console.log(`Increased quantity for ${product.name} to ${product.quantity}`);
+            const totals = calculateTotals();
+            updateSummaryDisplay(totals);
+            updateCartDisplayWithControls(paymentState.products);
+        });
+    });
+    
+    console.log('Cart display updated with', products.length, 'items');
+}
+
+// Update user avatar
+function updateUserAvatar(userData) {
+    const avatarEl = document.querySelector('div.bg-center.bg-no-repeat.bg-cover.rounded-full.size-9');
+    if (avatarEl && userData.profile_image) {
+        avatarEl.style.backgroundImage = `url('${userData.profile_image}')`;
+    }
+}
+
+// Setup shipping method UI with animations
+function setupShippingMethodUI() {
+    // Find all shipping radios directly
+    const shippingRadios = document.querySelectorAll('input[name="delivery-method"]');
+    if (shippingRadios.length === 0) return;
+    
+    shippingRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Update all labels
+            shippingRadios.forEach(r => {
+                const label = r.closest('label');
+                if (!label) return;
+                
+                if (r === radio) {
+                    // Selected label
+                    label.classList.remove('border-border-light', 'dark:border-border-dark', 'bg-surface-light', 'dark:bg-surface-dark');
+                    label.classList.add('border-primary', 'bg-primary/5');
+                    
+                    // Update icon
+                    const icon = label.querySelector('.material-symbols-outlined');
+                    if (icon) {
+                        icon.textContent = 'check_circle';
+                        icon.classList.remove('text-gray-300');
+                        icon.classList.add('text-primary');
+                    }
+                } else {
+                    // Unselected labels
+                    label.classList.remove('border-primary', 'bg-primary/5');
+                    label.classList.add('border-border-light', 'dark:border-border-dark', 'bg-surface-light', 'dark:bg-surface-dark');
+                    
+                    // Update icon
+                    const icon = label.querySelector('.material-symbols-outlined');
+                    if (icon) {
+                        icon.textContent = 'circle';
+                        icon.classList.remove('text-primary');
+                        icon.classList.add('text-gray-300');
+                    }
+                }
+            });
+            
+            // Update shipping cost
+            if (this.value === 'reguler') {
+                paymentState.shippingCost = 15000;
+            } else if (this.value === 'nextday') {
+                paymentState.shippingCost = 28000;
+            } else if (this.value === 'instant') {
+                paymentState.shippingCost = 45000;
+            }
+            
+            const totals = calculateTotals();
+            updateSummaryDisplay(totals);
+        });
+    });
+}
+
+// Setup payment method UI with animations
+function setupPaymentMethodUI() {
+    const paymentRadios = document.querySelectorAll('input[name="payment"]');
+    if (paymentRadios.length === 0) return;
+    
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Update all payment containers
+            paymentRadios.forEach(r => {
+                const container = r.closest('.rounded-lg.border');
+                if (!container) return;
+                
+                const label = container.querySelector('label');
+                const content = container.querySelector('[class*="border-t"]');
+                
+                if (r === radio) {
+                    // Selected payment method
+                    if (label) {
+                        label.classList.add('border-primary', 'bg-primary/5', 'shadow-md');
+                        label.classList.remove('hover:bg-gray-50', 'dark:hover:bg-gray-800/50');
+                    }
+                    
+                    // Show content with animation
+                    if (content) {
+                        setTimeout(() => {
+                            content.style.maxHeight = '300px';
+                            content.style.opacity = '1';
+                            content.style.overflow = 'visible';
+                        }, 10);
+                    }
+                } else {
+                    // Unselected payment methods
+                    if (label) {
+                        label.classList.remove('border-primary', 'bg-primary/5', 'shadow-md');
+                        label.classList.add('hover:bg-gray-50', 'dark:hover:bg-gray-800/50');
+                    }
+                    
+                    // Hide content with animation
+                    if (content) {
+                        content.style.maxHeight = '0';
+                        content.style.opacity = '0';
+                        content.style.overflow = 'hidden';
+                    }
+                }
+            });
+        });
+    });
+}
+
+// Load payment data
 async function loadPaymentData() {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const rawCart = localStorage.getItem('cart');
+    console.log('Raw cart from localStorage:', rawCart);
+    
+    const cart = JSON.parse(rawCart || '[]');
     const token = localStorage.getItem('token');
+    
+    console.log('Parsed cart:', cart);
+    console.log('Cart length:', cart.length);
+    console.log('Token available:', !!token);
     
     if (!token) {
         alert('Silakan login terlebih dahulu');
@@ -363,6 +700,7 @@ async function loadPaymentData() {
     
     try {
         // Fetch user data
+        console.log('Fetching user data from /me endpoint...');
         const userRes = await fetch(`${API_URL}/me`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -371,61 +709,121 @@ async function loadPaymentData() {
         });
         
         if (!userRes.ok) {
+            console.error(`User fetch failed: ${userRes.status} ${userRes.statusText}`);
             if (userRes.status === 401) {
                 localStorage.removeItem('token');
                 alert('Sesi Anda telah berakhir. Silakan login kembali.');
                 window.location.href = 'login.html';
+            } else {
+                alert('Gagal mengambil data user: ' + userRes.statusText);
             }
             return;
         }
         
         const userData = await userRes.json();
+        const user = userData.data || userData;
+        paymentState.userData = user;
+        console.log('✓ User data loaded:', user);
+        
+        // Use profile from user data as address
+        const primaryAddress = user.profile;
+        console.log('✓ Using user profile as address:', primaryAddress);
         
         // Fetch cart items details
-        let totalAmount = 0;
-        const orderItems = [];
+        let products = [];
         
-        await Promise.all(cart.map(async item => {
-            const prodRes = await fetch(`${API_URL}/products/${item.id}`, {
-                headers: { 'Accept': 'application/json' }
-            });
-            const prodData = await prodRes.json();
-            const product = prodData.data || prodData;
-            
-            const itemTotal = (product.price || 0) * (item.quantity || 1);
-            totalAmount += itemTotal;
-            
-            orderItems.push({
-                product_id: product.id,
-                quantity: item.quantity || 1,
-                price: product.price || 0
-            });
-        }));
+        console.log(`Processing ${cart.length} items from cart`);
         
-        // Update total di halaman
-        const totalElements = document.querySelectorAll('.text-primary, .font-bold, .text-2xl, .text-xl');
-        totalElements.forEach(el => {
-            if (el.textContent.includes('Rp') && !el.textContent.includes('Diskon')) {
-                const text = el.textContent;
-                if (!text.includes('Tagihan')) {
-                    el.textContent = `Rp ${totalAmount.toLocaleString('id-ID')}`;
+        // Process each cart item
+        for (const item of cart) {
+            try {
+                console.log(`Fetching product ${item.id} with quantity ${item.quantity}`);
+                
+                const prodRes = await fetch(`${API_URL}/products/${item.id}`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (!prodRes.ok) {
+                    console.error(`Failed to fetch product ${item.id}: ${prodRes.status} ${prodRes.statusText}`);
+                    // Add fallback product from cart data
+                    products.push({
+                        id: item.id,
+                        name: `Produk #${item.id}`,
+                        price: 0,
+                        quantity: item.quantity || 1,
+                        image_url: ''
+                    });
+                    continue;
                 }
+                
+                const prodData = await prodRes.json();
+                const product = prodData.data || prodData;
+                
+                if (product && product.id) {
+                    const productObj = {
+                        id: product.id,
+                        name: product.name || 'Unknown',
+                        price: product.price || 0,
+                        quantity: item.quantity || 1,
+                        image_url: (product.image_urls && product.image_urls[0]) || product.image || ''
+                    };
+                    products.push(productObj);
+                    console.log(`✓ Added product: ${productObj.name} (qty: ${productObj.quantity})`);
+                } else {
+                    console.error(`Product data invalid for ${item.id}:`, product);
+                    // Add fallback
+                    products.push({
+                        id: item.id,
+                        name: `Produk #${item.id}`,
+                        price: 0,
+                        quantity: item.quantity || 1,
+                        image_url: ''
+                    });
+                }
+            } catch (prodErr) {
+                console.error(`Error fetching product ${item.id}:`, prodErr.message);
+                // Add fallback even on error
+                products.push({
+                    id: item.id,
+                    name: `Produk #${item.id}`,
+                    price: 0,
+                    quantity: item.quantity || 1,
+                    image_url: ''
+                });
             }
-        });
+        }
         
-        // Store untuk digunakan saat submit
-        window.paymentData = {
-            totalAmount,
-            orderItems,
-            userData
-        };
+        console.log(`Total products fetched: ${products.length}`, products);
+        
+        paymentState.cart = cart;
+        paymentState.products = products;
+        
+        // Update UI
+        console.log('Using address for display:', primaryAddress);
+        updateAddressDisplay(primaryAddress);
+        updateCartDisplayWithControls(products);
+        
+        const totals = calculateTotals();
+        updateSummaryDisplay(totals);
+        updateUserAvatar(user);
+        
+        console.log('✓ All UI updated successfully');
         
         // Setup payment button
         setupPaymentButton();
         
+        // Setup shipping and payment UI
+        setupShippingMethodUI();
+        setupPaymentMethodUI();
+        
+        console.log('✓ Payment page fully loaded!');
+        
     } catch (err) {
+        console.error('=== CRITICAL ERROR ===');
         console.error('Error loading payment data:', err);
-        alert('Gagal memuat data pembayaran');
+        console.error('Error message:', err.message);
+        console.error('Error stack:', err.stack);
+        alert('Gagal memuat data pembayaran: ' + err.message);
     }
 }
 
@@ -440,15 +838,24 @@ function setupPaymentButton() {
             e.stopPropagation();
             
             const token = localStorage.getItem('token');
-            const data = window.paymentData;
+            const totals = calculateTotals();
             
-            if (!data) {
-                alert('Data pembayaran tidak ditemukan');
+            if (!paymentState.userData) {
+                alert('Data user tidak ditemukan');
                 return;
             }
             
             try {
+                // Get selected payment method
+                const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'bca';
+                
                 // Create order
+                const orderItems = paymentState.products.map(prod => ({
+                    product_id: prod.id,
+                    quantity: prod.quantity,
+                    price: prod.price
+                }));
+                
                 const res = await fetch(`${API_URL}/orders`, {
                     method: 'POST',
                     headers: {
@@ -457,9 +864,14 @@ function setupPaymentButton() {
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
-                        items: data.orderItems,
-                        total_amount: data.totalAmount,
-                        payment_method: 'midtrans'
+                        items: orderItems,
+                        total_price: totals.total,
+                        shipping_cost: totals.shippingCost,
+                        insurance_cost: totals.insuranceCost,
+                        service_fee: totals.serviceCost,
+                        discount: totals.discount,
+                        payment_method: paymentMethod,
+                        notes: ''
                     })
                 });
                 

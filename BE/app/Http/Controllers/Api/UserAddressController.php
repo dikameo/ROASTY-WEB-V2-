@@ -14,13 +14,34 @@ class UserAddressController extends Controller
      */
     public function index()
     {
-        $addresses = UserAddress::where('user_id', auth()->id())->paginate(10);
+        try {
+            $userId = auth()->id();
+            \Log::debug('Fetching addresses for user: ' . $userId);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Addresses retrieved successfully',
-            'data' => $addresses
-        ]);
+            if (!$userId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized'
+                ], 401);
+            }
+
+            $addresses = UserAddress::where('user_id', $userId)->get();
+
+            \Log::debug('Found ' . count($addresses) . ' addresses');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Addresses retrieved successfully',
+                'data' => $addresses
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching addresses: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching addresses',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
