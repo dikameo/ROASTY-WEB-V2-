@@ -60,18 +60,32 @@
 <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2 hidden lg:block"></div>
 <!-- Icons -->
 <div class="flex items-center gap-3">
-<button class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">
-<span class="material-symbols-outlined">shopping_cart</span>
-<span class="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-</button>
-<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">
+<!-- Admin Button - Only for Admin Users -->
+<a id="admin-button" href="admin_dashboard.html" class="hidden items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-semibold whitespace-nowrap">
+<span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+<span class="hidden md:inline">Admin Panel</span>
+</a>
+
+<!-- User Navigation Icons -->
+<div id="user-icons" class="flex items-center gap-3">
+<!-- Notification Icon -->
+<button id="notification-button" class="hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">
 <span class="material-symbols-outlined">notifications</span>
+<span id="notification-badge" class="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full hidden"></span>
 </button>
-<button class="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all">
-<div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden" data-alt="User avatar profile picture">
-<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvVXeJqRSs_-kPVTGupkFknUHy1euGdz0DuFV3MdqimEGOUDURW13gSPHW0FMOGGOTPRQnIdIqhWjhlRvS6CKGM9Em_Ob-krTXzm8nAX6zanIbDct-KplZqKBcK2B38Am6-OZ2BuNLbAfC5iGqCiUbm5PYwLgu0A0X4q8_hTsYWicVEJdiZy0XoiLGN8ebFzcIQhpJwEMfs0BavhzJgz7fwO0xr3Ydbc4w1ccuuzrSeG-o5brNi-dnWZnOPbDvqreFO1KF0ouJtw"/>
+
+<!-- Cart Icon -->
+<button id="cart-button" class="hidden relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span id="cart-badge" class="absolute top-1 right-1 w-5 h-5 bg-primary text-white text-xs rounded-full flex items-center justify-center text-[10px] font-bold hidden">0</span>
+</button>
 </div>
-<span class="text-sm font-medium hidden sm:block">Akbar</span>
+
+<!-- Profile Button -->
+<button id="profile-button" class="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all">
+<div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden" id="profile-avatar" data-alt="User avatar profile picture">
+</div>
+<span class="text-sm font-medium hidden sm:block" id="profile-name">User</span>
 </button>
 </div>
 </div>
@@ -404,6 +418,7 @@
 </footer>
 
 <script src="config.js"></script>
+<script src="navbar-helper.js"></script>
 <script>
 const API_URL = CONFIG.API_BASE_URL;
 let allProducts = [];

@@ -149,14 +149,19 @@
     </main>
 
     <script src="config.js"></script>
+    <!-- Optional: Uncomment untuk debugging/testing -->
+    <!-- <script src="login-verification.js"></script> -->
     <script>
         // Mengambil nilai dari config.js
         const API_URL = CONFIG.API_BASE_URL;
+        console.log('API_URL:', API_URL);
 
         async function login(e) {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+
+            console.log('🔐 Login attempt with email:', email);
 
             // Reset pesan
             const errorMessage = document.getElementById('errorMessage');
@@ -166,6 +171,8 @@
             if (successMessage) successMessage.classList.add('hidden');
 
             try {
+                console.log('📡 Sending login request to:', `${API_URL}/login`);
+                
                 const res = await fetch(`${API_URL}/login`, {
                     method: 'POST',
                     headers: {
@@ -175,32 +182,69 @@
                     body: JSON.stringify({ email, password })
                 });
 
+                console.log('📊 Response status:', res.status);
+                
                 const data = await res.json();
+                console.log('📦 Response data:', data);
 
-                if (!res.ok) throw new Error(data.message || 'Login gagal');
+                if (!res.ok) {
+                    throw new Error(data.message || 'Login gagal');
+                }
+
+                // Validasi response
+                if (!data.data || !data.data.token) {
+                    throw new Error('Response API tidak valid: token tidak ditemukan');
+                }
+
+                if (!data.data.user) {
+                    throw new Error('Response API tidak valid: user data tidak ditemukan');
+                }
+
+                const user = data.data.user;
+                console.log('👤 User data received:', {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                });
+
+                // Validasi role field
+                if (!user.role) {
+                    throw new Error('Role field tidak ditemukan di response API');
+                }
 
                 // 1. Simpan Token
                 localStorage.setItem('token', data.data.token);
-                // Simpan user info jika perlu
-                if (data.data.user) {
-                    localStorage.setItem('user', JSON.stringify(data.data.user));
-                }
+                console.log('✅ Token disimpan ke localStorage');
 
+                // 2. Simpan User Info
+                localStorage.setItem('user', JSON.stringify(user));
+                console.log('✅ User data disimpan ke localStorage');
+                console.log('👤 User role:', user.role);
+
+                // 3. Tampilkan success message
                 if (successMessage) {
                     successMessage.classList.remove('hidden');
                     successMessage.textContent = 'Login berhasil! Mengalihkan...';
                 }
 
-                // 2. Cek Role dari Response API
+                // 4. Redirect berdasarkan role
                 setTimeout(() => {
-                    if (data.data.user && data.data.user.role === 'admin') {
+                    console.log('🔄 Redirect berdasarkan role:', user.role);
+                    
+                    if (user.role === 'admin') {
+                        console.log('👨‍💼 Admin login detected - redirecting to admin_dashboard.html');
                         window.location.href = 'admin_dashboard.html';
                     } else {
+                        console.log('👤 Regular user login detected - redirecting to Halaman.beranda.html');
                         window.location.href = 'Halaman.beranda.html';
                     }
                 }, 1000);
 
             } catch (err) {
+                console.error('❌ Login error:', err.message);
+                console.error('Error details:', err);
+                
                 if (errorMessage) {
                     errorMessage.classList.remove('hidden');
                     errorMessage.textContent = err.message;
@@ -211,7 +255,12 @@
         }
 
         // Bind event listener
-        document.getElementById('loginForm').addEventListener('submit', login);
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', login);
+        } else {
+            console.error('❌ Login form not found!');
+        }
     </script>
 
 

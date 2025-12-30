@@ -100,16 +100,35 @@
 </div>
 </div>
 <div class="flex items-center gap-6">
-<!-- Breadcrumbs embedded in header for mobile/tablet optimization or kept separate -->
-<div class="hidden md:flex items-center text-sm">
-<span class="text-text-sec-light dark:text-text-sec-dark font-medium">1. Keranjang</span>
-<span class="material-symbols-outlined text-base mx-2 text-border-light dark:text-border-dark">chevron_right</span>
-<span class="text-primary font-bold">2. Pengiriman &amp; Pembayaran</span>
-<span class="material-symbols-outlined text-base mx-2 text-border-light dark:text-border-dark">chevron_right</span>
-<span class="text-text-sec-light dark:text-text-sec-dark font-medium">3. Selesai</span>
+<!-- Admin Button - Only for Admin Users -->
+<a id="admin-button" href="admin_dashboard.html" class="hidden items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-semibold whitespace-nowrap">
+<span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+<span class="hidden md:inline">Admin Panel</span>
+</a>
+
+<!-- User Navigation Icons -->
+<div id="user-icons" class="flex items-center gap-3">
+<!-- Cart Icon -->
+<button id="cart-button" class="hidden relative p-2 text-text-main-light dark:text-text-main-dark hover:opacity-70 rounded-lg transition-opacity">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span id="cart-badge" class="absolute top-1 right-1 h-5 w-5 bg-primary text-white text-xs rounded-full flex items-center justify-center font-bold hidden">0</span>
+</button>
+
+<!-- Notification Icon -->
+<button id="notification-button" class="hidden p-2 text-text-main-light dark:text-text-main-dark hover:opacity-70 rounded-lg transition-opacity">
+<span class="material-symbols-outlined">notifications</span>
+<span id="notification-badge" class="absolute top-1 right-1 h-2 w-2 bg-primary rounded-full hidden"></span>
+</button>
 </div>
-<div class="bg-center bg-no-repeat bg-cover rounded-full size-9 ring-2 ring-offset-2 ring-primary/20 dark:ring-offset-background-dark" data-alt="User profile avatar showing a smiling person" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB3x0Vla6ka1ASQKph9PLwSibZWorf-uClUq8sS8udhzyxnXYRAeSoNKmNNkJxEaQKSjMepEQ4GvuGiADtZLN5qDgjdJh2tQ4vDtwzSqegQILfwzQn3anlNgPkDhBAX3bZy9RHVRe3q63XAGsYJoKmPP3uBGyWf66Spgfxgtqt-6D32vGdsSvhpk7OzHlafefhmMGX17TdBluzw08wRXHyFqSJtfm1rx3larf1R-buMZRStU01KzRa9KXSsjAyPRmnBgGEDWehpyg");'>
+
+<!-- Profile Button -->
+<button id="profile-button" class="flex items-center gap-2 pl-3 py-1 rounded-full hover:opacity-80 transition-opacity">
+<div class="w-8 h-8 rounded-full bg-cover bg-center border border-border-light dark:border-border-dark" id="profile-avatar" data-alt="User profile picture">
 </div>
+<span class="text-sm font-medium hidden sm:block" id="profile-name">User</span>
+</button>
+</div>
+
 </div>
 </div>
 </header>
@@ -354,6 +373,7 @@
 </footer>
 
 <script src="config.js"></script>
+<script src="navbar-helper.js"></script>
 <script>
 const API_URL = CONFIG.API_BASE_URL;
 let paymentState = {

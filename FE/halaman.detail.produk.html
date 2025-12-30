@@ -65,33 +65,37 @@
 </div>
 <span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white group-hover:text-primary transition-colors">Roasty</span>
 </a>
-<!-- Search -->
-<div class="hidden md:flex flex-1 max-w-xl">
-<div class="flex w-full items-center bg-[#f4ece7] dark:bg-[#3d3028] rounded-lg border border-transparent focus-within:border-primary transition-all overflow-hidden h-10">
-<div class="pl-3 pr-2 text-gray-500 dark:text-gray-400">
-<span class="material-symbols-outlined">search</span>
-</div>
-<input class="w-full bg-transparent border-none focus:ring-0 text-sm placeholder:text-gray-500 text-gray-900 dark:text-white dark:placeholder:text-gray-400 h-full py-0" placeholder="Cari kopi, alat seduh, atau merchandise..." type="text"/>
-</div>
-</div>
+
 <!-- Nav Actions -->
 <div class="flex items-center gap-2 lg:gap-6">
-<nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-700 dark:text-gray-300">
-<a class="hover:text-primary transition-colors" href="#">Kategori</a>
-<a class="hover:text-primary transition-colors" href="#">Official Store</a>
-</nav>
 <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 hidden lg:block"></div>
 <div class="flex items-center gap-2">
-<button class="size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors relative">
+
+<!-- Admin Button - Only for Admin Users -->
+<a id="admin-button" href="admin_dashboard.html" class="hidden items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-semibold whitespace-nowrap">
+<span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+<span class="hidden md:inline">Admin Panel</span>
+</a>
+
+<!-- User Navigation Icons -->
+<div id="user-icons" class="flex items-center gap-2">
+<!-- Cart Icon -->
+<button id="cart-button" class="hidden size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors relative">
 <span class="material-symbols-outlined">shopping_cart</span>
-<span class="absolute top-2 right-2 size-2 bg-primary rounded-full"></span>
+<span id="cart-badge" class="absolute top-2 right-2 h-5 w-5 bg-primary text-white text-xs rounded-full flex items-center justify-center font-bold hidden">0</span>
 </button>
-<button class="size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors">
+
+<!-- Notification Icon -->
+<button id="notification-button" class="hidden size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors">
 <span class="material-symbols-outlined">notifications</span>
+<span id="notification-badge" class="absolute top-2 right-2 size-2 bg-primary rounded-full hidden"></span>
 </button>
-<button class="flex items-center gap-2 pl-2 pr-1 lg:pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-<div class="size-8 rounded-full bg-gray-200 overflow-hidden" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCzivqSOu2ozkNxWsS9iPw1qfKxTIxyJCKYRXQ6KeP5qD-EY3rizDSeVfqbInKm8me6pR-sKDD7rBTleZDST6dZNPtt3OgAVLnvtHhIbPr2fscCkjkUjKN78R2ulAUb5SfdulX-GPFXLofchIYnKS8LyokTWmrqqmVphDGMF5lC9cbkbq0JR4Zmw5PiGqruHwed0bvscoARAvt7P8cP9KDgimxvlQLP902a3Up3dtnuMv1AGT2k4gPVqTFMzk1_KGrPYajyFOz7oQ'); background-size: cover;"></div>
-<span class="text-sm font-semibold text-gray-700 dark:text-gray-300 hidden lg:block">Rendra</span>
+</div>
+
+<!-- Profile Button -->
+<button class="flex items-center gap-2 pl-2 pr-1 lg:pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" id="profile-button">
+<div class="size-8 rounded-full bg-gray-200 overflow-hidden" id="profile-avatar" style="background-size: cover;"></div>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-300 hidden lg:block" id="profile-name">Loading...</span>
 </button>
 </div>
 </div>
@@ -99,16 +103,7 @@
 </header>
 <!-- Main Content -->
 <main class="max-w-[1280px] mx-auto px-4 lg:px-8 py-6">
-<!-- Breadcrumbs -->
-<nav class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
-<a class="hover:text-primary" href="#">Beranda</a>
-<span class="material-symbols-outlined !text-[16px]">chevron_right</span>
-<a class="hover:text-primary" href="#">Makanan &amp; Minuman</a>
-<span class="material-symbols-outlined !text-[16px]">chevron_right</span>
-<a class="hover:text-primary" href="#">Kopi</a>
-<span class="material-symbols-outlined !text-[16px]">chevron_right</span>
-<span class="font-medium text-gray-900 dark:text-white truncate">Roasty Signature Espresso Blend - 1kg</span>
-</nav>
+
 <!-- Product Grid Layout -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
 <!-- Left Column: Image Gallery (Sticky on large screens) -->
@@ -178,22 +173,18 @@
 <!-- Variant Selector -->
 <div class="space-y-4">
 <div>
-<h3 class="font-bold text-gray-900 dark:text-white mb-3">Pilih Gilingan: <span class="font-normal text-gray-500">Biji Utuh</span></h3>
-<div class="flex flex-wrap gap-2">
-<button class="px-4 py-2 rounded-lg border-2 border-primary bg-primary/10 text-primary font-semibold text-sm">Biji Utuh</button>
-<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-surface-dark text-sm">Giling Halus</button>
-<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-surface-dark text-sm">Giling Kasar</button>
+<h3 class="font-bold text-gray-900 dark:text-white mb-3">Pilih Gilingan: <span class="font-normal text-gray-500" id="selected-gilingan">Biji Utuh</span></h3>
+<div class="flex flex-wrap gap-2" id="gilingan-options">
+<button class="px-4 py-2 rounded-lg border-2 border-primary bg-primary/10 text-primary font-semibold text-sm gilingan-btn" data-gilingan="biji-utuh">Biji Utuh</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-surface-dark text-sm gilingan-btn" data-gilingan="giling-halus">Giling Halus</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-surface-dark text-sm gilingan-btn" data-gilingan="giling-kasar">Giling Kasar</button>
 </div>
 </div>
 </div>
 <hr class="border-gray-100 dark:border-gray-800"/>
 <!-- Description Tabs -->
 <div>
-<div class="flex gap-6 border-b border-gray-200 dark:border-gray-700 mb-4">
-<button class="pb-3 border-b-2 border-primary text-primary font-bold text-sm">Detail</button>
-<button class="pb-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-medium text-sm">Spesifikasi</button>
-<button class="pb-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-medium text-sm">Info Penting</button>
-</div>
+
 <div class="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed">
 <p>
                             Nikmati cita rasa kopi premium dengan <strong>Roasty Signature Espresso Blend</strong>. 
@@ -296,11 +287,7 @@
 </div>
 <span class="text-sm text-gray-500 dark:text-gray-400">Stok Total: <span class="font-semibold text-gray-900 dark:text-white">99+</span></span>
 </div>
-<div class="flex items-center gap-2 cursor-pointer group">
-<span class="material-symbols-outlined text-primary !text-[18px]">edit_note</span>
-<span class="text-sm text-primary font-medium group-hover:underline">Tambah Catatan</span>
-</div>
-<hr class="border-dashed border-gray-200 dark:border-gray-700 my-1"/>
+
 <div class="flex items-center justify-between">
 <span class="text-gray-500 dark:text-gray-400 text-sm">Subtotal</span>
 <span class="text-xl font-bold text-gray-900 dark:text-white">Rp 74.000</span>
@@ -472,6 +459,7 @@
 </footer>
 
 <script src="config.js"></script>
+<script src="navbar-helper.js"></script>
 <script>
 const API_URL = CONFIG.API_BASE_URL;
 let currentProduct = null;
@@ -731,6 +719,9 @@ function setupAddToCart() {
                 localStorage.setItem('cart', JSON.stringify(cart));
                 console.log('Cart saved to localStorage:', cart);
                 
+                // Dispatch cart update event for navbar badge
+                dispatchCartUpdateEvent();
+                
                 alert('Produk berhasil ditambahkan ke keranjang!');
                 
                 // Reset quantity
@@ -809,6 +800,52 @@ function setupAddToCart() {
 
 // Setup Navigation Links
 function setupNavigation() {
+    // Setup gilingan option buttons
+    const gilinganBtns = document.querySelectorAll('.gilingan-btn');
+    gilinganBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active state from all buttons
+            gilinganBtns.forEach(b => {
+                b.classList.remove('border-2', 'border-primary', 'bg-primary/10', 'text-primary', 'font-semibold');
+                b.classList.add('border', 'border-gray-200', 'dark:border-gray-700', 'text-gray-600', 'dark:text-gray-300', 'bg-white', 'dark:bg-surface-dark');
+            });
+            
+            // Add active state to clicked button
+            this.classList.remove('border', 'border-gray-200', 'dark:border-gray-700', 'text-gray-600', 'dark:text-gray-300', 'bg-white', 'dark:bg-surface-dark');
+            this.classList.add('border-2', 'border-primary', 'bg-primary/10', 'text-primary', 'font-semibold');
+            
+            // Update display text
+            const gilinganValue = this.getAttribute('data-gilingan');
+            const gilinganLabels = {
+                'biji-utuh': 'Biji Utuh',
+                'giling-halus': 'Giling Halus',
+                'giling-kasar': 'Giling Kasar'
+            };
+            
+            const selectedEl = document.getElementById('selected-gilingan');
+            if (selectedEl) {
+                selectedEl.textContent = gilinganLabels[gilinganValue] || 'Biji Utuh';
+            }
+            
+            // Store selected gilingan
+            sessionStorage.setItem('selectedGilingan', gilinganValue);
+            console.log('Selected gilingan:', gilinganValue);
+        });
+    });
+    
+    // Load user profile from localStorage
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user && user.name) {
+        const nameEl = document.getElementById('profile-name');
+        if (nameEl) nameEl.textContent = user.name;
+    }
+    if (user && user.photo) {
+        const avatarEl = document.getElementById('profile-avatar');
+        if (avatarEl) avatarEl.style.backgroundImage = `url('${user.photo}')`;
+    }
+    
     // Cart button
     const cartBtn = document.querySelector('button.size-10[class*="flex"]');
     const cartIcon = cartBtn?.querySelector('.material-symbols-outlined');
@@ -820,7 +857,7 @@ function setupNavigation() {
     }
     
     // Profile button
-    const profileBtn = document.querySelector('.flex.items-center.gap-2.pl-2');
+    const profileBtn = document.getElementById('profile-button');
     if (profileBtn) {
         profileBtn.addEventListener('click', function(e) {
             e.preventDefault();

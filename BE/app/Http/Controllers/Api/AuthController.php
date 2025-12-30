@@ -101,14 +101,21 @@ class AuthController extends Controller
                 ]
             ], 401);
         }
-        
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'success' => true,
             'message' => 'Login successful',
             'data' => [
-                'user' => $user->load('profile'),
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'role' => $user->role,
+                    'profile' => $user->load('profile')->profile
+                ],
                 'token' => $token,
             ]
         ]);
@@ -120,7 +127,7 @@ class AuthController extends Controller
     public function profile(Request $request)
     {
         $user = $request->user();
-        
+
         if (!$user) {
             return response()->json([
                 'success' => false,
