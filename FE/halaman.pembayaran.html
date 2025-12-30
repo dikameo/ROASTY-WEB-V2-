@@ -374,6 +374,7 @@
 
 <script src="config.js"></script>
 <script src="navbar-helper.js"></script>
+<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-KOAGQWpfEka2OKgh"></script>
 <script>
 const API_URL = CONFIG.API_BASE_URL;
 let paymentState = {
@@ -416,28 +417,23 @@ function updateAddressDisplay(profile) {
     
     if (!profile) {
         console.warn('No profile/address data provided');
-        // Show default values
         const nameEl = addressCard.querySelector('h3.text-xl.font-bold');
         if (nameEl) nameEl.textContent = 'User';
         return;
     }
     
-    // Handle both UserAddress and Profile models
     const fullName = profile.user?.name || profile.name || 'User';
-    const phone = profile.phone_number || profile.phone || profile.phone || '+62 8xx xxxx xxxx';
+    const phone = profile.phone_number || profile.phone || '+62 8xx xxxx xxxx';
     const address = profile.full_address || profile.address || 'Alamat tidak tersedia';
     
     console.log('Updating address display:', { fullName, phone, address });
     
-    // Update name
     const nameEl = addressCard.querySelector('h3.text-xl.font-bold');
     if (nameEl) nameEl.textContent = fullName;
     
-    // Update phone
     const phoneEl = addressCard.querySelector('p.text-white\\/90:first-of-type');
     if (phoneEl) phoneEl.textContent = phone;
     
-    // Update address
     const addressEl = addressCard.querySelector('p.text-white\\/90.leading-relaxed.max-w-lg');
     if (addressEl) addressEl.textContent = address;
 }
@@ -449,7 +445,6 @@ function updateSummaryDisplay(totals) {
     
     const itemCount = paymentState.products.reduce((sum, p) => sum + p.quantity, 0);
     
-    // Update summary items
     const summaryText = summaryContainer.querySelector('div.space-y-3.mb-6');
     if (summaryText) {
         summaryText.innerHTML = `
@@ -478,13 +473,11 @@ function updateSummaryDisplay(totals) {
         `;
     }
     
-    // Update total tagihan
     const totalEl = summaryContainer.querySelector('span.text-xl.font-bold.text-primary');
     if (totalEl) {
         totalEl.textContent = formatCurrency(totals.total);
     }
     
-    // Update total harga display (new section above button)
     const totalHargaSection = summaryContainer.querySelector('div.bg-primary\\/10.rounded-lg.border.border-primary\\/30');
     if (totalHargaSection) {
         const totalHargaEl = totalHargaSection.querySelector('p.text-2xl.font-bold.text-primary');
@@ -493,8 +486,6 @@ function updateSummaryDisplay(totals) {
         }
     }
 }
-
-// Update cart items display
 
 // Update cart items with quantity controls
 function updateCartDisplayWithControls(products) {
@@ -547,7 +538,6 @@ function updateCartDisplayWithControls(products) {
         tableBody.appendChild(row);
         console.log(`Added product ${product.id} (${product.name}) with quantity ${product.quantity}`);
         
-        // Setup quantity controls
         const minusBtn = row.querySelector('.qty-minus');
         const plusBtn = row.querySelector('.qty-plus');
         
@@ -602,25 +592,21 @@ function updateUserAvatar(userData) {
     }
 }
 
-// Setup shipping method UI with animations
+// Setup shipping method UI
 function setupShippingMethodUI() {
-    // Find all shipping radios directly
     const shippingRadios = document.querySelectorAll('input[name="delivery-method"]');
     if (shippingRadios.length === 0) return;
     
     shippingRadios.forEach(radio => {
         radio.addEventListener('change', function() {
-            // Update all labels
             shippingRadios.forEach(r => {
                 const label = r.closest('label');
                 if (!label) return;
                 
                 if (r === radio) {
-                    // Selected label
                     label.classList.remove('border-border-light', 'dark:border-border-dark', 'bg-surface-light', 'dark:bg-surface-dark');
                     label.classList.add('border-primary', 'bg-primary/5');
                     
-                    // Update icon
                     const icon = label.querySelector('.material-symbols-outlined');
                     if (icon) {
                         icon.textContent = 'check_circle';
@@ -628,11 +614,9 @@ function setupShippingMethodUI() {
                         icon.classList.add('text-primary');
                     }
                 } else {
-                    // Unselected labels
                     label.classList.remove('border-primary', 'bg-primary/5');
                     label.classList.add('border-border-light', 'dark:border-border-dark', 'bg-surface-light', 'dark:bg-surface-dark');
                     
-                    // Update icon
                     const icon = label.querySelector('.material-symbols-outlined');
                     if (icon) {
                         icon.textContent = 'circle';
@@ -642,7 +626,6 @@ function setupShippingMethodUI() {
                 }
             });
             
-            // Update shipping cost
             if (this.value === 'reguler') {
                 paymentState.shippingCost = 15000;
             } else if (this.value === 'nextday') {
@@ -657,14 +640,13 @@ function setupShippingMethodUI() {
     });
 }
 
-// Setup payment method UI with animations
+// Setup payment method UI
 function setupPaymentMethodUI() {
     const paymentRadios = document.querySelectorAll('input[name="payment"]');
     if (paymentRadios.length === 0) return;
     
     paymentRadios.forEach(radio => {
         radio.addEventListener('change', function() {
-            // Update all payment containers
             paymentRadios.forEach(r => {
                 const container = r.closest('.rounded-lg.border');
                 if (!container) return;
@@ -673,13 +655,11 @@ function setupPaymentMethodUI() {
                 const content = container.querySelector('[class*="border-t"]');
                 
                 if (r === radio) {
-                    // Selected payment method
                     if (label) {
                         label.classList.add('border-primary', 'bg-primary/5', 'shadow-md');
                         label.classList.remove('hover:bg-gray-50', 'dark:hover:bg-gray-800/50');
                     }
                     
-                    // Show content with animation
                     if (content) {
                         setTimeout(() => {
                             content.style.maxHeight = '300px';
@@ -688,13 +668,11 @@ function setupPaymentMethodUI() {
                         }, 10);
                     }
                 } else {
-                    // Unselected payment methods
                     if (label) {
                         label.classList.remove('border-primary', 'bg-primary/5', 'shadow-md');
                         label.classList.add('hover:bg-gray-50', 'dark:hover:bg-gray-800/50');
                     }
                     
-                    // Hide content with animation
                     if (content) {
                         content.style.maxHeight = '0';
                         content.style.opacity = '0';
@@ -731,7 +709,6 @@ async function loadPaymentData() {
     }
     
     try {
-        // Fetch user data
         console.log('Fetching user data from /me endpoint...');
         const userRes = await fetch(`${API_URL}/me`, {
             headers: {
@@ -755,7 +732,6 @@ async function loadPaymentData() {
         const userData = await userRes.json();
         const user = userData.data || userData;
         
-        // Validate user data
         if (!user) {
             throw new Error('Invalid user data received from API');
         }
@@ -764,7 +740,6 @@ async function loadPaymentData() {
         paymentState.userData = user;
         console.log('✓ User data loaded:', user);
         
-        // Use profile from user data as address - ensure it exists
         let primaryAddress = user.profile;
         if (!primaryAddress) {
             console.warn('User profile not found, creating fallback');
@@ -776,12 +751,10 @@ async function loadPaymentData() {
         }
         console.log('✓ Using user profile as address:', primaryAddress);
         
-        // Fetch cart items details
         let products = [];
         
         console.log(`Processing ${cart.length} items from cart`);
         
-        // Process each cart item
         for (const item of cart) {
             try {
                 console.log(`Fetching product ${item.id} with quantity ${item.quantity}`);
@@ -792,7 +765,6 @@ async function loadPaymentData() {
                 
                 if (!prodRes.ok) {
                     console.error(`Failed to fetch product ${item.id}: ${prodRes.status} ${prodRes.statusText}`);
-                    // Add fallback product from cart data
                     products.push({
                         id: item.id,
                         name: `Produk #${item.id}`,
@@ -818,7 +790,6 @@ async function loadPaymentData() {
                     console.log(`✓ Added product: ${productObj.name} (qty: ${productObj.quantity})`);
                 } else {
                     console.error(`Product data invalid for ${item.id}:`, product);
-                    // Add fallback
                     products.push({
                         id: item.id,
                         name: `Produk #${item.id}`,
@@ -829,7 +800,6 @@ async function loadPaymentData() {
                 }
             } catch (prodErr) {
                 console.error(`Error fetching product ${item.id}:`, prodErr.message);
-                // Add fallback even on error
                 products.push({
                     id: item.id,
                     name: `Produk #${item.id}`,
@@ -845,7 +815,6 @@ async function loadPaymentData() {
         paymentState.cart = cart;
         paymentState.products = products;
         
-        // Update UI
         console.log('Using address for display:', primaryAddress);
         
         try {
@@ -875,14 +844,12 @@ async function loadPaymentData() {
         
         console.log('✓ All UI updated successfully');
         
-        // Setup payment button
         try {
             setupPaymentButton();
         } catch (err) {
             console.error('Error setting up payment button:', err);
         }
         
-        // Setup shipping and payment UI
         try {
             setupShippingMethodUI();
         } catch (err) {
@@ -906,7 +873,7 @@ async function loadPaymentData() {
     }
 }
 
-// Setup payment button
+// Setup payment button with Midtrans integration
 function setupPaymentButton() {
     const payBtn = document.querySelector('button[class*="bg-primary"]');
     
@@ -924,24 +891,32 @@ function setupPaymentButton() {
                 return;
             }
             
+            // Disable button and show loading
+            payBtn.disabled = true;
+            const originalText = payBtn.innerHTML;
+            payBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Memproses...';
+            
             try {
                 // Get selected payment method
-                const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'bca';
+                const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'midtrans';
                 
-                // Get shipping address from user profile
+                // Get shipping address
                 let shippingAddress = 'Alamat tidak tersedia';
                 if (paymentState.userData) {
                     const profile = paymentState.userData.profile || paymentState.userData;
                     shippingAddress = profile.full_address || profile.address || 'Alamat tidak tersedia';
                 }
                 
-                // Create order
+                // Prepare order items
                 const orderItems = paymentState.products.map(prod => ({
                     product_id: prod.id,
                     quantity: prod.quantity,
                     price: prod.price
                 }));
                 
+                console.log('Creating order with Midtrans...');
+                
+                // Create order and get Midtrans token
                 const res = await fetch(`${API_URL}/orders`, {
                     method: 'POST',
                     headers: {
@@ -965,21 +940,75 @@ function setupPaymentButton() {
                 }
                 
                 const orderData = await res.json();
+                console.log('Order created:', orderData);
                 
-                // Clear cart
-                localStorage.removeItem('cart');
-                sessionStorage.removeItem('cartTotal');
-                
-                alert('Order berhasil dibuat! Terima kasih telah berbelanja.');
-                
-                // Redirect ke halaman beranda
-                setTimeout(() => {
-                    window.location.href = 'Halaman.beranda.html';
-                }, 1500);
+                // Check if Midtrans snap token is provided
+                if (orderData.snap_token || (orderData.data && orderData.data.snap_token)) {
+                    const snapToken = orderData.snap_token || orderData.data.snap_token;
+                    
+                    console.log('Opening Midtrans payment with token:', snapToken);
+                    
+                    // Open Midtrans Snap payment page
+                    window.snap.pay(snapToken, {
+                        onSuccess: function(result) {
+                            console.log('Payment success:', result);
+                            
+                            // Clear cart
+                            localStorage.removeItem('cart');
+                            sessionStorage.removeItem('cartTotal');
+                            
+                            alert('Pembayaran berhasil! Terima kasih telah berbelanja.');
+                            window.location.href = 'Halaman.beranda.html';
+                        },
+                        onPending: function(result) {
+                            console.log('Payment pending:', result);
+                            
+                            // Clear cart
+                            localStorage.removeItem('cart');
+                            sessionStorage.removeItem('cartTotal');
+                            
+                            alert('Pembayaran tertunda. Silakan selesaikan pembayaran Anda.');
+                            window.location.href = 'Halaman.beranda.html';
+                        },
+                        onError: function(result) {
+                            console.error('Payment error:', result);
+                            alert('Pembayaran gagal: ' + (result.status_message || 'Terjadi kesalahan'));
+                            
+                            // Re-enable button
+                            payBtn.disabled = false;
+                            payBtn.innerHTML = originalText;
+                        },
+                        onClose: function() {
+                            console.log('Payment popup closed');
+                            alert('Anda menutup popup pembayaran sebelum menyelesaikan pembayaran.');
+                            
+                            // Re-enable button
+                            payBtn.disabled = false;
+                            payBtn.innerHTML = originalText;
+                        }
+                    });
+                } else {
+                    // Fallback: No Midtrans token, just confirm order
+                    console.log('No Midtrans token, using fallback confirmation');
+                    
+                    // Clear cart
+                    localStorage.removeItem('cart');
+                    sessionStorage.removeItem('cartTotal');
+                    
+                    alert('Order berhasil dibuat! Terima kasih telah berbelanja.');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'Halaman.beranda.html';
+                    }, 1500);
+                }
                 
             } catch (err) {
+                console.error('Payment error:', err);
                 alert('Error: ' + err.message);
-                console.error(err);
+                
+                // Re-enable button
+                payBtn.disabled = false;
+                payBtn.innerHTML = originalText;
             }
         });
     }
@@ -987,7 +1016,6 @@ function setupPaymentButton() {
 
 // Setup Navigation
 function setupNavigation() {
-    // Logo
     const logoBtn = document.querySelector('a.flex.items-center');
     if (logoBtn) {
         logoBtn.addEventListener('click', function(e) {
@@ -998,7 +1026,6 @@ function setupNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Check authentication
     const token = localStorage.getItem('token');
     if (!token) {
         window.location.href = 'login.html';
