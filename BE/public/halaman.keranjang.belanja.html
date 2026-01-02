@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Keranjang Belanja - Roasty</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f26c0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221710",
+                        "text-main": "#1c130d",
+                        "text-secondary": "#9c6c49",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#2a1e17",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom checkbox style to match theme */
+        input[type="checkbox"] {
+            border-radius: 4px;
+            border-color: #e8d9ce;
+            color: #f26c0d;
+        }
+        input[type="checkbox"]:focus {
+            ring-color: #f26c0d;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-main flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 w-full bg-[#fcfaf8] dark:bg-surface-dark border-b border-[#f4ece7] dark:border-white/10">
+<div class="px-4 lg:px-10 py-3 max-w-[1440px] mx-auto flex items-center justify-between gap-4">
+<!-- Logo & Search -->
+<div class="flex items-center gap-8 flex-1">
+<a class="flex items-center gap-2 text-text-main" href="#">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold tracking-tight text-primary">Roasty</h2>
+</a>
+</div>
+<!-- Navigation Links -->
+<!-- Action Buttons -->
+<div class="flex items-center gap-3">
+<!-- Admin Button - Only for Admin Users -->
+<a id="admin-button" href="admin_dashboard.html" class="hidden items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-semibold whitespace-nowrap">
+<span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+<span class="hidden md:inline">Admin Panel</span>
+</a>
+
+<!-- User Navigation Icons -->
+<div id="user-icons" class="flex items-center gap-3">
+<!-- Cart Icon -->
+<button id="cart-button" class="hidden relative p-2 text-text-main hover:bg-black/5 dark:text-white dark:hover:bg-white/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span id="cart-badge" class="absolute top-1 right-1 flex h-5 w-5 bg-primary text-white text-xs rounded-full flex items-center justify-center font-bold text-[10px] hidden">0</span>
+</button>
+
+<!-- Notification Icon -->
+<button id="notification-button" class="hidden p-2 text-text-main hover:bg-black/5 dark:text-white dark:hover:bg-white/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span id="notification-badge" class="absolute top-1 right-1 flex h-2 w-2 hidden">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+</button>
+</div>
+
+<div class="w-px h-6 bg-[#e8d9ce] mx-1"></div>
+
+<!-- Profile Button -->
+<div class="flex items-center gap-2 cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 p-1 pr-2 rounded-lg" id="profile-button">
+<div class="w-8 h-8 rounded-full bg-primary/20 overflow-hidden" data-alt="User avatar placeholder" id="profile-avatar">
+</div>
+<span class="text-sm font-medium hidden sm:block dark:text-white" id="profile-name">Loading...</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-4 lg:px-8 py-8">
+<!-- Page Title -->
+<div class="mb-6 flex items-center justify-between">
+<h1 class="text-2xl font-bold text-text-main dark:text-white">Keranjang Belanja</h1>
+<button onclick="resetCartForTesting()" class="text-xs bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200 transition-colors" title="Reset cart ke 1 item untuk testing">Reset Cart (Testing)</button>
+</div>
+<div class="flex flex-col lg:flex-row gap-6 relative">
+<!-- Left Column: Cart Items -->
+<div class="flex-1 flex flex-col gap-4" id="cartItemsContainer">
+<!-- Items will be rendered here by JavaScript -->
+</div>
+<!-- Right Column: Summary Sticky -->
+<div class="lg:w-[360px] flex-shrink-0">
+<div class="sticky top-24 bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-transparent dark:border-white/5 p-5 flex flex-col gap-4">
+<h2 class="font-bold text-lg text-text-main dark:text-white">Ringkasan Belanja</h2>
+<!-- Calculation -->
+<div class="flex flex-col gap-2 text-sm">
+<div class="flex justify-between">
+<span class="text-text-secondary">Total Harga (1 Barang)</span>
+<span class="text-text-main dark:text-white font-medium">Rp 74.000</span>
+</div>
+<div class="flex justify-between">
+<span class="text-text-secondary">Total Diskon Barang</span>
+<span class="text-primary font-medium">-Rp 15.000</span>
+</div>
+</div>
+<div class="h-px bg-[#f4ece7] dark:bg-white/5 my-1"></div>
+<!-- Grand Total -->
+<div class="flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-lg font-bold text-text-main dark:text-white">Total Harga</span>
+</div>
+<span class="text-xl font-bold text-primary">Rp 240.000</span>
+</div>
+<!-- Checkout Button -->
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg shadow-primary/20 mt-2">
+<span>Beli </span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Simple -->
+<footer class="bg-white dark:bg-surface-dark border-t border-[#f4ece7] dark:border-white/5 py-8 mt-12">
+<div class="max-w-[1200px] mx-auto px-4 text-center">
+<p class="text-text-secondary text-sm">© 2024 Roasty Indonesia. All rights reserved.</p>
+</div>
+</footer>
+
+<script src="config.js"></script>
+<script src="navbar-helper.js"></script>
+<script>
+const API_URL = CONFIG.API_BASE_URL;
+const ASSETS_URL = CONFIG.assets;
+let cartProducts = [];
+
+// Normalize image URLs from localhost to ngrok
+function normalizeImageUrl(imageUrl) {
+    if (!imageUrl) return '';
+
+    imageUrl = String(imageUrl).trim();
+
+    // If it's a data URI, use directly (don't prepend anything)
+    if (imageUrl.startsWith('data:')) {
+        return imageUrl;
+    }
+
+    // If it's already a full HTTP URL, use as-is
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        return imageUrl;
+    }
+
+    // If it's a relative path from /storage, clean it and prepend ASSETS_URL
+    if (imageUrl.startsWith('/storage/') || imageUrl.startsWith('storage/')) {
+        const cleanUrl = imageUrl.replace(/^\/storage\//, '');
+        return `${ASSETS_URL}/${cleanUrl}`;
+    }
+
+    // Otherwise assume it's a relative path and prepend ASSETS_URL
+    return `${ASSETS_URL}/${imageUrl}`;
+}
+
+// Debug function to reset cart for testing
+function resetCartForTesting() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (cart.length > 1) {
+        console.log('Resetting cart - keeping only first item:', cart[0]);
+        localStorage.setItem('cart', JSON.stringify([cart[0]]));
+        alert('Cart direset! Sekarang hanya menyimpan 1 item pertama. Refresh halaman untuk melihat perubahan.');
+        location.reload();
+    } else {
+        alert('Cart sudah hanya punya 1 item atau kosong.');
+    }
+}
+
+// Load cart items
+function loadCartItems() {
+    console.log('=== loadCartItems START ===');
+    console.log('API_URL:', API_URL);
+
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    console.log('Cart from localStorage (raw):', cart);
+
+    // Validate and filter cart - only keep items with id
+    cart = cart.filter(item => {
+        if (!item.id) {
+            console.warn('Removing invalid cart item without id:', item);
+            return false;
+        }
+        return true;
+    });
+
+    console.log('Cart from localStorage (filtered):', cart);
+
+    if (cart.length === 0) {
+        console.log('Cart is empty');
+        const container = document.querySelector('main') || document.body;
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center min-h-screen">
+                <span class="material-symbols-outlined text-[100px] text-gray-300 mb-4">shopping_cart</span>
+                <p class="text-2xl font-semibold mb-2">Keranjang Anda Kosong</p>
+                <p class="text-gray-500 mb-6">Mulai berbelanja untuk menambahkan item</p>
+                <button onclick="window.location.href='Halaman.beranda.html'" class="bg-primary hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold">
+                    Lanjutkan Belanja
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    // Fetch product details untuk setiap item di cart
+    console.log('Starting to fetch', cart.length, 'products...');
+
+    Promise.all(cart.map((item, idx) => {
+        console.log(`[${idx}] Fetching product ID: ${item.id}, quantity: ${item.quantity}`);
+
+        // Double check item.id exists
+        if (!item.id) {
+            console.error(`Cart item ${idx} has no id:`, item);
+            return Promise.resolve(null); // Return null for invalid items
+        }
+
+        const fetchUrl = `${API_URL}/products/${item.id}`;
+        console.log(`[${idx}] Fetch URL: ${fetchUrl}`);
+
+        return fetch(fetchUrl, {
+            headers: { 'Accept': 'application/json' }
+        }).then(res => {
+            console.log(`[${idx}] Response status: ${res.status}`);
+            if (!res.ok) {
+                console.warn(`Product ${item.id} not found (404), will skip this item`);
+                return null; // Return null instead of throwing error
+            }
+            return res.json();
+        }).then(data => {
+            if (!data) return null;
+            console.log(`[${idx}] Response data:`, data);
+            return data;
+        }).catch(err => {
+            console.warn(`[${idx}] Error fetching product ${item.id}:`, err.message);
+            return null; // Return null on error
+        });
+    })).then(results => {
+        console.log('All products fetched (with nulls for failed items):', results);
+
+        // Filter out null results and parse valid products
+        cartProducts = results
+            .map((data, idx) => {
+                if (!data) return null; // Skip null results
+
+                // Handle both wrapped and unwrapped responses
+                let product = null;
+                if (data.data) {
+                    product = data.data;
+                } else if (data.success && data.data) {
+                    product = data.data;
+                } else {
+                    product = data;
+                }
+
+                console.log(`Product ${idx} parsed:`, product);
+
+                return {
+                    ...product,
+                    quantity: cart[idx].quantity,
+                    cartIndex: idx
+                };
+            })
+            .filter(p => p !== null); // Remove null items
+
+        console.log('Parsed cart products (valid items only):', cartProducts);
+
+        if (cartProducts.length === 0) {
+            // All items are invalid
+            console.warn('No valid products in cart');
+            const container = document.querySelector('main') || document.body;
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center min-h-screen">
+                    <span class="material-symbols-outlined text-[100px] text-gray-300 mb-4">warning</span>
+                    <p class="text-2xl font-semibold mb-2">Keranjang Anda Kosong atau Invalid</p>
+                    <p class="text-gray-500 mb-6">Beberapa item di keranjang tidak ditemukan atau sudah dihapus</p>
+                    <button onclick="localStorage.removeItem('cart'); window.location.href='Halaman.beranda.html'" class="bg-primary hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold">
+                        Bersihkan Keranjang & Belanja Ulang
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        // Show warning if some items were removed
+        if (cartProducts.length < results.length) {
+            const removedCount = results.length - cartProducts.length;
+            console.warn(`${removedCount} item(s) were removed from cart (not found in database)`);
+            alert(`⚠️ ${removedCount} item di keranjang tidak ditemukan dan telah dihapus dari tampilan.`);
+        }
+
+        // Render cart items from API data
+        renderCartItems(cartProducts);
+
+        // Setup all handlers
+        setupDeleteButtons();
+        setupQuantityButtons();
+        setupCheckoutButton();
+        updateCartTotal();
+        setupNavigation();
+        console.log('=== loadCartItems COMPLETE ===');
+    }).catch(err => {
+        console.error('Critical error loading cart:', err);
+        console.error('Error message:', err.message);
+        console.error('Error stack:', err.stack);
+        alert('Gagal memuat keranjang: ' + err.message);
+    });
+}
+
+// Render cart items from API data
+function renderCartItems(products) {
+    console.log('=== renderCartItems START ===');
+    console.log('Products to render:', products);
+
+    // Find the left column container that holds all cart items
+    // Multiple strategies to find it
+    let leftColumn = null;
+
+    // Strategy 1: Try exact class selector
+    leftColumn = document.querySelector('main div.flex-1.flex.flex-col.gap-4');
+    if (leftColumn) {
+        console.log('Found leftColumn with strategy 1 (exact class)');
+    }
+
+    // Strategy 2: Try finding by searching for parent with "flex flex-col lg:flex-row"
+    if (!leftColumn) {
+        const parentDiv = document.querySelector('main div[class*="flex-col lg:flex-row"]');
+        if (parentDiv) {
+            leftColumn = parentDiv.querySelector('div[class*="flex-1"]');
+            if (leftColumn) {
+                console.log('Found leftColumn with strategy 2 (parent search)');
+            }
+        }
+    }
+
+    // Strategy 3: Find all divs in main and find the one that contains "Pilih Semua"
+    if (!leftColumn) {
+        const main = document.querySelector('main');
+        if (main) {
+            const allDivs = main.querySelectorAll('div');
+            for (let div of allDivs) {
+                if (div.textContent.includes('Pilih Semua')) {
+                    leftColumn = div.parentElement;
+                    if (leftColumn) {
+                        console.log('Found leftColumn with strategy 3 (search by content)');
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // Strategy 4: Find first div after the page title in main
+    if (!leftColumn) {
+        const main = document.querySelector('main');
+        if (main) {
+            const allDivs = main.querySelectorAll(':scope > div');
+            if (allDivs.length > 1) {
+                leftColumn = allDivs[1].querySelector('div:first-child');
+                if (leftColumn) {
+                    console.log('Found leftColumn with strategy 4 (DOM traversal)');
+                }
+            }
+        }
+    }
+
+    console.log('Final leftColumn:', leftColumn);
+
+    if (!leftColumn) {
+        console.error('Cannot find left column container for cart items');
+        console.log('Trying to debug - all elements in main:');
+        const main = document.querySelector('main');
+        if (main) {
+            console.log('main element:', main);
+            console.log('main innerHTML length:', main.innerHTML.length);
+            console.log('main children count:', main.children.length);
+            // List all direct child divs of main
+            const directDivs = main.querySelectorAll(':scope > div');
+            console.log('Direct child divs in main:', directDivs.length);
+            directDivs.forEach((div, idx) => {
+                console.log(`Div ${idx}:`, div.className, '- content:', div.textContent.substring(0, 100));
+            });
+        }
+        return;
+    }
+
+    // Clear all existing content (Select All Bar + all store groups)
+    console.log('Clearing leftColumn innerHTML...');
+    leftColumn.innerHTML = '';
+
+    console.log('Rendering', products.length, 'cart items');
+
+    // Create and add Select All Bar
+    const selectAllBar = document.createElement('div');
+    selectAllBar.className = 'bg-surface-light dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-transparent dark:border-white/5 flex items-center justify-between';
+    selectAllBar.innerHTML = `
+        <label class="flex items-center gap-3 cursor-pointer select-none">
+            <input class="w-5 h-5 rounded border-[#e8d9ce] text-primary focus:ring-0" type="checkbox"/>
+            <span class="text-text-main dark:text-white font-medium">Pilih Semua (${products.length})</span>
+        </label>
+        <button class="text-primary font-bold text-sm hover:underline">Hapus</button>
+    `;
+    leftColumn.appendChild(selectAllBar);
+
+    // Group products by store/creator
+    const productsByStore = {};
+    products.forEach(product => {
+        const storeName = product.category || 'Roasty Official Store';
+        if (!productsByStore[storeName]) {
+            productsByStore[storeName] = [];
+        }
+        productsByStore[storeName].push(product);
+    });
+
+    // Render each store group
+    Object.entries(productsByStore).forEach(([storeName, storeProducts]) => {
+        // Create store header
+        const storeDiv = document.createElement('div');
+        storeDiv.className = 'bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-transparent dark:border-white/5 overflow-hidden';
+
+        // Store header
+        const storeHeader = document.createElement('div');
+        storeHeader.className = 'px-4 py-3 border-b border-[#f4ece7] dark:border-white/5 flex items-center gap-3';
+        storeHeader.innerHTML = `
+            <input checked="" class="w-5 h-5 rounded border-[#e8d9ce] text-primary focus:ring-0" type="checkbox"/>
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-text-main dark:text-white">${storeName}</span>
+            </div>
+        `;
+        storeDiv.appendChild(storeHeader);
+
+        // Products in store
+        storeProducts.forEach((product, idx) => {
+            const rawImageUrl = (product.image_urls && product.image_urls.length > 0)
+                ? product.image_urls[0]
+                : 'https://via.placeholder.com/200';
+            const imageUrl = normalizeImageUrl(rawImageUrl);
+            console.log('Product', product.name, '- Normalized image:', imageUrl);
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'p-4 flex gap-4 items-start group';
+            itemDiv.innerHTML = `
+                <div class="pt-1">
+                    <input class="w-5 h-5 rounded border-[#e8d9ce] text-primary focus:ring-0" type="checkbox"/>
+                </div>
+                <div class="flex flex-1 gap-4 flex-col sm:flex-row">
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-lg overflow-hidden border border-[#f4ece7] dark:border-white/5 bg-gray-100">
+                        <img alt="${product.name}" class="w-full h-full object-cover" src="${imageUrl}"/>
+                    </div>
+                    <div class="flex flex-1 flex-col justify-between min-h-[6rem]">
+                        <div>
+                            <h3 class="text-text-main dark:text-white font-medium line-clamp-2 mb-1">${product.name}</h3>
+                            <p class="text-sm text-text-secondary mb-2">Kategori: ${product.category || 'Umum'}</p>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-text-main dark:text-white text-lg">Rp ${parseInt(product.price).toLocaleString('id-ID')}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col items-end justify-between gap-4 h-full min-h-[6rem]">
+                    <button class="text-text-secondary hover:text-red-500 transition-colors" title="Hapus">
+                        <span class="material-symbols-outlined text-[22px]">delete</span>
+                    </button>
+                    <div class="flex items-center border border-[#e8d9ce] dark:border-white/10 rounded-lg h-8">
+                        <button class="w-8 h-full flex items-center justify-center text-text-secondary hover:bg-black/5 dark:hover:bg-white/10 rounded-l-lg transition-colors disabled:opacity-50">
+                            <span class="material-symbols-outlined text-[16px]">remove</span>
+                        </button>
+                        <input class="w-10 h-full text-center border-none p-0 text-sm font-medium text-text-main dark:text-white bg-transparent focus:ring-0" readonly="" type="text" value="${product.quantity}"/>
+                        <button class="w-8 h-full flex items-center justify-center text-primary hover:bg-black/5 dark:hover:bg-white/10 rounded-r-lg transition-colors">
+                            <span class="material-symbols-outlined text-[16px]">add</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            storeDiv.appendChild(itemDiv);
+
+            // Add divider if not last item
+            if (idx < storeProducts.length - 1) {
+                const divider = document.createElement('div');
+                divider.className = 'mx-4 h-px bg-[#f4ece7] dark:bg-white/5';
+                storeDiv.appendChild(divider);
+            }
+        });
+
+        leftColumn.appendChild(storeDiv);
+        console.log(`Added store group: ${storeName} with ${storeProducts.length} products`);
+    });
+
+    console.log('=== renderCartItems COMPLETE ===');
+}
+
+// Setup delete buttons
+function setupDeleteButtons() {
+    const deleteButtons = document.querySelectorAll('button[title="Hapus"]');
+
+    deleteButtons.forEach((btn, index) => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            console.log('Delete button clicked for index:', index);
+
+            // Get cart from localStorage
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+            // Remove item from cart
+            if (index < cart.length) {
+                const removedProduct = cartProducts[index];
+                console.log('Removing product:', removedProduct);
+
+                cart.splice(index, 1);
+                localStorage.setItem('cart', JSON.stringify(cart));
+
+                // Remove from cartProducts array
+                cartProducts.splice(index, 1);
+
+                // Reload page
+                setTimeout(() => {
+                    window.location.reload();
+                }, 200);
+            }
+        });
+    });
+}
+
+// Setup quantity buttons
+function setupQuantityButtons() {
+    const quantityContainers = document.querySelectorAll('div.flex.items-center.border.border-\\[\\#e8d9ce\\]');
+
+    quantityContainers.forEach((container, index) => {
+        if (index >= cartProducts.length) return;
+
+        const decreaseBtn = container.querySelector('button:first-child');
+        const quantityInput = container.querySelector('input[readonly]');
+        const increaseBtn = container.querySelector('button:last-child');
+
+        if (!decreaseBtn || !quantityInput || !increaseBtn) {
+            console.log('Missing quantity elements for container', index);
+            return;
+        }
+
+        // Set initial quantity
+        quantityInput.value = cartProducts[index].quantity;
+
+        // Decrease quantity
+        decreaseBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            let currentQty = parseInt(quantityInput.value) || 1;
+            if (currentQty > 1) {
+                currentQty--;
+                quantityInput.value = currentQty;
+                updateQuantityInStorage(index, currentQty);
+                cartProducts[index].quantity = currentQty;
+                updateCartTotal();
+            }
+        });
+
+        // Increase quantity
+        increaseBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            let currentQty = parseInt(quantityInput.value) || 1;
+            currentQty++;
+            quantityInput.value = currentQty;
+            updateQuantityInStorage(index, currentQty);
+            cartProducts[index].quantity = currentQty;
+            updateCartTotal();
+        });
+    });
+}
+
+// Update quantity in localStorage
+function updateQuantityInStorage(index, quantity) {
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (index < cart.length) {
+        cart[index].quantity = quantity;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        console.log('Updated quantity for index', index, 'to', quantity);
+    }
+}
+
+// Update total price
+function updateCartTotal() {
+    let totalPrice = 0;
+
+    cartProducts.forEach(product => {
+        const itemTotal = (product.price || 0) * (product.quantity || 1);
+        totalPrice += itemTotal;
+    });
+
+    console.log('Updated total price:', totalPrice);
+
+    // Find and update total price display
+    const totalDisplay = document.querySelector('.sticky.top-24');
+    if (totalDisplay) {
+        // Update "Total Harga (X Barang)"
+        const totalQtyElement = totalDisplay.querySelector('.flex.justify-between:first-child span:first-child');
+        if (totalQtyElement) {
+            const totalQty = cartProducts.reduce((sum, p) => sum + p.quantity, 0);
+            totalQtyElement.textContent = `Total Harga (${totalQty} Barang)`;
+        }
+
+        // Update the price value
+        const priceValueElement = totalDisplay.querySelector('span.text-primary.font-bold');
+        if (priceValueElement) {
+            priceValueElement.textContent = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+        }
+    }
+
+    // Store total untuk halaman pembayaran
+    sessionStorage.setItem('cartTotal', totalPrice);
+}
+
+// Setup checkout button
+function setupCheckoutButton() {
+    // Find button by looking for buttons with "Beli" text and bg-primary class
+    const allButtons = document.querySelectorAll('button');
+    let found = false;
+
+    allButtons.forEach(btn => {
+        if (btn.textContent.includes('Beli') && btn.classList.contains('bg-primary') && !found) {
+            found = true;
+            console.log('Found checkout button:', btn);
+            setupCheckoutHandler(btn);
+        }
+    });
+
+    if (!found) {
+        console.warn('Checkout button not found');
+    }
+}
+
+function setupCheckoutHandler(btn) {
+    btn.setAttribute('type', 'button');
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        console.log('Checkout button clicked');
+
+        const token = localStorage.getItem('token');
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+        if (!token) {
+            alert('Silakan login terlebih dahulu');
+            window.location.href = 'login.html';
+        } else if (cart.length === 0) {
+            alert('Keranjang Anda kosong');
+        } else {
+            console.log('Proceeding to payment with cart:', cart);
+            window.location.href = 'halaman.pembayaran.html';
+        }
+    });
+}
+
+// Setup Navigation
+function setupNavigation() {
+    // Cart button
+    const cartBtn = document.querySelector('button[class*="relative"][class*="p-2"]');
+    const cartIcon = cartBtn?.querySelector('.material-symbols-outlined');
+    if (cartIcon && cartIcon.textContent.includes('shopping_cart')) {
+        cartBtn?.addEventListener('click', function(e) {
+            e.preventDefault();
+            location.reload();
+        });
+    }
+
+    // Profile button
+    const profileBtn = document.querySelector('.flex.items-center.gap-2[class*="pr-"]');
+    if (profileBtn) {
+        profileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'halaman.profil.html';
+        });
+    }
+
+    // Logo
+    const logoBtn = document.querySelector('a.flex.items-center.gap-2');
+    if (logoBtn) {
+        logoBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'Halaman.beranda.html';
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Check authentication
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Clean up old cart format if exists
+    const rawCart = localStorage.getItem('cart');
+    if (rawCart) {
+        try {
+            const cart = JSON.parse(rawCart);
+            // Check if cart has old format (objects without proper id field)
+            const hasOldFormat = cart.some(item => !item.id);
+            if (hasOldFormat) {
+                console.log('Detected old cart format, clearing...');
+                localStorage.removeItem('cart');
+                alert('Keranjang lama telah dihapus. Silakan tambahkan produk lagi.');
+                window.location.href = 'Halaman.beranda.html';
+                return;
+            }
+        } catch (e) {
+            console.error('Error parsing cart:', e);
+            localStorage.removeItem('cart');
+        }
+    }
+
+    // Setup profile from localStorage
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user && user.name) {
+        const nameEl = document.getElementById('profile-name');
+        if (nameEl) nameEl.textContent = `Hi, ${user.name}`;
+    }
+    if (user && user.photo) {
+        const avatarEl = document.getElementById('profile-avatar');
+        if (avatarEl) avatarEl.style.backgroundImage = `url('${user.photo}')`;
+    }
+
+    // Setup profile button click
+    const profileBtn = document.getElementById('profile-button');
+    if (profileBtn) {
+        profileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'halaman.profil.html';
+        });
+    }
+
+    // Setup logo click
+    const logoBtn = document.querySelector('a.flex.items-center.gap-2[class*="text-text-main"]');
+    if (logoBtn) {
+        logoBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'Halaman.beranda.html';
+        });
+    }
+
+    console.log('Page loaded, calling loadCartItems()');
+    loadCartItems();
+});
+</script>
+
+</body></html>

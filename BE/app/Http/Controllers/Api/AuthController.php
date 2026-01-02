@@ -8,6 +8,7 @@ use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
@@ -126,32 +127,55 @@ class AuthController extends Controller
      */
     public function profile(Request $request)
     {
-        $user = $request->user();
+        try {
+            $user = $request->user();
 
-        if (!$user) {
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized',
+                    'error' => [
+                        'code' => 'UNAUTHORIZED',
+                        'details' => 'User not authenticated'
+                    ]
+                ], 401);
+            }
+
+            // Safely load profile
+            $user->load('profile');
+
+            // Safely get roles
+            $roles = [];
+            try {
+                $roles = $user->getRoleNames() ?? [];
+            } catch (\Exception $e) {
+                Log::warning('Failed to get roles for user ' . $user->id . ': ' . $e->getMessage());
+                $roles = [];
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile retrieved successfully',
+                'data' => [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'name' => $user->name,
+                    'phone' => $user->phone ?? '',
+                    'profile' => $user->profile ?? null,
+                    'roles' => $roles,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Profile endpoint error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized',
+                'message' => 'Error retrieving profile',
                 'error' => [
-                    'code' => 'UNAUTHORIZED',
-                    'details' => 'User not authenticated'
+                    'code' => 'PROFILE_ERROR',
+                    'details' => $e->getMessage()
                 ]
-            ], 401);
+            ], 500);
         }
-
-        $user->load('profile');
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Profile retrieved successfully',
-            'data' => [
-                'id' => $user->id,
-                'email' => $user->email,
-                'name' => $user->name,
-                'profile' => $user->profile,
-                'roles' => $user->getRoleNames(),
-            ]
-        ]);
     }
 
     /**

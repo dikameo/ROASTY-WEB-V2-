@@ -26,6 +26,7 @@ class Order extends Model
         'payment_method',
         'tracking_number',
         'items',
+        'snap_token',      // Add for Midtrans
     ];
 
     protected $casts = [

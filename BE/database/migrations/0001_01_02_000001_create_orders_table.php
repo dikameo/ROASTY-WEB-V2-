@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('status')->default('pending');
+            $table->string('id')->primary();
+            $table->uuid('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('status')->default('pendingPayment');
             $table->decimal('subtotal', 10, 2);
             $table->decimal('shipping_cost', 10, 2)->default(0);
             $table->decimal('total', 10, 2);
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->string('payment_method');
             $table->string('tracking_number')->nullable();
             $table->jsonb('items');
+            $table->string('snap_token')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

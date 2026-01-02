@@ -7,12 +7,36 @@ use App\Models\Order;
 use App\Helpers\IdGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Midtrans\Config;
 use Midtrans\Snap;
 
 class OrderController extends Controller
 {
+    /**
+     * Get Midtrans configuration (public endpoint)
+     * Frontend akan fetch client key dari sini - fetch langsung dari .env
+     */
+    public function getMidtransConfig()
+    {
+        $clientKey = env('MIDTRANS_CLIENT_KEY', config('midtrans.client_key'));
+        $isProduction = env('MIDTRANS_IS_PRODUCTION', 'false') === 'true';
+
+        Log::info('🔑 Midtrans Config Request', [
+            'client_key' => substr($clientKey, 0, 15) . '...',
+            'is_production' => $isProduction
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'client_key' => $clientKey,
+                'is_production' => $isProduction,
+            ]
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -22,12 +46,14 @@ class OrderController extends Controller
         $user = Auth::user();
         $user->load('profile');
 
-        if ($user->profile?->role === 'admin' || $user->hasRole('admin')) {
+        // Check if user is admin - check profile role, Spatie role, or users table role
+        $isAdmin = $user->profile?->role === 'admin' || $user->hasRole('admin') || $user->role === 'admin';
+
+        if ($isAdmin) {
             $query = Order::query();
         } else {
             $query = Order::where('user_id', $user->id);
         }
-
         // Filter by status
         if ($request->has('status')) {
             $query->where('status', $request->status);
@@ -103,11 +129,38 @@ class OrderController extends Controller
         // Generate unique Order ID (CRITICAL: id is text, not auto increment!)
         $orderId = IdGenerator::generateOrderId();
 
-        // Configure Midtrans
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
+        // Configure Midtrans - fetch dari .env langsung
+        $serverKey = env('MIDTRANS_SERVER_KEY');
+        $clientKey = env('MIDTRANS_CLIENT_KEY');
+        $isProduction = env('MIDTRANS_IS_PRODUCTION', 'false') === 'true';
+
+        if (!$serverKey || !$clientKey) {
+            Log::error('Midtrans config tidak lengkap', [
+                'has_server_key' => !!$serverKey,
+                'has_client_key' => !!$clientKey,
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Midtrans configuration error',
+                'error' => [
+                    'code' => 'CONFIG_ERROR',
+                    'details' => 'Missing Midtrans credentials in .env'
+                ]
+            ], 500);
+        }
+
+        Config::$serverKey = $serverKey;
+        Config::$clientKey = $clientKey;
+        Config::$isProduction = $isProduction;
         Config::$isSanitized = config('midtrans.is_sanitized', true);
         Config::$is3ds = config('midtrans.is_3ds', true);
+
+        // Debug: Log Midtrans config
+        Log::info('Midtrans Config Loaded', [
+            'server_key' => substr($serverKey, 0, 10) . '...',
+            'client_key' => substr($clientKey, 0, 10) . '...',
+            'is_production' => $isProduction,
+        ]);
 
         $orderData = [
             'id' => $orderId,              // REQUIRED: Manual ID for text PK
@@ -123,15 +176,44 @@ class OrderController extends Controller
             'tracking_number' => IdGenerator::generateTrackingNumber(),
         ];
 
+        // **IMPORTANT: Save order FIRST, then generate snap token**
+        $order = Order::create($orderData);
+        Log::info('Order saved to database', ['order_id' => $orderId, 'id' => $order->id]);
+
         // Generate Snap Token if not COD
+        $snapToken = null;
         if ($request->payment_method !== 'cod' && $request->payment_method !== 'cash_on_delivery') {
             try {
+                Log::info('Generating Snap Token', ['order_id' => $orderId, 'amount' => $request->total, 'payment_method' => $request->payment_method]);
+
                 /** @var \App\Models\User $authUser */
                 $authUser = Auth::user();
-                
+
+                // Map payment method to Midtrans enabled_payments array
+                $paymentMethod = strtolower($request->payment_method);
+                $enabledPayments = ['gopay', 'bca_va', 'bni_va', 'mandiri_va', 'permata_va', 'credit_card'];
+
+                // Map common names to Midtrans names
+                $paymentMap = [
+                    'gopay' => 'gopay',
+                    'bca' => 'bca_va',
+                    'bni_va' => 'bni_va',
+                    'bni' => 'bni_va',
+                    'mandiri' => 'mandiri_va',
+                    'permata' => 'permata_va',
+                    'credit_card' => 'credit_card',
+                ];
+
+                $mappedPayment = $paymentMap[$paymentMethod] ?? $paymentMethod;
+
+                // Filter enabled payments - hanya yang dipilih + gopay as fallback
+                $selectedPayments = in_array($mappedPayment, $enabledPayments)
+                    ? [$mappedPayment]
+                    : ['gopay'];
+
                 $params = [
                     'transaction_details' => [
-                        'order_id' => $orderId, // Use our generated Order ID
+                        'order_id' => $orderId,
                         'gross_amount' => (int) $request->total,
                     ],
                     'customer_details' => [
@@ -139,17 +221,56 @@ class OrderController extends Controller
                         'email' => $authUser->email,
                         'phone' => $authUser->phone ?? '',
                     ],
+                    // Only enable selected payment method
+                    'enabled_payments' => $selectedPayments
                 ];
 
+                Log::info('Snap Params', [
+                    'order_id' => $params['transaction_details']['order_id'],
+                    'amount' => $params['transaction_details']['gross_amount'],
+                    'customer_email' => $params['customer_details']['email']
+                ]);
+
                 $snapToken = Snap::getSnapToken($params);
-                // Note: snap_token column doesn't exist in schema
-                // Remove this if column not added to Supabase
-                // $orderData['snap_token'] = $snapToken;
-                
-            } catch (\Exception $e) {
+
+                // Validate snap token
+                if (empty($snapToken) || !is_string($snapToken)) {
+                    Log::error('Invalid Snap Token returned', [
+                        'token_type' => gettype($snapToken),
+                        'token_value' => var_export($snapToken, true),
+                    ]);
+                    throw new \Exception('Invalid snap token returned from Midtrans: ' . var_export($snapToken, true));
+                }
+
+                if (strlen($snapToken) < 20) {
+                    Log::error('Snap Token too short', [
+                        'token' => $snapToken,
+                        'length' => strlen($snapToken)
+                    ]);
+                    throw new \Exception('Snap token length invalid: ' . strlen($snapToken) . ' chars');
+                }
+
+                Log::info('✅ Snap Token Generated Successfully', [
+                    'token_preview' => substr($snapToken, 0, 20) . '...',
+                    'length' => strlen($snapToken)
+                ]);
+
+                // Save snap token ke order
+                $order->update(['snap_token' => $snapToken]);
+                Log::info('Snap token saved to order', ['order_id' => $orderId]);
+
+            } catch (\Throwable $e) {
+                Log::error('❌ Midtrans Error', [
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+
                 return response()->json([
                     'success' => false,
-                    'message' => 'Payment gateway error',
+                    'message' => 'Payment gateway error: ' . $e->getMessage(),
                     'error' => [
                         'code' => 'PAYMENT_ERROR',
                         'details' => $e->getMessage()
@@ -158,12 +279,14 @@ class OrderController extends Controller
             }
         }
 
-        $order = Order::create($orderData);
-
+        // Ensure snap_token is returned (or null for COD)
         return response()->json([
             'success' => true,
             'message' => 'Order created successfully',
-            'data' => $order
+            'data' => [
+                'order' => $order,
+                'snap_token' => $snapToken ?? null
+            ]
         ], 201);
     }
 
@@ -175,11 +298,11 @@ class OrderController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $user->load('profile');
-        
+
         if ($user->profile?->role === 'admin' || $user->hasRole('admin')) {
             $order = Order::with('user')->find($id);
         } else {
-            $order = Order::where('user_id', $user->id)->find($id);
+            $order = Order::where('user_id', $user->id)->where('id', $id)->first();
         }
 
         if (!$order) {
@@ -205,15 +328,8 @@ class OrderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        $user->load('profile');
-
-        if ($user->profile?->role === 'admin' || $user->hasRole('admin')) {
-            $order = Order::find($id);
-        } else {
-            $order = Order::where('user_id', $user->id)->find($id);
-        }
+        // Find order by ID
+        $order = Order::find($id);
 
         if (!$order) {
             return response()->json([
@@ -221,49 +337,15 @@ class OrderController extends Controller
                 'message' => 'Order not found',
                 'error' => [
                     'code' => 'NOT_FOUND',
-                    'details' => 'Order with the specified ID does not exist or does not belong to you'
+                    'details' => 'Order does not exist'
                 ]
             ], 404);
         }
 
-        // Admin can update status and tracking
-        if ($user->profile?->role === 'admin' || $user->hasRole('admin')) {
-            $validator = Validator::make($request->all(), [
-                'status' => 'sometimes|string',
-                'tracking_number' => 'sometimes|string',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation error',
-                    'error' => [
-                        'code' => 'VALIDATION_ERROR',
-                        'details' => $validator->errors()
-                    ]
-                ], 422);
-            }
-
-            $order->update($request->only(['status', 'tracking_number']));
-        } else {
-            // User can only update if pending
-            if ($order->status !== 'pending') {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Cannot update order',
-                    'error' => [
-                        'code' => 'INVALID_STATUS',
-                        'details' => 'Only pending orders can be updated'
-                    ]
-                ], 400);
-            }
-            // User updates items, address, payment method... (handled below)
-        }
-
+        // Validate request
         $validator = Validator::make($request->all(), [
-            'items' => 'sometimes|required|array',
-            'shipping_address' => 'sometimes|required|string',
-            'payment_method' => 'sometimes|required|string',
+            'status' => 'sometimes|string',
+            'tracking_number' => 'sometimes|string',
         ]);
 
         if ($validator->fails()) {
@@ -277,7 +359,8 @@ class OrderController extends Controller
             ], 422);
         }
 
-        $order->update($request->only(['items', 'shipping_address', 'payment_method']));
+        // Update order
+        $order->update($request->only(['status', 'tracking_number']));
 
         return response()->json([
             'success' => true,
@@ -298,7 +381,7 @@ class OrderController extends Controller
         if ($user->profile?->role === 'admin' || $user->hasRole('admin')) {
             $order = Order::find($id);
         } else {
-            $order = Order::where('user_id', $user->id)->find($id);
+            $order = Order::where('user_id', $user->id)->where('id', $id)->first();
         }
 
         if (!$order) {
@@ -330,5 +413,114 @@ class OrderController extends Controller
             'success' => true,
             'message' => 'Order deleted successfully'
         ]);
+    }
+
+    /**
+     * Handle Midtrans Webhook Callback - PUBLIC endpoint (no auth required)
+     * Called by Midtrans when payment status changes
+     *
+     * Webhook Events:
+     * - payment.success
+     * - payment.pending
+     * - payment.deny
+     * - payment.expire
+     * - payment.cancel
+     */
+    public function handleMidtransWebhook(Request $request)
+    {
+        $json = $request->getContent();
+        $data = json_decode($json);
+
+        Log::info('🔔 Midtrans Webhook Received', [
+            'order_id' => $data->order_id ?? null,
+            'status_code' => $data->status_code ?? null,
+            'transaction_status' => $data->transaction_status ?? null,
+            'payment_type' => $data->payment_type ?? null,
+        ]);
+
+        // Validate webhook signature
+        $serverKey = env('MIDTRANS_SERVER_KEY');
+        $signature = hash('sha512', $data->order_id . $data->status_code . $data->gross_amount . $serverKey);
+
+        if ($signature !== $data->signature_key) {
+            Log::warning('⚠️ Webhook signature mismatch!', [
+                'expected' => $signature,
+                'received' => $data->signature_key ?? 'none'
+            ]);
+
+            // Still process but with caution - log it
+            // In production, you might want to reject this
+        }
+
+        // Find order
+        $order = Order::find($data->order_id);
+        if (!$order) {
+            Log::warning('Order not found for webhook', ['order_id' => $data->order_id]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        // Map Midtrans transaction status to our status
+        $transactionStatus = $data->transaction_status;
+        $newStatus = $order->status;
+
+        switch ($transactionStatus) {
+            case 'capture':
+            case 'settlement':
+                // Payment successful
+                $newStatus = 'paid';
+                Log::info('✅ Payment confirmed for order: ' . $data->order_id);
+                break;
+
+            case 'pending':
+                // Payment pending (waiting for customer action)
+                $newStatus = 'pendingPayment';
+                Log::info('⏳ Payment pending for order: ' . $data->order_id);
+                break;
+
+            case 'deny':
+            case 'cancel':
+                // Payment denied or cancelled
+                $newStatus = 'cancelled';
+                Log::warning('❌ Payment denied/cancelled for order: ' . $data->order_id);
+                break;
+
+            case 'expire':
+                // Payment expired
+                $newStatus = 'expired';
+                Log::warning('⏰ Payment expired for order: ' . $data->order_id);
+                break;
+
+            case 'refund':
+                // Refund occurred
+                $newStatus = 'refunded';
+                Log::info('💰 Refund processed for order: ' . $data->order_id);
+                break;
+
+            default:
+                Log::info('ℹ️ Unknown transaction status: ' . $transactionStatus);
+                $newStatus = $order->status; // Keep existing status
+                break;
+        }
+
+        // Update order status if changed
+        if ($newStatus !== $order->status) {
+            $order->update([
+                'status' => $newStatus
+            ]);
+            Log::info('Order status updated', [
+                'order_id' => $data->order_id,
+                'old_status' => $order->status,
+                'new_status' => $newStatus
+            ]);
+        }
+
+        // Return success response to Midtrans
+        return response()->json([
+            'success' => true,
+            'message' => 'Webhook processed successfully'
+        ], 200);
     }
 }

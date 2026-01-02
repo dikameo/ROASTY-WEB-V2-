@@ -56,10 +56,10 @@ class ProfileController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|max:255',
-            'first_name' => 'sometimes|string|max:255',
-            'last_name' => 'sometimes|string|max:255',
+            'first_name' => 'sometimes|nullable|string|max:255',
+            'last_name' => 'sometimes|nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'birth_date' => 'nullable|date',
+            'birth_date' => 'nullable|date_format:Y-m-d',
             'gender' => 'nullable|in:male,female',
         ]);
 

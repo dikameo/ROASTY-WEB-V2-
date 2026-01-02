@@ -16,12 +16,18 @@ class Product extends Model
     protected $fillable = [
         'name',
         'price',
+        'original_price',
+        'description',
         'capacity',
         'category',
+        'stock',
         'specifications',
         'image_urls',
+        'notes',
         'rating',
         'review_count',
+        'sold_count',
+        'discussion_count',
         'is_active',
         'created_by',
     ];
@@ -30,10 +36,14 @@ class Product extends Model
         'specifications' => 'json',
         'image_urls' => 'json',
         'price' => 'decimal:2',
+        'original_price' => 'decimal:2',
+        'stock' => 'integer',
         'rating' => 'decimal:2',
         'is_active' => 'boolean',
         'review_count' => 'integer',
-        'created_by' => 'integer',
+        'sold_count' => 'integer',
+        'discussion_count' => 'integer',
+        'created_by' => 'string',
     ];
 
     public function creator(): BelongsTo

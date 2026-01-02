@@ -23,15 +23,25 @@ class DatabaseSeeder extends Seeder
     {
         // Real UUIDs from Supabase auth.users
         $adminId = '8f411fc5-b498-4449-ab84-dadf4acf700c'; // admin@roastmaster.com
-        
-        
+
         $customerId = null; // Replace with real customer UUID when available
 
-        // Create admin profile
-        Profile::firstOrCreate(
+        // Create admin user first
+        User::updateOrCreate(
             ['id' => $adminId],
             [
+                'name' => 'Admin Roastmaster',
                 'email' => 'admin@roastmaster.com',
+                'password' => bcrypt('admin123'),
+                'phone' => '081234567890',
+                'role' => 'admin',
+            ]
+        );
+
+        // Create admin profile
+        Profile::updateOrCreate(
+            ['user_id' => $adminId],
+            [
                 'name' => 'Admin Roastmaster',
                 'phone' => '081234567890',
                 'role' => 'admin',
@@ -40,10 +50,20 @@ class DatabaseSeeder extends Seeder
 
         // Create customer profile only if UUID available
         if ($customerId) {
-            Profile::firstOrCreate(
+            User::updateOrCreate(
                 ['id' => $customerId],
                 [
+                    'name' => 'John Doe',
                     'email' => 'customer@example.com',
+                    'password' => bcrypt('customer123'),
+                    'phone' => '081234567891',
+                    'role' => 'customer',
+                ]
+            );
+
+            Profile::updateOrCreate(
+                ['user_id' => $customerId],
+                [
                     'name' => 'John Doe',
                     'phone' => '081234567891',
                     'role' => 'customer',

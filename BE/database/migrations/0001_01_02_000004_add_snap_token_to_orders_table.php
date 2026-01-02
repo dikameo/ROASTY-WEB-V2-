@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('snap_token')->nullable()->after('status');
+            // snap_token sudah ditambahkan di migration create_orders_table
+            // Jadi kita skip disini untuk mencegah duplikasi
         });
     }
 

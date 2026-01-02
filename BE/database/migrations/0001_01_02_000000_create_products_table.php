@@ -22,7 +22,8 @@ return new class extends Migration
             $table->decimal('rating', 3, 2)->default(0);
             $table->integer('review_count')->default(0);
             $table->boolean('is_active')->default(true);
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->uuid('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
         });

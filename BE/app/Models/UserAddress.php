@@ -8,28 +8,30 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserAddress extends Model
 {
     /**
-     * Primary key is user_id (uuid), not 'id'
-     * Supabase schema: user_id = uuid (PK, FK to auth.users)
-     * No 'id' column exists in this table!
+     * Address model for storing user addresses
      */
-    protected $table = 'user_address';
-    protected $primaryKey = 'user_id';
-    protected $keyType = 'string';
-    public $incrementing = false;
+    protected $table = 'user_addresses';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'user_id',     // This is the PK
-        'alamat',
+        'user_id',
+        'label',
+        'recipient_name',
+        'phone',
+        'address',
+        'province',
+        'city',
+        'postal_code',
         'latitude',
         'longitude',
         'accuracy',
+        'is_primary',
     ];
 
     protected $casts = [
-        'user_id' => 'string',     // UUID from auth.users
-        'latitude' => 'float',     // double precision
-        'longitude' => 'float',    // double precision
-        'accuracy' => 'string',    // text (not decimal!)
+        'is_primary' => 'boolean',
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
 
     public function user(): BelongsTo
@@ -37,3 +39,4 @@ class UserAddress extends Model
         return $this->belongsTo(User::class);
     }
 }
+
