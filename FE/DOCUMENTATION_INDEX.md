@@ -325,6 +325,34 @@ For questions about:
 - **Login** → See [ADMIN_REDIRECT_FINAL_SUMMARY.md](ADMIN_REDIRECT_FINAL_SUMMARY.md)
 - **Backend** → See [BACKEND_API_REQUIREMENTS.md](BACKEND_API_REQUIREMENTS.md)
 - **Testing** → Use [login-verification.js](login-verification.js)
+- **File Upload** → See [FILE_UPLOAD_SUMMARY.md](FILE_UPLOAD_SUMMARY.md)
+
+---
+
+## 📸 FILE UPLOAD FEATURE (NEW - DECEMBER 2024)
+
+### 🎯 What
+Convert product image input from URL text to local file upload in admin dashboard
+
+### ✅ Status
+**COMPLETE AND VERIFIED** - Ready for testing
+
+### 📚 Documentation
+1. **[IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md)** - Completion checklist
+2. **[FILE_UPLOAD_SUMMARY.md](FILE_UPLOAD_SUMMARY.md)** - Quick overview
+3. **[FILE_UPLOAD_IMPLEMENTATION.md](FILE_UPLOAD_IMPLEMENTATION.md)** - Technical details
+4. **[TESTING_FILE_UPLOAD.md](TESTING_FILE_UPLOAD.md)** - Test scenarios
+5. **[BEFORE_AFTER_COMPARISON.md](BEFORE_AFTER_COMPARISON.md)** - What changed
+
+### 🚀 Quick Start
+- Modified: FE/admin_dashboard.html (7 changes)
+- Input type: `type="url"` → `type="file"`
+- Submission: JSON → FormData
+- Validation: Added file type/size checks
+- Features: Optional updates, filename feedback, error handling
+
+### 🧪 Ready for Testing
+See [TESTING_FILE_UPLOAD.md](TESTING_FILE_UPLOAD.md) for complete test scenarios
 
 ---
 

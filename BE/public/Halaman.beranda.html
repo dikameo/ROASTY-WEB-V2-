@@ -67,9 +67,14 @@
 <header class="sticky top-0 z-50 bg-surface-light dark:bg-surface-dark border-b border-[#f4ece7] dark:border-[#3a2e26] shadow-sm">
 <div class="max-w-[1200px] mx-auto px-4 lg:px-8 py-3">
 <div class="flex items-center justify-between gap-8">
-<a class="flex items-center gap-2 text-primary group" href="#">
-<span class="material-symbols-outlined text-4xl filled">local_fire_department</span>
-<h1 class="text-2xl font-bold tracking-tight text-primary">Roasty</h1>
+<!-- Logo -->
+<a class="flex items-center gap-2 text-primary hover:opacity-90 transition-opacity" href="#">
+    <span class="material-symbols-outlined !text-[32px] fill-1">
+        local_cafe
+    </span>
+    <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+        Roasty
+    </h1>
 </a>
 <div class="flex items-center gap-4">
 <button class="md:hidden p-2 text-text-main dark:text-white">
@@ -83,6 +88,11 @@
 
 <!-- User Navigation Icons -->
 <div id="user-icons" class="flex items-center gap-3">
+</div>
+</div>
+<div class="flex items-center gap-6 mt-4 text-sm font-medium overflow-x-auto no-scrollbar pb-1">
+<a class="text-primary whitespace-nowrap border-b-2 border-primary pb-1" href="#">Rekomendasi</a>
+<div class="ml-auto flex items-center gap-3">
 <!-- Notification Icon - Only for Non-Admin Users -->
 <button id="notification-button" class="p-2 text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-[#3a2e26] rounded-lg transition-colors relative hidden">
 <span class="material-symbols-outlined">notifications</span>
@@ -94,7 +104,6 @@
 <span class="material-symbols-outlined">shopping_cart</span>
 <span id="cart-badge" class="absolute top-1 right-1 w-5 h-5 bg-primary text-white text-xs rounded-full flex items-center justify-center text-[10px] font-bold hidden">0</span>
 </button>
-</div>
 
 <!-- Profile Button - For All Users -->
 <div class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-[#3a2e26] p-1.5 rounded-lg pr-3 transition-colors" id="profile-button">
@@ -103,8 +112,6 @@
 <span class="text-sm font-semibold hidden lg:block" id="profile-name">Rina Barista</span>
 </div>
 </div>
-<div class="flex items-center gap-6 mt-4 text-sm font-medium overflow-x-auto no-scrollbar pb-1">
-<a class="text-primary whitespace-nowrap border-b-2 border-primary pb-1" href="#">Rekomendasi</a>
 </div>
 </div>
 </header>
@@ -498,9 +505,8 @@ function renderProducts(products, pageNum = 1) {
                             <span class="font-bold text-primary">Rp ${price.toLocaleString('id-ID')}</span>
                             <span class="text-xs text-gray-400 line-through">Rp ${originalPrice.toLocaleString('id-ID')}</span>
                         </div>
-                        <button class="w-full bg-primary hover:bg-orange-600 text-white px-2 py-1.5 rounded text-xs font-medium transition-colors">
-                            Tambah
-                        </button>
+
+        
                     </div>
                 </div>
             `;

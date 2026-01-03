@@ -224,16 +224,25 @@
         console.log('=== ADMIN DASHBOARD AUTH CHECK ===');
         console.log('Token:', token);
         console.log('User data:', user);
+        console.log('User role:', user.role);
 
-        // Only check if token exists - allow access to dashboard
+        // Check if token exists
         if (!token) {
             console.log('❌ No token found - redirecting to login');
             window.location.href = 'login.html';
             return;
         }
 
-        // If token exists, allow access to dashboard
-        console.log('✅ Token found - granting access to admin dashboard');
+        // Check if user has admin role
+        if (!user.role || user.role.toLowerCase() !== 'admin') {
+            console.log('❌ User is not an admin - redirecting to home');
+            alert('Akses ditolak! Hanya admin yang dapat mengakses dashboard ini.');
+            window.location.href = 'Halaman.beranda.html';
+            return;
+        }
+
+        // If token exists and user is admin, allow access to dashboard
+        console.log('✅ Token found and user is admin - granting access to admin dashboard');
         document.getElementById('adminName').textContent = `Hi, ${user.name || 'Admin'}`;
         loadProducts();
         loadOrders();
@@ -367,6 +376,8 @@
             formData.append('name', document.getElementById('productName').value);
             formData.append('price', parseInt(document.getElementById('productPrice').value));
             formData.append('category', document.getElementById('productCategory').value);
+            formData.append('description', document.getElementById('productDescription').value);
+            formData.append('stock', parseInt(document.getElementById('productStock').value));
             formData.append('image', imageFile);
 
             console.log('📤 Mengirim data produk ke:', `${API_URL}/products`);

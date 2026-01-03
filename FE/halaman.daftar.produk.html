@@ -423,6 +423,31 @@
 const API_URL = CONFIG.API_BASE_URL;
 let allProducts = [];
 
+// Normalize image URL helper function
+function normalizeImageUrl(imageUrl) {
+    if (!imageUrl) return 'https://via.placeholder.com/200?text=No+Image';
+
+    imageUrl = String(imageUrl).trim();
+
+    // If it's a data URI, use directly (don't prepend anything)
+    if (imageUrl.startsWith('data:')) {
+        return imageUrl;
+    }
+
+    // If it's already a full HTTP URL, use as-is
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        return imageUrl;
+    }
+
+    // If it's a relative path from /storage, clean it and prepend assets URL
+    if (imageUrl.startsWith('/storage/') || imageUrl.startsWith('storage/')) {
+        const cleanUrl = imageUrl.replace(/^\/storage\//, '');
+        return `${CONFIG.assets}/${cleanUrl}`;
+    }
+
+    // Otherwise assume it's a relative path and prepend assets URL
+    return `${CONFIG.assets}/${imageUrl}`;
+}
 // Update user profile display
 async function updateUserProfile() {
     try {
@@ -430,7 +455,7 @@ async function updateUserProfile() {
         if (!token) return;
 
         const user = JSON.parse(localStorage.getItem('user') || '{}');
-        
+
         // Update user name di header
         const userNameElement = document.querySelector('button.flex.items-center.gap-2.p-1 span.hidden');
         if (userNameElement && user.name) {
@@ -454,14 +479,14 @@ async function loadProducts() {
         });
 
         if (!res.ok) throw new Error('Gagal memuat produk');
-        
+
         const data = await res.json();
         console.log('API Response full structure:', data);
-        
+
         // Handle paginated response from Laravel
         // API returns: { success, message, data: { data: [...], meta, links } }
         let productArray = [];
-        
+
         if (data.data) {
             if (Array.isArray(data.data)) {
                 // data.data is array directly
@@ -473,20 +498,20 @@ async function loadProducts() {
         } else if (Array.isArray(data)) {
             productArray = data;
         }
-        
+
         allProducts = productArray;
         console.log('Parsed products array:', allProducts);
         console.log('Sample product IDs:', allProducts.slice(0, 3).map(p => ({ id: p.id, name: p.name })));
-        
+
         // Render products ke halaman
         renderProducts(allProducts);
-        
+
         // Setup event listeners setelah render selesai
         // Gunakan requestAnimationFrame untuk tunggu DOM update
         requestAnimationFrame(() => {
             setupExistingProductCards();
         });
-        
+
     } catch (err) {
         console.error('Error loading products:', err);
         alert('Gagal memuat produk. Silakan refresh halaman.');
@@ -498,7 +523,7 @@ function renderProducts(products) {
     // Find the grid container - look for grid with gap-4 class
     // QuerySelector doesn't support Tailwind's : so we use a simpler selector
     let productGrid = document.querySelector('div.grid.gap-4');
-    
+
     // If not found, try finding parent main and then grid inside
     if (!productGrid) {
         const main = document.querySelector('main');
@@ -506,7 +531,7 @@ function renderProducts(products) {
             productGrid = main.querySelector('div.grid.gap-4');
         }
     }
-    
+
     if (!productGrid) {
         console.error('Product grid container not found. Trying alternative method...');
         // Last resort: find by finding all grids and taking the one with most direct grid-cols
@@ -519,45 +544,45 @@ function renderProducts(products) {
             }
         }
     }
-    
+
     if (!productGrid) {
         console.error('Product grid container not found after all attempts');
         return;
     }
-    
+
     console.log('Found product grid:', productGrid);
-    
+
     // If we have products from API, replace all cards
     if (products && products.length > 0) {
         // Log first product structure to debug
         console.log('First product structure:', products[0]);
         console.log('Product ID values:', products.map(p => ({ id: p.id, name: p.name })));
-        
+
         // CLEAR ALL existing cards completely
         productGrid.innerHTML = '';
-        
+
         console.log('Cleared grid, now rendering', products.length, 'products');
-        
+
         // Create new cards from API data
         products.forEach((product, index) => {
             const card = document.createElement('div');
             card.className = 'group bg-white dark:bg-[#1a120b] rounded-lg border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full';
-            
+
             // Set data attribute BEFORE setting innerHTML
             card.setAttribute('data-product-id', String(product.id));
-            
+
             const price = parseInt(product.price);
             const originalPrice = Math.floor(price * 1.2); // Assume 20% discount
             const discount = Math.round(((originalPrice - price) / originalPrice) * 100);
-            
+
             // Get image from image_urls array
-            const imageUrl = (product.image_urls && product.image_urls.length > 0) 
-                ? product.image_urls[0] 
+            const imageUrl = (product.image_urls && product.image_urls.length > 0)
+                ? normalizeImageUrl(product.image_urls[0])
                 : 'https://via.placeholder.com/200?text=' + encodeURIComponent(product.name);
-            
+
             card.innerHTML = `
                 <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
-                    <img alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    <img alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                          src="${imageUrl}">
                 </div>
                 <div class="p-3 flex flex-col flex-1">
@@ -580,10 +605,10 @@ function renderProducts(products) {
                     </div>
                 </div>
             `;
-            
+
             productGrid.appendChild(card);
         });
-        
+
         console.log(`Rendered ${products.length} products from API`);
     }
 }
@@ -592,14 +617,14 @@ function renderProducts(products) {
 function setupExistingProductCards() {
     // Find the grid container first - use selector without :
     let productGrid = document.querySelector('div.grid.gap-4');
-    
+
     if (!productGrid) {
         const main = document.querySelector('main');
         if (main) {
             productGrid = main.querySelector('div.grid.gap-4');
         }
     }
-    
+
     if (!productGrid) {
         // Fallback: find by looking for grid with gap-4
         const grids = document.querySelectorAll('div.grid');
@@ -610,57 +635,57 @@ function setupExistingProductCards() {
             }
         }
     }
-    
+
     if (!productGrid) {
         console.error('Product grid not found in setupExistingProductCards');
         return;
     }
-    
+
     // Find product cards only within the grid
     const productCards = productGrid.querySelectorAll('div.group.bg-white');
-    
+
     console.log('setupExistingProductCards: Found', productCards.length, 'cards');
     console.log('setupExistingProductCards: allProducts has', allProducts.length, 'items');
-    
+
     productCards.forEach((card, index) => {
         const productId = card.getAttribute('data-product-id');
         console.log(`Card ${index}: data-product-id = "${productId}"`);
-        
+
         if (!productId) {
             console.warn(`Card ${index} has no data-product-id attribute, skipping...`);
             return;
         }
-        
+
         card.style.cursor = 'pointer';
         console.log(`Setting up click listener for card ${index} with product ID: ${productId}`);
-        
+
         card.addEventListener('click', function(e) {
             // Don't navigate if clicking button or link
             if (e.target.closest('button') || e.target.closest('a')) {
                 return;
             }
-            
+
             e.preventDefault();
-            
+
             const clickedProductId = this.getAttribute('data-product-id');
             console.log('Product clicked, ID:', clickedProductId);
-            
+
             if (!clickedProductId) {
                 console.error('No product ID in clicked card');
                 alert('Produk tidak ditemukan');
                 return;
             }
-            
+
             // Save to sessionStorage
             sessionStorage.setItem('selectedProductId', clickedProductId);
-            
+
             // Also find and store full product data
             const product = allProducts.find(p => String(p.id) === String(clickedProductId));
             if (product) {
                 sessionStorage.setItem('currentProduct', JSON.stringify(product));
                 console.log('Stored product data:', product);
             }
-            
+
             // Navigate to detail page
             window.location.href = 'halaman.detail.produk.html';
         });
@@ -670,7 +695,7 @@ function setupExistingProductCards() {
 // Setup all header and navigation buttons
 function setupAllButtons() {
     console.log('Setting up buttons...');
-    
+
     // Check auth
     const token = localStorage.getItem('token');
     if (!token) {
@@ -680,7 +705,7 @@ function setupAllButtons() {
 
     // ===== SEARCH BUTTON =====
     const searchInput = document.querySelector('input[placeholder*="Cari"]');
-    
+
     if (searchInput) {
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -697,17 +722,17 @@ function setupAllButtons() {
     // ===== HEADER - Cart, Notifications, Profile Buttons =====
     // Find the flex container with gap-3 that contains icon buttons
     const iconButtonContainer = document.querySelector('div.flex.items-center.gap-3');
-    
+
     if (iconButtonContainer) {
         const buttons = iconButtonContainer.querySelectorAll('button');
         console.log('Header buttons found:', buttons.length);
-        
+
         buttons.forEach((btn, idx) => {
             const icon = btn.querySelector('.material-symbols-outlined');
             const iconText = icon ? icon.textContent.trim() : '';
-            
+
             console.log(`Button ${idx}: ${iconText}`);
-            
+
             if (iconText === 'shopping_cart') {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -722,7 +747,7 @@ function setupAllButtons() {
                 });
             }
         });
-        
+
         // Profile button - find the button with flex and gap-2 that has an image
         const profileBtn = iconButtonContainer.querySelector('button.flex.items-center.gap-2');
         if (profileBtn) {
@@ -761,7 +786,7 @@ function setupAllButtons() {
             e.preventDefault();
             const text = link.textContent.trim();
             console.log('Breadcrumb clicked:', text);
-            
+
             if (text.toLowerCase() === 'home') {
                 window.location.href = 'Halaman.beranda.html';
             } else {
@@ -773,13 +798,13 @@ function setupAllButtons() {
     // ===== SIDEBAR CATEGORY LINKS =====
     const sidebarLinks = document.querySelectorAll('aside a[href="#"]');
     console.log('Sidebar links found:', sidebarLinks.length);
-    
+
     sidebarLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const categoryName = link.textContent.trim();
             console.log('Category clicked:', categoryName);
-            
+
             if (categoryName && !categoryName.includes('Lihat')) {
                 sessionStorage.setItem('selectedCategory', categoryName);
             }
@@ -792,14 +817,14 @@ function setupAllButtons() {
 // Jalankan saat halaman dimuat
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Page loaded');
-    
+
     const token = localStorage.getItem('token');
     if (!token) {
         console.log('No token, redirecting to login');
         window.location.href = 'login.html';
         return;
     }
-    
+
     // Load data and setup
     setTimeout(() => {
         updateUserProfile();
