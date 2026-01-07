@@ -33,7 +33,7 @@ class ProductController extends Controller
             }
 
             // Extract just the path part from full URLs
-            // From: https://unfollowed-corrin-unorchestrated.ngrok-free.dev/storage/uploads/products/...
+            // From: https://edda-unleavenable-selene.ngrok-free.dev/storage/uploads/products/...
             // To: uploads/products/... (without /storage prefix since CONFIG.assets already includes /storage)
             if (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0) {
                 // Parse URL and get the path
@@ -147,8 +147,12 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
             'capacity' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
+            'stock' => 'nullable|integer|min:0',
+            'original_price' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string',
             'specifications' => 'nullable|array',
             'image_urls' => 'nullable|array',
             'image' => 'nullable|file|mimes:jpg,jpeg,png|max:10240',
@@ -166,7 +170,7 @@ class ProductController extends Controller
             ], 422);
         }
 
-        $data = $request->only(['name', 'price', 'description', 'capacity', 'category', 'specifications', 'image_urls', 'is_active']);
+        $data = $request->only(['name', 'price', 'description', 'capacity', 'category', 'stock', 'original_price', 'notes', 'specifications', 'image_urls', 'is_active']);
         // Ensure created_by is set to the authenticated user's UUID ID (not integer)
         $data['created_by'] = $user->id;
 
@@ -255,8 +259,12 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
             'price' => 'sometimes|required|numeric|min:0',
+            'description' => 'nullable|string',
             'capacity' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
+            'stock' => 'nullable|integer|min:0',
+            'original_price' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string',
             'specifications' => 'nullable|array',
             'image' => 'nullable|file|mimes:jpg,jpeg,png|max:10240',
             'is_active' => 'nullable|boolean',
@@ -273,7 +281,7 @@ class ProductController extends Controller
             ], 422);
         }
 
-        $data = $request->only(['name', 'price', 'capacity', 'category', 'specifications', 'is_active']);
+        $data = $request->only(['name', 'price', 'description', 'capacity', 'category', 'stock', 'original_price', 'notes', 'specifications', 'is_active']);
 
         // Handle image upload
         if ($request->hasFile('image')) {

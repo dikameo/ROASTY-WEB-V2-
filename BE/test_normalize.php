@@ -1,5 +1,5 @@
 <?php
-$url = "https://unfollowed-corrin-unorchestrated.ngrok-free.dev/storage/uploads/products/1767357677_bitcoin.png.jpg";
+$url = "https://edda-unleavenable-selene.ngrok-free.dev/storage/uploads/products/1767357677_bitcoin.png.jpg";
 
 $parsed = parse_url($url);
 $path = $parsed['path'] ?? '';
