@@ -58,6 +58,7 @@ class ProfileController extends Controller
             'name' => 'sometimes|string|max:255',
             'first_name' => 'sometimes|nullable|string|max:255',
             'last_name' => 'sometimes|nullable|string|max:255',
+            'username' => 'sometimes|nullable|string|max:50|unique:users,name,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'birth_date' => 'nullable|date_format:Y-m-d',
             'gender' => 'nullable|in:male,female',
@@ -74,7 +75,7 @@ class ProfileController extends Controller
             ], 422);
         }
 
-        // Update profile with phone and other fields
+        // Update profile - now includes birth_date and gender
         $profileData = [];
         if ($request->has('phone')) {
             $profileData['phone'] = $request->phone;
@@ -90,23 +91,34 @@ class ProfileController extends Controller
             $profile->update($profileData);
         }
 
+        // Update user data (username, birth_date, gender stored as user attributes or in session)
+        if ($request->has('username')) {
+            $user->name = $request->username;
+        }
         // Update user's name if provided
-        if ($request->has('name')) {
+        elseif ($request->has('name')) {
             $user->name = $request->name;
-            $user->save();
         } elseif ($request->has('first_name') || $request->has('last_name')) {
             $firstName = $request->first_name ?: explode(' ', $user->name)[0];
             $lastName = $request->last_name ?: '';
             $user->name = trim($firstName . ' ' . $lastName);
-            $user->save();
         }
+
+        // Store birth_date and gender temporarily (refreshed from DB)
+        $profile->refresh();
+        $birthDate = $profile->birth_date;
+        $gender = $profile->gender;
+
+        $user->save();
 
         return response()->json([
             'success' => true,
             'message' => 'Profile updated successfully',
             'data' => [
                 'user' => $user->fresh()->load('profile'),
-                'profile' => $profile->fresh()
+                'profile' => $profile->fresh(),
+                'birth_date' => $birthDate,
+                'gender' => $gender
             ]
         ]);
     }

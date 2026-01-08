@@ -58,7 +58,7 @@ class UserAddressController extends Controller
             'label' => 'nullable|string|max:255',
             'recipient_name' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'address' => 'required|string',
+            'alamat' => 'required|string',
             'province' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
             'postal_code' => 'nullable|string|max:10',
@@ -80,17 +80,22 @@ class UserAddressController extends Controller
         }
 
         try {
+            $userId = Auth::id();
+            Log::info('Creating address for user: ' . $userId);
+            Log::info('Request data:', $request->all());
+
             // If this is primary, unset other primary addresses
             if ($request->get('is_primary')) {
-                UserAddress::where('user_id', Auth::id())->update(['is_primary' => false]);
+                Log::info('Setting as primary address, unsetting other primary addresses');
+                UserAddress::where('user_id', $userId)->update(['is_primary' => false]);
             }
 
-            $address = UserAddress::create([
-                'user_id' => Auth::id(),
+            $addressData = [
+                'user_id' => $userId,
                 'label' => $request->label,
                 'recipient_name' => $request->recipient_name,
                 'phone' => $request->phone,
-                'address' => $request->address,
+                'alamat' => $request->alamat,
                 'province' => $request->province,
                 'city' => $request->city,
                 'postal_code' => $request->postal_code,
@@ -98,7 +103,13 @@ class UserAddressController extends Controller
                 'longitude' => $request->longitude,
                 'accuracy' => $request->accuracy,
                 'is_primary' => $request->get('is_primary', false),
-            ]);
+            ];
+
+            Log::info('Address data to create:', $addressData);
+
+            $address = UserAddress::create($addressData);
+
+            Log::info('Address created successfully with ID: ' . $address->id);
 
             return response()->json([
                 'success' => true,
@@ -106,11 +117,23 @@ class UserAddressController extends Controller
                 'data' => $address
             ], 201);
         } catch (\Exception $e) {
-            Log::error('Error creating address: ' . $e->getMessage());
+            Log::error('❌ Error creating address', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error creating address',
-                'error' => $e->getMessage()
+                'error' => [
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]
             ], 500);
         }
     }
@@ -162,7 +185,7 @@ class UserAddressController extends Controller
             'label' => 'nullable|string|max:255',
             'recipient_name' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'address' => 'sometimes|required|string',
+            'alamat' => 'sometimes|required|string',
             'province' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
             'postal_code' => 'nullable|string|max:10',
@@ -193,7 +216,7 @@ class UserAddressController extends Controller
             if ($request->has('label')) $updateData['label'] = $request->label;
             if ($request->has('recipient_name')) $updateData['recipient_name'] = $request->recipient_name;
             if ($request->has('phone')) $updateData['phone'] = $request->phone;
-            if ($request->has('address')) $updateData['address'] = $request->address;
+            if ($request->has('alamat')) $updateData['alamat'] = $request->alamat;
             if ($request->has('province')) $updateData['province'] = $request->province;
             if ($request->has('city')) $updateData['city'] = $request->city;
             if ($request->has('postal_code')) $updateData['postal_code'] = $request->postal_code;

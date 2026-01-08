@@ -22,6 +22,8 @@ class Profile extends Model
         'name',
         'phone',
         'role',
+        'birth_date',
+        'gender',
     ];
 
     /**

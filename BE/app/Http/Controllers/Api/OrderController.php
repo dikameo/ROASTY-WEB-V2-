@@ -64,6 +64,36 @@ class OrderController extends Controller
         $perPage = $request->get('limit', 10);
         $orders = $query->with('user')->latest('order_date')->paginate($perPage);
 
+        // Transform orders to enrich items with product details
+        $orders->transform(function ($order) {
+            $items = $order->items ?? [];
+
+            // Enrich each item dengan product name dan image jika belum ada
+            $enrichedItems = array_map(function ($item) {
+                // Jika sudah punya product_name, jangan perlu di-update
+                if (!empty($item['product_name'])) {
+                    return $item;
+                }
+
+                // Cari product dari database untuk mendapat nama dan gambar
+                $product = Product::find($item['product_id'] ?? null);
+                if ($product) {
+                    $item['product_name'] = $product->name;
+                    // Handle image_urls (array) atau image (single)
+                    if (!empty($product->image_urls) && is_array($product->image_urls)) {
+                        $item['product_image'] = $product->image_urls[0] ?? null;
+                    } else {
+                        $item['product_image'] = $product->image ?? null;
+                    }
+                }
+
+                return $item;
+            }, $items);
+
+            $order->items = $enrichedItems;
+            return $order;
+        });
+
         return response()->json([
             'success' => true,
             'message' => 'Orders retrieved successfully',
@@ -91,6 +121,36 @@ class OrderController extends Controller
         // Pagination
         $perPage = $request->get('limit', 10);
         $orders = $query->with('user')->latest('order_date')->paginate($perPage);
+
+        // Transform orders to enrich items with product details
+        $orders->transform(function ($order) {
+            $items = $order->items ?? [];
+
+            // Enrich each item dengan product name dan image jika belum ada
+            $enrichedItems = array_map(function ($item) {
+                // Jika sudah punya product_name, jangan perlu di-update
+                if (!empty($item['product_name'])) {
+                    return $item;
+                }
+
+                // Cari product dari database untuk mendapat nama dan gambar
+                $product = Product::find($item['product_id'] ?? null);
+                if ($product) {
+                    $item['product_name'] = $product->name;
+                    // Handle image_urls (array) atau image (single)
+                    if (!empty($product->image_urls) && is_array($product->image_urls)) {
+                        $item['product_image'] = $product->image_urls[0] ?? null;
+                    } else {
+                        $item['product_image'] = $product->image ?? null;
+                    }
+                }
+
+                return $item;
+            }, $items);
+
+            $order->items = $enrichedItems;
+            return $order;
+        });
 
         return response()->json([
             'success' => true,
