@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Product;
 use App\Helpers\IdGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -63,6 +64,36 @@ class OrderController extends Controller
         $perPage = $request->get('limit', 10);
         $orders = $query->with('user')->latest('order_date')->paginate($perPage);
 
+        // Transform orders to enrich items with product details
+        $orders->transform(function ($order) {
+            $items = $order->items ?? [];
+
+            // Enrich each item dengan product name dan image jika belum ada
+            $enrichedItems = array_map(function ($item) {
+                // Jika sudah punya product_name, jangan perlu di-update
+                if (!empty($item['product_name'])) {
+                    return $item;
+                }
+
+                // Cari product dari database untuk mendapat nama dan gambar
+                $product = Product::find($item['product_id'] ?? null);
+                if ($product) {
+                    $item['product_name'] = $product->name;
+                    // Handle image_urls (array) atau image (single)
+                    if (!empty($product->image_urls) && is_array($product->image_urls)) {
+                        $item['product_image'] = $product->image_urls[0] ?? null;
+                    } else {
+                        $item['product_image'] = $product->image ?? null;
+                    }
+                }
+
+                return $item;
+            }, $items);
+
+            $order->items = $enrichedItems;
+            return $order;
+        });
+
         return response()->json([
             'success' => true,
             'message' => 'Orders retrieved successfully',
@@ -90,6 +121,36 @@ class OrderController extends Controller
         // Pagination
         $perPage = $request->get('limit', 10);
         $orders = $query->with('user')->latest('order_date')->paginate($perPage);
+
+        // Transform orders to enrich items with product details
+        $orders->transform(function ($order) {
+            $items = $order->items ?? [];
+
+            // Enrich each item dengan product name dan image jika belum ada
+            $enrichedItems = array_map(function ($item) {
+                // Jika sudah punya product_name, jangan perlu di-update
+                if (!empty($item['product_name'])) {
+                    return $item;
+                }
+
+                // Cari product dari database untuk mendapat nama dan gambar
+                $product = Product::find($item['product_id'] ?? null);
+                if ($product) {
+                    $item['product_name'] = $product->name;
+                    // Handle image_urls (array) atau image (single)
+                    if (!empty($product->image_urls) && is_array($product->image_urls)) {
+                        $item['product_image'] = $product->image_urls[0] ?? null;
+                    } else {
+                        $item['product_image'] = $product->image ?? null;
+                    }
+                }
+
+                return $item;
+            }, $items);
+
+            $order->items = $enrichedItems;
+            return $order;
+        });
 
         return response()->json([
             'success' => true,
@@ -124,6 +185,36 @@ class OrderController extends Controller
                     'details' => $validator->errors()
                 ]
             ], 422);
+        }
+
+        // **VALIDATION: Check if all products have enough stock**
+        foreach ($request->items as $item) {
+            $product = Product::find($item['product_id']);
+
+            if (!$product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found',
+                    'error' => [
+                        'code' => 'PRODUCT_NOT_FOUND',
+                        'details' => "Produk dengan ID {$item['product_id']} tidak ditemukan"
+                    ]
+                ], 404);
+            }
+
+            $availableStock = $product->stock ?? 0;
+            $requestedQuantity = $item['quantity'];
+
+            if ($availableStock < $requestedQuantity) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Insufficient stock',
+                    'error' => [
+                        'code' => 'INSUFFICIENT_STOCK',
+                        'details' => "Stok '{$product->name}' tidak cukup. Tersedia: {$availableStock}, Diminta: {$requestedQuantity}"
+                    ]
+                ], 422);
+            }
         }
 
         // Generate unique Order ID (CRITICAL: id is text, not auto increment!)
@@ -179,6 +270,28 @@ class OrderController extends Controller
         // **IMPORTANT: Save order FIRST, then generate snap token**
         $order = Order::create($orderData);
         Log::info('Order saved to database', ['order_id' => $orderId, 'id' => $order->id]);
+
+        // **INVENTORY: Reduce product stock for each ordered item**
+        foreach ($request->items as $item) {
+            $product = Product::find($item['product_id']);
+
+            if ($product) {
+                $newStock = ($product->stock ?? 0) - $item['quantity'];
+                // Ensure stock doesn't go below 0
+                $newStock = max(0, $newStock);
+
+                $product->update(['stock' => $newStock]);
+
+                Log::info('Product stock reduced', [
+                    'product_id' => $item['product_id'],
+                    'product_name' => $product->name,
+                    'quantity_ordered' => $item['quantity'],
+                    'old_stock' => $product->stock ?? 0,
+                    'new_stock' => $newStock,
+                    'order_id' => $orderId
+                ]);
+            }
+        }
 
         // Generate Snap Token if not COD
         $snapToken = null;

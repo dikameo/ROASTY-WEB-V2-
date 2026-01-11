@@ -509,7 +509,7 @@ function renderProducts(products, pageNum = 1) {
                             <span class="text-xs text-gray-400 line-through">Rp ${originalPrice.toLocaleString('id-ID')}</span>
                         </div>
 
-        
+
                     </div>
                 </div>
             `;

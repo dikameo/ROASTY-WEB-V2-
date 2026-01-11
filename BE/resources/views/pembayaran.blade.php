@@ -440,39 +440,82 @@ function calculateTotals() {
 }
 
 // Update address display
-function updateAddressDisplay(profile) {
+function updateAddressDisplay(userData) {
     const addressCard = document.querySelector('div.relative.overflow-hidden.rounded-xl');
     if (!addressCard) {
         console.warn('Address card not found in DOM');
         return;
     }
 
-    if (!profile) {
-        console.warn('No profile/address data provided');
-        // Show default values
-        const nameEl = addressCard.querySelector('h3.text-xl.font-bold');
-        if (nameEl) nameEl.textContent = 'User';
+    if (!userData) {
+        console.warn('No user data provided');
         return;
     }
 
-    // Handle both UserAddress and Profile models
-    const fullName = profile.user?.name || profile.name || 'User';
-    const phone = profile.phone_number || profile.phone || profile.phone || '+62 8xx xxxx xxxx';
-    const address = profile.full_address || profile.address || 'Alamat tidak tersedia';
+    // Coba ambil dari berbagai struktur data yang mungkin
+    let fullName = 'User';
+    let phone = '+62 8xx xxxx xxxx';
+    let address = 'Alamat tidak tersedia';
 
-    console.log('Updating address display:', { fullName, phone, address });
+    // Priority 1: Dari user.primary_address (UserAddress model)
+    if (userData.primary_address) {
+        const addr = userData.primary_address;
+        console.log('📍 Using primary_address:', addr);
+        fullName = addr.recipient_name || addr.name || userData.name || 'User';
+        phone = addr.phone || userData.phone || phone;
+        address = addr.alamat || addr.address || 'Alamat tidak tersedia';
+    }
+    // Priority 2: Dari user.address (UserAddress model)
+    else if (userData.address) {
+        const addr = userData.address;
+        console.log('📍 Using address:', addr);
+        fullName = addr.recipient_name || addr.name || userData.name || 'User';
+        phone = addr.phone || userData.phone || phone;
+        address = addr.alamat || addr.address || 'Alamat tidak tersedia';
+    }
+    // Priority 3: Dari user.profile (Profile model)
+    else if (userData.profile) {
+        const profile = userData.profile;
+        console.log('📍 Using profile:', profile);
+        fullName = profile.user?.name || profile.name || userData.name || 'User';
+        phone = profile.phone_number || profile.phone || userData.phone || phone;
+        address = profile.full_address || profile.address || 'Alamat tidak tersedia';
+    }
+    // Priority 4: Direct properties di userData
+    else {
+        console.log('📍 Using direct userData properties');
+        fullName = userData.name || fullName;
+        phone = userData.phone_number || userData.phone || phone;
+        address = userData.full_address || userData.address || address;
+    }
+
+    console.log('✅ Updating address display:', { fullName, phone, address });
+
+    // Get all paragraph elements inside address card
+    const paragraphs = addressCard.querySelectorAll('p.text-white\\/90');
 
     // Update name
     const nameEl = addressCard.querySelector('h3.text-xl.font-bold');
-    if (nameEl) nameEl.textContent = fullName;
+    if (nameEl) {
+        nameEl.textContent = fullName;
+        console.log('✓ Name updated:', fullName);
+    }
 
-    // Update phone
-    const phoneEl = addressCard.querySelector('p.text-white\\/90:first-of-type');
-    if (phoneEl) phoneEl.textContent = phone;
+    // Update phone - paragraphs[0] adalah phone (first p dengan class text-white/90)
+    if (paragraphs.length > 0) {
+        paragraphs[0].textContent = phone;
+        console.log('✓ Phone updated:', phone);
+    }
 
-    // Update address
-    const addressEl = addressCard.querySelector('p.text-white\\/90.leading-relaxed.max-w-lg');
-    if (addressEl) addressEl.textContent = address;
+    // Update address - paragraphs[1] adalah address (second p dengan class text-white/90 dan max-w-lg)
+    if (paragraphs.length > 1) {
+        paragraphs[1].textContent = address;
+        console.log('✓ Address updated:', address);
+    }
+
+    // Store address untuk dipakai saat pembayaran
+    paymentState.shippingAddress = address;
+    paymentState.shippingPhone = phone;
 }
 
 // Update summary display
@@ -861,6 +904,39 @@ async function loadPaymentData() {
             console.warn('Fetch /me failed, using fallback:', err.message);
         }
 
+        // Fetch primary address (alamat utama)
+        if (user && user.id) {
+            try {
+                const addressRes = await fetch(`${API_URL}/user-addresses`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (addressRes.ok) {
+                    const addressData = await addressRes.json();
+                    const addresses = addressData.data || [];
+                    console.log('📍 All addresses:', addresses);
+
+                    // Ambil alamat utama (primary=true) atau yang pertama
+                    const primaryAddress = addresses.find(addr => addr.is_primary === true || addr.is_primary === 1) || addresses[0];
+
+                    if (primaryAddress) {
+                        console.log('📍 Primary address found:', primaryAddress);
+                        user.primary_address = primaryAddress;
+                        user.address = primaryAddress;
+                    } else {
+                        console.warn('⚠️ No primary address found');
+                    }
+                } else {
+                    console.warn('❌ Failed to fetch addresses:', addressRes.status);
+                }
+            } catch (err) {
+                console.warn('Fetch /user-addresses failed:', err.message);
+            }
+        }
+
         // Fallback user
         if (!user) {
             user = {
@@ -873,8 +949,15 @@ async function loadPaymentData() {
 
         paymentState.userData = user;
 
+        // Log untuk debugging - lihat struktur data lengkap
+        console.log('=== USER DATA LENGKAP ===');
+        console.log(JSON.stringify(user, null, 2));
+        console.log('User keys:', Object.keys(user));
+        if (user.profile) console.log('Profile keys:', Object.keys(user.profile));
+        if (user.addresses) console.log('Addresses:', user.addresses);
+
         // Update address display
-        updateAddressDisplay(user.profile || user);
+        updateAddressDisplay(user);
 
         // Fetch products
         let products = [];
@@ -987,9 +1070,11 @@ function setupPaymentButton() {
             }
             console.log('📍 Shipping address:', shippingAddress);
 
-            // Create order
+            // Create order with complete item data
             const orderItems = paymentState.products.map(prod => ({
                 product_id: prod.id,
+                product_name: prod.name,
+                product_image: prod.image_url,
                 quantity: prod.quantity,
                 price: prod.price
             }));
@@ -1173,6 +1258,18 @@ function setupNavigation() {
             window.location.href = "{{ route('home') }}";
         });
     }
+
+    // Tombol ubah alamat
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(btn => {
+        if (btn.textContent.includes('Ubah Alamat')) {
+            btn.classList.remove('hidden');
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Fitur ubah alamat akan ditambahkan segera.\n\nAlamat saat ini: ' + (paymentState.shippingAddress || 'Belum ada'));
+            });
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -493,11 +493,21 @@ async function loadProfile() {
         const fullName = `${firstName} ${lastName}`.trim() || userData.name || 'User';
 
         // Update profile data di form
+        console.log('📝 Populating form with user data...');
+
         document.getElementById('fullname').value = fullName;
-        document.getElementById('username').value = userData.username || '';
+
+        // Username dari userData.name (karena di backend disimpan di users.name)
+        const username = userData.name || '';
+        document.getElementById('username').value = username;
+        console.log('✅ Username set to:', username);
+
         document.getElementById('email').value = userData.email || '';
         document.getElementById('phone').value = profileData?.phone || userData.phone || '';
-        document.getElementById('birthdate').value = profileData?.birth_date || userData.birth_date || '';
+
+        const birthDate = profileData?.birth_date || userData.birth_date || '';
+        document.getElementById('birthdate').value = birthDate;
+        console.log('✅ Birth date set to:', birthDate);
 
         // Update gender
         if (profileData?.gender || userData.gender) {
@@ -505,6 +515,7 @@ async function loadProfile() {
             const genderInput = document.querySelector(`input[name="gender"][value="${genderVal}"]`);
             if (genderInput) {
                 genderInput.checked = true;
+                console.log('✅ Gender set to:', genderVal);
             }
         }
 
@@ -543,77 +554,175 @@ async function loadProfile() {
 // Load user addresses
 async function loadAddresses(token, userId) {
     try {
+        console.log('🔍 Loading addresses...');
+
         const res = await fetchWithAuth(`${API_URL}/user-addresses`, {
             method: 'GET'
         });
 
+        console.log('📡 Address API Response status:', res.status, res.ok);
+
         if (!res.ok) {
-            console.error('Gagal memuat alamat');
+            console.error('❌ Gagal memuat alamat - Status:', res.status);
+            const errorData = await res.json();
+            console.error('Error details:', errorData);
             return;
         }
 
         const data = await res.json();
-        allAddresses = data.data || data || [];
+        console.log('📦 Full API Response:', data);
+
+        // Parse addresses correctly - API returns { success, message, data: [...] }
+        allAddresses = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+        console.log('✅ Parsed addresses count:', allAddresses.length);
+        console.log('📋 All addresses:', allAddresses);
 
         if (allAddresses.length > 0) {
+            // Find primary address or use first one
             const primaryAddress = allAddresses.find(addr => addr.is_primary) || allAddresses[0];
+            console.log('🏠 Primary address:', primaryAddress);
 
             const addressNameEl = document.getElementById('addressName');
             const addressDetailsEl = document.getElementById('addressDetails');
 
-            addressNameEl.textContent = `${primaryAddress.label || 'Alamat'} (${primaryAddress.recipient_name || '-'})`;
+            if (!addressNameEl || !addressDetailsEl) {
+                console.error('❌ Address elements not found in DOM');
+                return;
+            }
 
-            let addressText = `${primaryAddress.address || ''}<br/>`;
+            // Build address name with label and recipient
+            const label = primaryAddress.label || 'Alamat';
+            const recipient = primaryAddress.recipient_name || '-';
+            addressNameEl.textContent = `${label} (${recipient})`;
+            console.log('✅ Address name set:', `${label} (${recipient})`);
+
+            // Build address details with all information
+            let addressText = `${primaryAddress.alamat || primaryAddress.address || ''}<br/>`;
             if (primaryAddress.province) {
                 addressText += `${primaryAddress.province}`;
                 if (primaryAddress.city) addressText += `, ${primaryAddress.city}`;
-                addressText += ' ' + (primaryAddress.postal_code || '') + '<br/>';
+                if (primaryAddress.postal_code) addressText += ' ' + primaryAddress.postal_code;
+                addressText += '<br/>';
             }
-            addressText += `<span class="text-xs">${primaryAddress.phone || ''}</span>`;
+            if (primaryAddress.phone) {
+                addressText += `<span class="text-xs">${primaryAddress.phone}</span>`;
+            }
 
             addressDetailsEl.innerHTML = addressText;
+            console.log('✅ Address details set');
+        } else {
+            console.warn('⚠️ No addresses found for user');
+            const addressDetailsEl = document.getElementById('addressDetails');
+            if (addressDetailsEl) {
+                addressDetailsEl.textContent = 'Belum ada alamat tersimpan';
+            }
         }
     } catch (err) {
-        console.error('Error loading addresses:', err);
+        console.error('❌ Error loading addresses:', err);
+        console.error('Stack:', err.stack);
+
+        const addressDetailsEl = document.getElementById('addressDetails');
+        if (addressDetailsEl) {
+            addressDetailsEl.textContent = 'Gagal memuat alamat';
+        }
     }
 }
 
 // Load last order
 async function loadLastOrder(token) {
     try {
+        console.log('🔍 Loading last order...');
+
         const res = await fetchWithAuth(`${API_URL}/orders?limit=1&sort=-created_at`, {
             method: 'GET'
         });
 
+        console.log('📡 Last order API response status:', res.status, res.ok);
+
         if (!res.ok) {
-            console.error('Gagal memuat pesanan');
+            console.error('❌ Gagal memuat pesanan - Status:', res.status);
+            const errorData = await res.json();
+            console.error('Error details:', errorData);
+            document.getElementById('lastOrder').innerHTML = '<p class="text-text-sub-light dark:text-text-sub-dark">Gagal memuat pesanan</p>';
             return;
         }
 
         const data = await res.json();
-        const orders = data.data || data || [];
+        console.log('📦 Full order response:', data);
+
+        // Parse orders dengan berbagai format response yang mungkin
+        let orders = [];
+        if (Array.isArray(data)) {
+            orders = data;
+            console.log('✅ Using root array format');
+        } else if (data.data && data.data.data && Array.isArray(data.data.data)) {
+            orders = data.data.data;
+            console.log('✅ Using data.data.data (paginated) format');
+        } else if (data.data && Array.isArray(data.data)) {
+            orders = data.data;
+            console.log('✅ Using data.data array format');
+        } else if (data.data && typeof data.data === 'object' && !Array.isArray(data.data)) {
+            orders = [data.data];
+            console.log('✅ Using single data object format');
+        } else {
+            orders = [];
+            console.warn('⚠️ Could not parse orders from response');
+        }
+
+        console.log('✅ Parsed orders count:', orders.length);
 
         if (orders.length > 0) {
             const order = orders[0];
+            console.log('🛒 First order data:', order);
+
             const items = order.items || [];
+            console.log('📦 Items in order:', items);
 
             if (items.length > 0) {
                 const firstItem = items[0];
+                console.log('📌 First item:', firstItem);
 
-                document.getElementById('lastOrderName').textContent = firstItem.product_name || firstItem.name || '-';
-                document.getElementById('lastOrderDate').textContent = formatDate(order.created_at);
-                document.getElementById('lastOrderStatus').textContent = order.status || 'Pending';
-                document.getElementById('lastOrderPrice').textContent = formatCurrency(order.total_price || order.total);
+                const orderName = firstItem.product_name || firstItem.name || '-';
+                const orderDate = formatDate(order.created_at || order.order_date);
+                const orderStatus = order.status || 'Pending';
+                const orderPrice = formatCurrency(order.total_price || order.total);
+                const orderImage = firstItem.product_image || firstItem.image;
 
-                if (firstItem.product_image || firstItem.image) {
-                    document.getElementById('lastOrderImage').style.backgroundImage = `url('${firstItem.product_image || firstItem.image}')`;
+                console.log('✅ Order data to display:', {
+                    name: orderName,
+                    date: orderDate,
+                    status: orderStatus,
+                    price: orderPrice,
+                    image: orderImage
+                });
+
+                document.getElementById('lastOrderName').textContent = orderName;
+                document.getElementById('lastOrderDate').textContent = orderDate;
+                document.getElementById('lastOrderStatus').textContent = orderStatus;
+                document.getElementById('lastOrderPrice').textContent = orderPrice;
+
+                if (orderImage) {
+                    document.getElementById('lastOrderImage').style.backgroundImage = `url('${orderImage}')`;
+                    console.log('✅ Order image set');
                 }
+
+                console.log('✅ Last order displayed successfully');
+            } else {
+                console.warn('⚠️ Order has no items');
+                document.getElementById('lastOrder').innerHTML = '<p class="text-text-sub-light dark:text-text-sub-dark">Pesanan belum memiliki item</p>';
             }
         } else {
+            console.log('ℹ️ No orders found for user');
             document.getElementById('lastOrder').innerHTML = '<p class="text-text-sub-light dark:text-text-sub-dark">Belum ada pesanan</p>';
         }
     } catch (err) {
-        console.error('Error loading orders:', err);
+        console.error('❌ Error loading last order:', err);
+        console.error('Stack:', err.stack);
+
+        const lastOrderDiv = document.getElementById('lastOrder');
+        if (lastOrderDiv) {
+            lastOrderDiv.innerHTML = '<p class="text-text-sub-light dark:text-text-sub-dark">Gagal memuat pesanan</p>';
+        }
     }
 }
 
@@ -651,7 +760,7 @@ async function loadOrderHistory() {
     }
 }
 
-// Render order history
+// Render order history dengan image dari product API
 function renderOrderHistory() {
     const ordersList = document.getElementById('ordersList');
 
@@ -660,6 +769,7 @@ function renderOrderHistory() {
         return;
     }
 
+    // Render dengan data yang sudah ada di items
     ordersList.innerHTML = allOrders.map(order => `
         <div class="border border-border-light dark:border-border-dark rounded-lg p-4 hover:bg-background-light dark:hover:bg-background-dark transition-colors">
             <div class="flex justify-between items-start mb-3">
@@ -672,17 +782,23 @@ function renderOrderHistory() {
                 </span>
             </div>
             <div class="mb-3 space-y-2">
-                ${(order.items || []).map(item => `
+                ${(order.items || []).map(item => {
+                    // Cari product_name dari berbagai sumber
+                    const productName = item.product_name || item.name || 'Produk';
+                    const productImage = item.product_image || null;
+
+                    return `
                     <div class="flex gap-3">
                         <div class="h-12 w-12 rounded bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark flex-shrink-0 overflow-hidden">
-                            ${item.product_image ? `<img src="${item.product_image}" class="w-full h-full object-cover" alt="${item.product_name}"/>` : '<div class="w-full h-full flex items-center justify-center text-text-sub-light text-xs">-</div>'}
+                            ${productImage ? `<img src="${productImage}" class="w-full h-full object-cover" alt="${productName}"/>` : '<div class="w-full h-full flex items-center justify-center text-text-sub-light text-lg">📦</div>'}
                         </div>
                         <div class="flex-1">
-                            <p class="text-sm font-medium text-text-main-light dark:text-text-main-dark">${item.product_name || item.name || '-'}</p>
+                            <p class="text-sm font-medium text-text-main-light dark:text-text-main-dark">${productName}</p>
                             <p class="text-xs text-text-sub-light dark:text-text-sub-dark">${item.quantity || 1} x ${formatCurrency(item.price || item.product_price)}</p>
                         </div>
                     </div>
-                `).join('')}
+                    `;
+                }).join('')}
             </div>
             <div class="pt-3 border-t border-border-light dark:border-border-dark flex justify-between items-center">
                 <span class="text-sm text-text-sub-light dark:text-text-sub-dark">Total:</span>
@@ -743,7 +859,7 @@ function renderAddressesList() {
                 </div>
                 ${addr.is_primary ? '<span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-primary/20 text-primary">Utama</span>' : ''}
             </div>
-            <p class="text-sm text-text-sub-light dark:text-text-sub-dark mb-2">${addr.address}</p>
+            <p class="text-sm text-text-sub-light dark:text-text-sub-dark mb-2">${addr.alamat || addr.address || 'Alamat tidak tersedia'}</p>
             <p class="text-xs text-text-sub-light dark:text-text-sub-dark mb-3">${addr.province || ''} ${addr.city ? ', ' + addr.city : ''} ${addr.postal_code || ''}</p>
             <p class="text-xs text-text-sub-light dark:text-text-sub-dark mb-3">${addr.phone}</p>
             <div class="flex gap-2">
@@ -797,8 +913,12 @@ function editAddress(addressId) {
     document.getElementById('province').value = address.province || '';
     document.getElementById('city').value = address.city || '';
     document.getElementById('postalCode').value = address.postal_code || '';
-    document.getElementById('address').value = address.address || '';
+    // ✅ FIX: Use 'alamat' field from database (not 'address')
+    document.getElementById('address').value = address.alamat || address.address || '';
     document.getElementById('isPrimary').checked = address.is_primary || false;
+
+    console.log('📍 Editing address:', address);
+    console.log('   Alamat field value:', address.alamat || address.address);
 
     document.getElementById('addressFormModal').classList.remove('hidden');
 }
@@ -864,8 +984,11 @@ function setupSaveButton() {
             e.stopPropagation();
 
             try {
+                console.log('📝 Starting profile update...');
+
                 // Collect form data
                 const fullName = document.getElementById('fullname').value.trim();
+                const username = document.getElementById('username').value.trim();
                 const nameParts = fullName.split(' ');
                 const firstName = nameParts[0] || '';
                 const lastName = nameParts.slice(1).join(' ') || '';
@@ -874,15 +997,26 @@ function setupSaveButton() {
                 const phoneValue = document.getElementById('phone').value.trim();
                 const genderValue = document.querySelector('input[name="gender"]:checked')?.value;
 
+                console.log('📋 Form data collected:', {
+                    fullName,
+                    username,
+                    firstName,
+                    lastName,
+                    birthDate: birthDateValue,
+                    phone: phoneValue,
+                    gender: genderValue
+                });
+
                 // Build form data - only include non-empty values
                 const formData = {};
                 if (firstName) formData.first_name = firstName;
                 if (lastName) formData.last_name = lastName;
+                if (username) formData.username = username;
                 if (phoneValue) formData.phone = phoneValue;
                 if (birthDateValue) formData.birth_date = birthDateValue; // HTML date input is already Y-m-d format
                 if (genderValue) formData.gender = genderValue;
 
-                console.log('Sending profile update:', formData);
+                console.log('📤 Sending profile update with data:', formData);
 
                 const res = await fetchWithAuth(`${API_URL}/profile`, {
                     method: 'PUT',
@@ -892,19 +1026,61 @@ function setupSaveButton() {
                     body: JSON.stringify(formData)
                 });
 
+                console.log('📡 Profile update response status:', res.status, res.ok);
+
                 if (!res.ok) {
                     const error = await res.json();
-                    console.error('Profile update error:', error);
+                    console.error('❌ Profile update error:', error);
                     console.error('Validation details:', error.error?.details);
                     throw new Error(error.message || 'Gagal menyimpan profil');
                 }
 
+                const responseData = await res.json();
+                console.log('✅ Profile update success response:', responseData);
+
+                // Immediately update form from response data
+                if (responseData.data) {
+                    console.log('🔄 Updating form fields from response...');
+
+                    const userData = responseData.data.user;
+                    const profile = responseData.data.profile;
+
+                    // Update birth_date from response
+                    if (responseData.data.birth_date) {
+                        document.getElementById('birthdate').value = responseData.data.birth_date;
+                        console.log('✅ Birth date updated to:', responseData.data.birth_date);
+                    }
+
+                    // Update gender from response
+                    if (responseData.data.gender) {
+                        const genderInput = document.querySelector(`input[name="gender"][value="${responseData.data.gender}"]`);
+                        if (genderInput) {
+                            genderInput.checked = true;
+                            console.log('✅ Gender updated to:', responseData.data.gender);
+                        }
+                    }
+
+                    // Update username from user.name
+                    if (userData && userData.name) {
+                        document.getElementById('username').value = userData.name;
+                        console.log('✅ Username updated to:', userData.name);
+                    }
+
+                    // Update phone
+                    if (profile && profile.phone) {
+                        document.getElementById('phone').value = profile.phone;
+                        console.log('✅ Phone updated to:', profile.phone);
+                    }
+                }
+
                 alert('Profil berhasil diperbarui!');
+                console.log('🔄 Reloading profile data...');
                 loadProfile();
 
             } catch (err) {
+                console.error('❌ Error during profile update:', err);
+                console.error('Stack:', err.stack);
                 alert('Error: ' + err.message);
-                console.error(err);
             }
         });
     }
@@ -997,12 +1173,16 @@ function setupAddressFormModal() {
                     province: document.getElementById('province').value,
                     city: document.getElementById('city').value,
                     postal_code: document.getElementById('postalCode').value,
-                    address: document.getElementById('address').value,
+                    alamat: document.getElementById('address').value,
                     is_primary: document.getElementById('isPrimary').checked
                 };
 
+                console.log('📝 Saving address with data:', formData);
+
                 const url = addressId ? `${API_URL}/user-addresses/${addressId}` : `${API_URL}/user-addresses`;
                 const method = addressId ? 'PUT' : 'POST';
+
+                console.log(`📤 Sending ${method} request to:`, url);
 
                 const res = await fetchWithAuth(url, {
                     method: method,
@@ -1012,9 +1192,35 @@ function setupAddressFormModal() {
                     body: JSON.stringify(formData)
                 });
 
+                console.log('📡 Response status:', res.status, res.ok);
+
                 if (!res.ok) {
                     const error = await res.json();
-                    throw new Error(error.message || 'Gagal menyimpan alamat');
+                    console.error('❌ API Error response:', error);
+
+                    const errorMessage = error.error?.message || error.message || 'Gagal menyimpan alamat';
+                    throw new Error(errorMessage);
+                }
+
+                const responseData = await res.json();
+                console.log('✅ Success response:', responseData);
+
+                // Immediately update the form with response data
+                if (responseData.data) {
+                    const savedAddress = responseData.data;
+                    console.log('🔄 Updating form with saved data:', savedAddress);
+
+                    // Update form fields dengan data yang baru disimpan
+                    document.getElementById('addressLabel').value = savedAddress.label || '';
+                    document.getElementById('recipientName').value = savedAddress.recipient_name || '';
+                    document.getElementById('recipientPhone').value = savedAddress.phone || '';
+                    document.getElementById('province').value = savedAddress.province || '';
+                    document.getElementById('city').value = savedAddress.city || '';
+                    document.getElementById('postalCode').value = savedAddress.postal_code || '';
+                    document.getElementById('address').value = savedAddress.alamat || savedAddress.address || '';
+                    document.getElementById('isPrimary').checked = savedAddress.is_primary || false;
+
+                    console.log('✅ Form fields updated from response');
                 }
 
                 alert('Alamat berhasil disimpan!');
@@ -1022,8 +1228,9 @@ function setupAddressFormModal() {
                 await loadAddressesForModal();
                 loadAddresses(localStorage.getItem('token'), currentUserId);
             } catch (err) {
+                console.error('❌ Error saving address:', err);
+                console.error('Stack:', err.stack);
                 alert('Error: ' + err.message);
-                console.error(err);
             }
         });
     }
