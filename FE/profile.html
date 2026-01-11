@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Roasty - Profil Pengguna</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f26c0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221710",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#2a1e16",
+                        "text-main-light": "#1c130d",
+                        "text-main-dark": "#f4ece7",
+                        "text-sub-light": "#9c6c49",
+                        "text-sub-dark": "#bda088",
+                        "border-light": "#f4ece7",
+                        "border-dark": "#3e2b22",
+                    },
+                    fontFamily: { "display": ["Plus Jakarta Sans", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display antialiased transition-colors duration-200">
+
+    <header
+        class="sticky top-0 z-50 w-full bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark shadow-sm">
+        <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="Halaman.beranda.html" class="flex items-center gap-2 text-primary">
+                    <svg class="h-8 w-8" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z"
+                            fill="currentColor"></path>
+                    </svg>
+                    <span
+                        class="text-2xl font-bold text-text-main-light dark:text-text-main-dark hidden sm:block">Roasty</span>
+                </a>
+
+                <div class="flex items-center gap-4">
+                    <button id="cartBtn"
+                        class="p-2 text-text-main-light dark:text-text-main-dark hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                    </button>
+                    <div id="navAvatar" class="h-9 w-9 rounded-full bg-cover bg-center border border-gray-200"
+                        style="background-image: url('https://ui-avatars.com/api/?name=User');"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+
+            <aside class="w-full lg:w-64 flex-shrink-0">
+                <div
+                    class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+                    <div class="p-5 border-b border-border-light dark:border-border-dark flex items-center gap-4">
+                        <div id="sideAvatar" class="h-12 w-12 rounded-full bg-cover bg-center"
+                            style="background-image: url('https://ui-avatars.com/api/?name=User');"></div>
+                        <div class="overflow-hidden">
+                            <p id="sideUserName"
+                                class="text-sm font-bold text-text-main-light dark:text-text-main-dark truncate">
+                                Memuat...</p>
+                            <p class="text-xs text-text-sub-light">Member Premium</p>
+                        </div>
+                    </div>
+                    <nav class="p-2 space-y-1">
+                        <a href="#"
+                            class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary font-semibold">
+                            <span class="material-symbols-outlined text-[20px]">person</span>
+                            <span class="text-sm">Biodata Diri</span>
+                        </a>
+                        <button onclick="handleLogout()"
+                            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">logout</span>
+                            <span class="text-sm font-semibold">Keluar Akun</span>
+                        </button>
+                    </nav>
+                </div>
+            </aside>
+
+            <div class="flex-1 space-y-6">
+                <div
+                    class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-sm border border-border-light dark:border-border-dark p-6">
+                    <div class="flex flex-col sm:flex-row items-center gap-6">
+                        <div id="mainAvatar"
+                            class="h-24 w-24 rounded-full bg-cover bg-center border-4 border-white shadow-md"
+                            style="background-image: url('https://ui-avatars.com/api/?name=User');"></div>
+                        <div class="text-center sm:text-left">
+                            <h2 id="displayFullname"
+                                class="text-2xl font-bold text-text-main-light dark:text-text-main-dark">Nama Pengguna
+                            </h2>
+                            <p id="displayEmail" class="text-text-sub-light text-sm">email@roasty.com</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+                    <div class="px-6 py-5 border-b border-border-light dark:border-border-dark">
+                        <h3 class="text-lg font-bold text-text-main-light dark:text-text-main-dark">Pengaturan Profil
+                        </h3>
+                    </div>
+
+                    <div class="p-6">
+                        <form id="profileForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label
+                                        class="text-sm font-semibold text-text-main-light dark:text-text-main-dark">Nama
+                                        Lengkap</label>
+                                    <input type="text" id="inputFullname"
+                                        class="w-full rounded-xl border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-4 py-3 text-sm focus:ring-primary focus:border-primary">
+                                </div>
+                                <div class="space-y-2">
+                                    <label
+                                        class="text-sm font-semibold text-text-main-light dark:text-text-main-dark">Username</label>
+                                    <input type="text" id="inputUsername"
+                                        class="w-full rounded-xl border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-4 py-3 text-sm focus:ring-primary focus:border-primary">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label
+                                        class="text-sm font-semibold text-text-main-light dark:text-text-main-dark">Tanggal
+                                        Lahir</label>
+                                    <input type="date" id="inputBirthDate"
+                                        class="w-full rounded-xl border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-4 py-3 text-sm">
+                                </div>
+                                <div class="space-y-2">
+                                    <label
+                                        class="text-sm font-semibold text-text-main-light dark:text-text-main-dark block mb-3">Jenis
+                                        Kelamin</label>
+                                    <div class="flex gap-6">
+                                        <label class="flex items-center gap-2 cursor-pointer text-sm">
+                                            <input type="radio" name="gender" value="Laki-laki"
+                                                class="text-primary focus:ring-primary"> Laki-laki
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer text-sm">
+                                            <input type="radio" name="gender" value="Perempuan"
+                                                class="text-primary focus:ring-primary"> Perempuan
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label
+                                        class="text-sm font-semibold text-text-main-light dark:text-text-main-dark">Alamat
+                                        Email</label>
+                                    <input type="email" id="inputEmail" disabled
+                                        class="w-full rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-500 px-4 py-3 text-sm cursor-not-allowed">
+                                </div>
+                                <div class="space-y-2">
+                                    <label
+                                        class="text-sm font-semibold text-text-main-light dark:text-text-main-dark">Nomor
+                                        Telepon</label>
+                                    <input type="text" id="inputPhone"
+                                        class="w-full rounded-xl border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-4 py-3 text-sm"
+                                        placeholder="08xxxxxxxxxx">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div
+                        class="px-6 py-5 bg-gray-50 dark:bg-background-dark border-t border-border-light dark:border-border-dark flex justify-end gap-3">
+                        <button id="btnCancel"
+                            class="px-6 py-2.5 text-sm font-bold text-text-sub-light hover:text-red-500 transition-colors">Batal</button>
+                        <button id="btnSave"
+                            class="px-8 py-2.5 bg-primary hover:bg-orange-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-orange-500/20 active:scale-95 transition-all">Simpan
+                            Perubahan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="config.js"></script>
+    <script>
+        const API_URL = CONFIG.API_BASE_URL;
+
+        /**
+         * 1. Mengambil Data Profil (GET)
+         */
+        async function fetchProfileData() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) handleLogout();
+                    throw new Error('Gagal memuat profil');
+                }
+
+                const result = await response.json();
+                const user = result.data || result; // Menyesuaikan jika response dibungkus objek 'data'
+
+                // Mapping Data ke Input Form
+                document.getElementById('inputFullname').value = user.name || user.first_name || '';
+                document.getElementById('inputUsername').value = user.username || '';
+                document.getElementById('inputEmail').value = user.email || '';
+                document.getElementById('inputPhone').value = user.phone || '';
+                document.getElementById('inputBirthDate').value = user.birth_date || '';
+
+                // Update Tampilan UI Nama & Email
+                document.getElementById('sideUserName').textContent = user.name || user.username || 'User';
+                document.getElementById('displayFullname').textContent = user.name || user.username || 'User';
+                document.getElementById('displayEmail').textContent = user.email;
+
+                // Gender Radio
+                if (user.gender) {
+                    const genderRadio = document.querySelector(`input[name="gender"][value="${user.gender}"]`);
+                    if (genderRadio) genderRadio.checked = true;
+                }
+
+                // Inisialisasi Avatar berdasarkan Nama
+                updateAvatars(user.name || 'User');
+
+            } catch (error) {
+                console.error('Fetch Error:', error);
+                alert('Terjadi kesalahan: ' + error.message);
+            }
+        }
+
+        /**
+         * 2. Mengirim Pembaruan Profil (PUT)
+         */
+        async function updateProfile() {
+            const token = localStorage.getItem('token');
+            const btnSave = document.getElementById('btnSave');
+
+            // Collect Data
+            const payload = {
+                name: document.getElementById('inputFullname').value,
+                username: document.getElementById('inputUsername').value,
+                phone: document.getElementById('inputPhone').value,
+                birth_date: document.getElementById('inputBirthDate').value,
+                gender: document.querySelector('input[name="gender"]:checked')?.value
+            };
+
+            try {
+                btnSave.disabled = true;
+                btnSave.textContent = 'Menyimpan...';
+
+                const response = await fetch(`${API_URL}/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Gagal menyimpan perubahan');
+
+                alert('Profil berhasil diperbarui!');
+                fetchProfileData(); // Reload data untuk memastikan UI sinkron
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                btnSave.disabled = false;
+                btnSave.textContent = 'Simpan Perubahan';
+            }
+        }
+
+        /**
+         * Helper Functions
+         */
+        function updateAvatars(name) {
+            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=f26c0d&color=fff&bold=true`;
+            document.getElementById('navAvatar').style.backgroundImage = `url('${avatarUrl}')`;
+            document.getElementById('sideAvatar').style.backgroundImage = `url('${avatarUrl}')`;
+            document.getElementById('mainAvatar').style.backgroundImage = `url('${avatarUrl}')`;
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // Initialize on DOM Ready
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchProfileData();
+
+            // Bind Events
+            document.getElementById('btnSave').addEventListener('click', (e) => {
+                e.preventDefault();
+                updateProfile();
+            });
+
+            document.getElementById('btnCancel').addEventListener('click', () => {
+                window.location.href = 'Halaman.beranda.html';
+            });
+
+            document.getElementById('cartBtn').addEventListener('click', () => {
+                window.location.href = 'halaman.keranjang.belanja.html';
+            });
+        });
+    </script>
+</body>
+
+</html>
