@@ -33,7 +33,7 @@ class ProductController extends Controller
             }
 
             // Extract just the path part from full URLs
-            // From: https://unfollowed-corrin-unorchestrated.ngrok-free.dev/storage/uploads/products/...
+            // From: http://localhost:8000/storage/uploads/products/...
             // To: uploads/products/... (without /storage prefix since CONFIG.assets already includes /storage)
             if (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0) {
                 // Parse URL and get the path
@@ -147,6 +147,7 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'stock' => 'nullable|integer|min:0',
             'capacity' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
             'specifications' => 'nullable|array',
@@ -166,7 +167,7 @@ class ProductController extends Controller
             ], 422);
         }
 
-        $data = $request->only(['name', 'price', 'description', 'capacity', 'category', 'specifications', 'image_urls', 'is_active']);
+        $data = $request->only(['name', 'price', 'stock', 'capacity', 'category', 'specifications', 'image_urls', 'is_active']);
         // Ensure created_by is set to the authenticated user's UUID ID (not integer)
         $data['created_by'] = $user->id;
 
@@ -174,9 +175,21 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $imagePath = $image->storeAs('uploads/products', $imageName, 'public');
-            // image_urls is JSONB array in database
-            $data['image_urls'] = [Storage::url($imagePath)];
+            
+            // Use configured disk (s3 for Supabase, public for local)
+            $disk = env('FILESYSTEM_DISK', 'public');
+            $imagePath = $image->storeAs('products', $imageName, $disk);
+            
+            // Store relative path - frontend will prepend the correct base URL
+            // For S3/Supabase: products/filename.jpg
+            // For local: uploads/products/filename.jpg
+            $data['image_urls'] = [$imagePath];
+            
+            Log::info('Image uploaded', [
+                'disk' => $disk,
+                'path' => $imagePath,
+                'name' => $imageName
+            ]);
         }
 
         $product = Product::create($data);
@@ -255,6 +268,8 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
             'price' => 'sometimes|required|numeric|min:0',
+            'description' => 'nullable|string',
+            'stock' => 'sometimes|required|integer|min:0',
             'capacity' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
             'specifications' => 'nullable|array',
@@ -273,14 +288,25 @@ class ProductController extends Controller
             ], 422);
         }
 
-        $data = $request->only(['name', 'price', 'capacity', 'category', 'specifications', 'is_active']);
+        $data = $request->only(['name', 'price', 'stock', 'capacity', 'category', 'specifications', 'is_active']);
 
         // Handle image upload
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $imagePath = $image->storeAs('uploads/products', $imageName, 'public');
-            $data['image_urls'] = [Storage::url($imagePath)];
+            
+            // Use configured disk (s3 for Supabase, public for local)
+            $disk = env('FILESYSTEM_DISK', 'public');
+            $imagePath = $image->storeAs('products', $imageName, $disk);
+            
+            // Store relative path - frontend will prepend the correct base URL
+            $data['image_urls'] = [$imagePath];
+            
+            Log::info('Image updated', [
+                'disk' => $disk,
+                'path' => $imagePath,
+                'product_id' => $id
+            ]);
         }
 
         $product->update($data);

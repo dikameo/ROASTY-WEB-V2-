@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Roasty - Product Detail</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#f26c0d",
+              "background-light": "#f8f7f5",
+              "background-dark": "#221710",
+              "surface-light": "#ffffff",
+              "surface-dark": "#2e231e",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom scrollbar for gallery */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 font-display transition-colors duration-200">
+<!-- Navbar -->
+<header class="sticky top-0 z-50 w-full bg-surface-light dark:bg-surface-dark border-b border-[#f4ece7] dark:border-gray-800 shadow-sm">
+<div class="max-w-[1280px] mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-4 lg:gap-8">
+<!-- Logo -->
+<a class="flex items-center gap-2 text-primary hover:opacity-90 transition-opacity" href="{{ route('home') }}">
+    <span class="material-symbols-outlined !text-[32px] fill-1">
+        local_cafe
+    </span>
+    <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+        Roasty
+    </h1>
+</a>
+
+
+<!-- Nav Actions -->
+<div class="flex items-center gap-2 lg:gap-6">
+<div class="w-px h-6 bg-gray-200 dark:bg-gray-700 hidden lg:block"></div>
+<div class="flex items-center gap-2">
+
+<!-- Admin Button - Only for Admin Users -->
+<a id="admin-button" href="{{ route('admin.dashboard') }}" class="hidden items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-semibold whitespace-nowrap">
+<span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+<span class="hidden md:inline">Admin Panel</span>
+</a>
+
+<!-- User Navigation Icons -->
+<div id="user-icons" class="flex items-center gap-2">
+<!-- Cart Icon -->
+<button id="cart-button" class="hidden size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors relative">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span id="cart-badge" class="absolute top-2 right-2 h-5 w-5 bg-primary text-white text-xs rounded-full flex items-center justify-center font-bold hidden">0</span>
+</button>
+
+<!-- Notification Icon -->
+<button id="notification-button" class="hidden size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span id="notification-badge" class="absolute top-2 right-2 size-2 bg-primary rounded-full hidden"></span>
+</button>
+</div>
+
+<!-- Profile Button -->
+<button class="flex items-center gap-2 pl-2 pr-1 lg:pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" id="profile-button">
+<div class="size-8 rounded-full bg-gray-200 overflow-hidden" id="profile-avatar" style="background-size: cover;"></div>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-300 hidden lg:block" id="profile-name">Loading...</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="max-w-[1280px] mx-auto px-4 lg:px-8 py-6">
+
+<!-- Product Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
+<!-- Left Column: Image Gallery (Sticky on large screens) -->
+<div class="lg:col-span-4 space-y-4">
+<div class="sticky top-24 space-y-4">
+<!-- Main Image -->
+                <!-- Main Image -->
+                <div class="aspect-square w-full rounded-xl overflow-hidden bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 relative group cursor-zoom-in">
+                    <img id="main-product-image" class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110" 
+                         src="/images/lakopi.jpg" 
+                         alt="Main product image"
+                         onerror="this.onerror=null;this.src='/images/lakopi.jpg'">
+                    
+                    <div class="absolute top-4 right-4 z-10">
+                        <button class="size-9 rounded-full bg-white/90 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors shadow-sm">
+                            <span class="material-symbols-outlined">favorite</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Thumbnails -->
+                <div class="grid grid-cols-5 gap-2" id="thumbnails-container">
+                    <!-- Thumbnails will be populated by JS -->
+                    <button class="aspect-square rounded-lg border-2 border-primary overflow-hidden relative">
+                         <img class="w-full h-full object-cover" src="/images/lakopi.jpg" onerror="this.onerror=null;this.src='/images/lakopi.jpg'">
+                    </button>
+                    <button class="aspect-square rounded-lg border border-transparent hover:border-primary/50 overflow-hidden relative">
+                         <img class="w-full h-full object-cover" src="/images/lakopi.jpg" onerror="this.onerror=null;this.src='/images/lakopi.jpg'">
+                    </button>
+                    <button class="aspect-square rounded-lg border border-transparent hover:border-primary/50 overflow-hidden relative">
+                         <img class="w-full h-full object-cover" src="/images/lakopi.jpg" onerror="this.onerror=null;this.src='/images/lakopi.jpg'">
+                    </button>
+                    <button class="aspect-square rounded-lg border border-transparent hover:border-primary/50 overflow-hidden relative">
+                         <img class="w-full h-full object-cover" src="/images/lakopi.jpg" onerror="this.onerror=null;this.src='/images/lakopi.jpg'">
+                    </button>
+                    <div class="aspect-square rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-medium text-gray-500 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700">
+                        +3
+                    </div>
+                </div>
+</div>
+</div>
+<!-- Middle Column: Product Details -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Header Info -->
+<div>
+<h1 class="text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white leading-tight mb-2" id="product-title">
+                        Loading...
+                    </h1>
+<div class="flex flex-wrap items-center gap-4 text-sm mb-4" id="product-rating-section">
+<div class="flex items-center gap-1">
+<span class="text-gray-900 dark:text-white font-bold" id="product-rating">0</span>
+<div class="flex text-yellow-400" id="rating-stars">
+<span class="material-symbols-outlined filled-icon !text-[18px]">star_rate</span>
+</div>
+<span class="text-gray-500 dark:text-gray-400" id="review-count">(0 Ulasan)</span>
+</div>
+<span class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+<div class="text-gray-900 dark:text-white font-medium" id="sold-count">Terjual 0</div>
+<span class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+<div class="text-gray-500 dark:text-gray-400" id="discussion-count">Diskusi (0)</div>
+</div>
+<div class="flex items-end gap-3 mb-2" id="price-section">
+<h2 class="text-4xl font-bold text-primary tracking-tight" id="product-price">Rp 0</h2>
+<span class="text-sm text-gray-400 line-through mb-2" id="original-price" style="display:none;">Rp 0</span>
+<span class="text-xs font-bold text-red-600 bg-red-100 dark:bg-red-900/30 px-1.5 py-0.5 rounded mb-2" id="discount-badge" style="display:none;">0% OFF</span>
+</div>
+</div>
+<hr class="border-gray-100 dark:border-gray-800"/>
+<!-- Variant Selector -->
+<div class="space-y-4">
+<div>
+<h3 class="font-bold text-gray-900 dark:text-white mb-3">Pilih Gilingan: <span class="font-normal text-gray-500" id="selected-gilingan">Biji Utuh</span></h3>
+<div class="flex flex-wrap gap-2" id="gilingan-options">
+<button class="px-4 py-2 rounded-lg border-2 border-primary bg-primary/10 text-primary font-semibold text-sm gilingan-btn" data-gilingan="biji-utuh">Biji Utuh</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-surface-dark text-sm gilingan-btn" data-gilingan="giling-halus">Giling Halus</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-surface-dark text-sm gilingan-btn" data-gilingan="giling-kasar">Giling Kasar</button>
+</div>
+</div>
+</div>
+<hr class="border-gray-100 dark:border-gray-800"/>
+<!-- Description Tabs -->
+<div>
+
+<div class="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed" id="product-description">
+<p>Loading description...</p>
+</div>
+</div>
+<hr class="border-gray-100 dark:border-gray-800"/>
+<!-- Store Info -->
+<div class="flex items-center gap-4">
+<div class="size-14 rounded-full bg-gray-100 overflow-hidden border border-gray-200 dark:border-gray-700">
+<div class="w-full h-full bg-cover bg-center" data-alt="Roasty Official Store Logo" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD-12ycQZ9UwfItvc7U0ch2sboFeBBDWLlDLMK4U1S4CMo9u7x2xabuY9baPLkQJHZke8iGHOYirRIdn2fcwKg6QbMdNm90D_51AtOopwtjGL3gm-GZsbZ9yCO0oP6zyt_-GB_Oi1fUF9dnznqJCSxn_l2Kg05JVrA9W_WPXH_PCdoS6L8Hx3TX19UbXJxWNmDEJc6RZLYh8yB6GZQOTxlqz1a6Zx1oe2JKOT5NIlaw7EiaX84ggqQxM-nTJjGm9syNQVY8m81oPA');"></div>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2">
+<h3 class="font-bold text-gray-900 dark:text-white">Roasty Official Store</h3>
+<span class="material-symbols-outlined filled-icon text-blue-500 !text-[16px]">verified</span>
+</div>
+<div class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+<span class="text-green-600 dark:text-green-400 font-semibold">• Online</span>
+<span class="mx-1">|</span>
+<span>Jakarta Selatan</span>
+</div>
+</div>
+<button class="px-4 py-1.5 rounded-lg border border-primary text-primary font-semibold text-sm hover:bg-primary/5 transition-colors">
+                        Follow
+                    </button>
+</div>
+<!-- Reviews Snippet -->
+<div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold text-gray-900 dark:text-white">Ulasan Pilihan</h3>
+<a class="text-primary text-sm font-semibold hover:underline" href="#">Lihat Semua</a>
+</div>
+<div class="space-y-4">
+<!-- Review Item -->
+<div class="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-4 last:pb-0">
+<div class="flex items-center gap-2 mb-2">
+<div class="flex text-yellow-400 text-xs">
+<span class="material-symbols-outlined filled-icon !text-[14px]">star</span>
+<span class="material-symbols-outlined filled-icon !text-[14px]">star</span>
+<span class="material-symbols-outlined filled-icon !text-[14px]">star</span>
+<span class="material-symbols-outlined filled-icon !text-[14px]">star</span>
+<span class="material-symbols-outlined filled-icon !text-[14px]">star</span>
+</div>
+<span class="text-xs text-gray-500">oleh <span class="font-semibold text-gray-900 dark:text-white">Budi Santoso</span></span>
+<span class="text-xs text-gray-400">• 2 Hari lalu</span>
+</div>
+<p class="text-sm text-gray-700 dark:text-gray-300">
+                                Packing aman banget pake bubble wrap tebel. Kopinya wangi, crema tebel pas di brew. Recommended seller!
+                            </p>
+</div>
+<!-- Review Item -->
+<div class="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-4 last:pb-0">
+<div class="flex items-center gap-2 mb-2">
+<div class="flex text-yellow-400 text-xs">
+<span class="material-symbols-outlined filled-icon !text-[14px]">star</span>
+<span class="material-symbols-outlined filled-icon !text-[14px]">star</span>
+<span class="material-symbols-outlined filled-icon !text-[14px]">star</span>
+<span class="material-symbols-outlined filled-icon !text-[14px]">star</span>
+<span class="material-symbols-outlined filled-icon !text-[14px]">star</span>
+</div>
+<span class="text-xs text-gray-500">oleh <span class="font-semibold text-gray-900 dark:text-white">Siti Aminah</span></span>
+<span class="text-xs text-gray-400">• 1 Minggu lalu</span>
+</div>
+<p class="text-sm text-gray-700 dark:text-gray-300">
+                                Selalu langganan di sini buat stok kedai. Pengiriman cepat, kualitas biji konsisten.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Sticky Purchase Card -->
+<div class="lg:col-span-3">
+<div class="sticky top-24">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg p-4 lg:p-6 flex flex-col gap-4">
+<h3 class="font-bold text-gray-900 dark:text-white">Atur jumlah dan catatan</h3>
+<div class="flex items-center gap-3">
+<div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
+<button class="size-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors">
+<span class="material-symbols-outlined !text-[18px]">remove</span>
+</button>
+<input class="w-12 h-8 border-none text-center text-sm font-semibold bg-transparent text-gray-900 dark:text-white focus:ring-0 p-0" type="text" value="1"/>
+<button class="size-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-primary transition-colors">
+<span class="material-symbols-outlined !text-[18px]">add</span>
+</button>
+</div>
+<span class="text-sm text-gray-500 dark:text-gray-400" id="stock-display">Stok Total: <span class="font-semibold text-gray-900 dark:text-white" id="stock-amount">0</span></span>
+</div>
+
+<div class="flex items-center justify-between">
+<span class="text-gray-500 dark:text-gray-400 text-sm">Subtotal</span>
+<span class="text-xl font-bold text-gray-900 dark:text-white" id="subtotal-price">Rp 0</span>
+</div>
+<div class="flex flex-col gap-3 mt-2">
+<button class="w-full h-11 rounded-lg bg-primary hover:bg-orange-600 text-white font-bold text-sm tracking-wide transition-colors shadow-md shadow-orange-500/20 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined !text-[20px]">add_shopping_cart</span>
+                                Tambah ke Keranjang
+                            </button>
+<button class="w-full h-11 rounded-lg border border-primary text-primary hover:bg-primary/5 font-bold text-sm tracking-wide transition-colors">
+                                Beli Langsung
+                            </button>
+</div>
+<div class="flex items-start gap-2 mt-2 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg">
+<span class="material-symbols-outlined text-gray-400 !text-[18px] mt-0.5">verified_user</span>
+<p class="text-xs text-gray-500 dark:text-gray-400 leading-snug">
+<span class="font-semibold text-gray-700 dark:text-gray-300">Jaminan Aman.</span> Dapatkan barang sesuai pesanan atau uang kembali.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Simple Footer for Context -->
+<footer class="bg-white dark:bg-[#1a120d] border-t border-gray-100 dark:border-gray-800 py-12 mt-12">
+<div class="max-w-[1280px] mx-auto px-4 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="col-span-1">
+<div class="flex items-center gap-2 mb-4 text-primary">
+<span class="material-symbols-outlined !text-[24px]">local_cafe</span>
+<span class="text-lg font-bold">Roasty</span>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400">
+                        Platform marketplace kopi terbesar untuk para pecinta kopi di seluruh Indonesia.
+                    </p>
+</div>
+<div>
+<h4 class="font-bold text-gray-900 dark:text-white mb-4">Roasty</h4>
+<ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+<li><a class="hover:text-primary" href="#">Tentang Kami</a></li>
+<li><a class="hover:text-primary" href="#">Karir</a></li>
+<li><a class="hover:text-primary" href="#">Blog</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-gray-900 dark:text-white mb-4">Bantuan</h4>
+<ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+<li><a class="hover:text-primary" href="#">Roasty Care</a></li>
+<li><a class="hover:text-primary" href="#">Syarat &amp; Ketentuan</a></li>
+<li><a class="hover:text-primary" href="#">Kebijakan Privasi</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-gray-900 dark:text-white mb-4">Ikuti Kami</h4>
+<div class="flex gap-4">
+<a class="text-gray-400 hover:text-primary" href="#"><span class="text-xs">IG</span></a>
+<a class="text-gray-400 hover:text-primary" href="#"><span class="text-xs">FB</span></a>
+<a class="text-gray-400 hover:text-primary" href="#"><span class="text-xs">TW</span></a>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 dark:border-gray-800 mt-12 pt-8 text-center text-xs text-gray-400">
+                © 2024 Roasty Marketplace. All rights reserved.
+            </div>
+</div>
+</footer>
+
+<script src="{{ asset('config.js') }}"></script>
+<script src="{{ asset('navbar-helper.js') }}"></script>
+<script>
+const API_URL = CONFIG.API_BASE_URL;
+const ASSETS_URL = CONFIG.assets;
+let currentProduct = null;
+let currentQuantity = 1;
+
+// Format currency
+function formatCurrency(amount) {
+    return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
+}
+
+// Safe number conversion
+function toNumber(value) {
+    if (value === null || value === undefined || value === '') return 0;
+    const num = parseFloat(value);
+    return isNaN(num) ? 0 : num;
+}
+
+// Safe string conversion
+function toString(value) {
+    return value ? String(value) : '';
+}
+
+// Validate and normalize product data
+function validateProductData(product) {
+    if (!product) return null;
+
+    // Ensure critical fields are present and valid
+    return {
+        ...product,
+        name: toString(product.name) || 'Produk Tanpa Nama',
+        price: toNumber(product.price),
+        original_price: product.original_price ? toNumber(product.original_price) : null,
+        stock: toNumber(product.stock) || 0,
+        rating: toNumber(product.rating) || 0,
+        review_count: toNumber(product.review_count) || 0,
+        sold_count: toNumber(product.sold_count) || 0,
+        discussion_count: toNumber(product.discussion_count) || 0,
+        description: toString(product.description),
+        specifications: product.specifications || [],
+        notes: toString(product.notes),
+        image_urls: Array.isArray(product.image_urls) ? product.image_urls : []
+    };
+}
+
+// Normalize image URL to use proper asset base URL
+function normalizeImageUrl(imageUrl) {
+    if (!imageUrl) return '';
+
+    imageUrl = String(imageUrl).trim();
+
+    // If it's a data URI, use directly (don't prepend anything)
+    if (imageUrl.startsWith('data:')) {
+        return imageUrl;
+    }
+
+    // If it's already a full HTTP URL, use as-is
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        return imageUrl;
+    }
+
+    // If it's a relative path from /storage, clean it and prepend ASSETS_URL
+    if (imageUrl.startsWith('/storage/') || imageUrl.startsWith('storage/')) {
+        const cleanUrl = imageUrl.replace(/^\/storage\//, '');
+        return `${ASSETS_URL}/${cleanUrl}`;
+    }
+
+    // Otherwise assume it's a relative path and prepend ASSETS_URL
+    return `${ASSETS_URL}/${imageUrl}`;
+}
+
+// Update subtotal based on quantity and price
+function updateSubtotal() {
+    if (currentProduct && currentProduct.price) {
+        const price = toNumber(currentProduct.price);
+        const quantity = toNumber(currentQuantity);
+
+        if (price > 0 && quantity > 0) {
+            const subtotal = price * quantity;
+            const subtotalElement = document.getElementById('subtotal-price');
+            if (subtotalElement) {
+                subtotalElement.textContent = formatCurrency(subtotal);
+            }
+        }
+    }
+}
+
+// Setup quantity input handlers
+function setupQuantityControls() {
+    const quantityInput = document.querySelector('input[type="text"][value="1"]');
+    const minusBtn = quantityInput?.parentElement.querySelector('button:nth-child(1)');
+    const plusBtn = quantityInput?.parentElement.querySelector('button:nth-child(3)');
+
+    if (!quantityInput || !minusBtn || !plusBtn) {
+        console.error('Quantity controls not found');
+        return;
+    }
+
+    // Minus button
+    minusBtn.addEventListener('click', function() {
+        currentQuantity = Math.max(1, currentQuantity - 1);
+        quantityInput.value = currentQuantity;
+        updateSubtotal();
+    });
+
+    // Plus button
+    plusBtn.addEventListener('click', function() {
+        const maxStock = 99; // Assuming max stock
+        currentQuantity = Math.min(maxStock, currentQuantity + 1);
+        quantityInput.value = currentQuantity;
+        updateSubtotal();
+    });
+
+    // Input change
+    quantityInput.addEventListener('change', function() {
+        let value = parseInt(this.value) || 1;
+        value = Math.max(1, Math.min(99, value));
+        currentQuantity = value;
+        quantityInput.value = currentQuantity;
+        updateSubtotal();
+    });
+}
+
+// Load product details
+async function loadProductDetails() {
+    const productId = sessionStorage.getItem('selectedProductId');
+
+    if (!productId) {
+        console.error('No product ID found');
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_URL}/products/${productId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!res.ok) throw new Error('Gagal memuat detail produk');
+
+        const data = await res.json();
+        console.log('API Response full structure:', data);
+
+        // Handle both wrapped and unwrapped responses
+        let product = null;
+
+        if (data.data) {
+            product = data.data;
+        } else if (data.success && data.data) {
+            product = data.data;
+        } else {
+            product = data;
+        }
+
+        if (!product) {
+            throw new Error('Product data not found in API response');
+        }
+
+        // Validate and normalize product data
+        product = validateProductData(product);
+
+        console.log('Validated product:', product);
+
+        // Store product data
+        currentProduct = product;
+        currentQuantity = 1;
+
+        // Update page title
+        document.title = `${product.name} - Roasty`;
+
+        // ===== UPDATE PRODUCT TITLE =====
+        const productTitleEl = document.getElementById('product-title');
+        if (productTitleEl) {
+            productTitleEl.textContent = product.name;
+        }
+
+        // ===== UPDATE PRICE AND DISCOUNT =====
+        const priceEl = document.getElementById('product-price');
+        const originalPriceEl = document.getElementById('original-price');
+        const discountBadgeEl = document.getElementById('discount-badge');
+
+        if (priceEl) {
+            const price = toNumber(product.price);
+            if (price > 0) {
+                priceEl.textContent = formatCurrency(price);
+            } else {
+                console.warn('Invalid price:', product.price);
+                priceEl.textContent = 'Rp 0';
+            }
+        }
+
+        // Calculate and show discount if original_price exists
+        const originalPrice = product.original_price ? toNumber(product.original_price) : null;
+        const currentPrice = toNumber(product.price);
+
+        if (originalPrice && originalPrice > currentPrice && currentPrice > 0) {
+            const discountPercent = Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
+            if (originalPriceEl) {
+                originalPriceEl.textContent = formatCurrency(originalPrice);
+                originalPriceEl.style.display = 'inline';
+            }
+            if (discountBadgeEl) {
+                discountBadgeEl.textContent = `${discountPercent}% OFF`;
+                discountBadgeEl.style.display = 'inline';
+            }
+        }
+
+        // ===== UPDATE STOCK =====
+        const stockAmountEl = document.getElementById('stock-amount');
+        if (stockAmountEl) {
+            const stock = toNumber(product.stock);
+            if (stock > 99) {
+                stockAmountEl.textContent = '99+';
+            } else {
+                stockAmountEl.textContent = stock > 0 ? stock.toString() : '0';
+            }
+        }
+
+        // ===== UPDATE RATING AND REVIEW COUNT =====
+        const ratingEl = document.getElementById('product-rating');
+        const ratingStarsEl = document.getElementById('rating-stars');
+        const reviewCountEl = document.getElementById('review-count');
+
+        if (ratingEl && product.rating && product.rating > 0) {
+            const ratingNum = toNumber(product.rating);
+            ratingEl.textContent = ratingNum.toFixed(1);
+        }
+
+        // Generate star rating
+        if (ratingStarsEl && product.rating && product.rating > 0) {
+            const ratingNum = toNumber(product.rating);
+            const rating = Math.round(ratingNum);
+            let starsHTML = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < rating) {
+                    starsHTML += '<span class="material-symbols-outlined filled-icon !text-[18px]">star</span>';
+                } else {
+                    starsHTML += '<span class="material-symbols-outlined !text-[18px]">star</span>';
+                }
+            }
+            ratingStarsEl.innerHTML = starsHTML;
+        }
+
+        if (reviewCountEl && product.review_count) {
+            const reviewCount = product.review_count > 1000 ? Math.round(product.review_count / 1000) + 'rb' : product.review_count;
+            reviewCountEl.textContent = `(${reviewCount} Ulasan)`;
+        }
+
+        // ===== UPDATE SOLD COUNT =====
+        const soldCountEl = document.getElementById('sold-count');
+        if (soldCountEl && product.sold_count && product.sold_count > 0) {
+            const soldCount = toNumber(product.sold_count);
+            const soldDisplay = soldCount > 1000 ? Math.round(soldCount / 1000) + 'rb+' : soldCount;
+            soldCountEl.textContent = `Terjual ${soldDisplay}`;
+        }
+
+        // ===== UPDATE DISCUSSION COUNT =====
+        const discussionCountEl = document.getElementById('discussion-count');
+        if (discussionCountEl && product.discussion_count && product.discussion_count > 0) {
+            const discussionCount = toNumber(product.discussion_count);
+            discussionCountEl.textContent = `Diskusi (${discussionCount})`;
+        }
+
+        // ===== UPDATE PRODUCT DESCRIPTION =====
+        const descriptionEl = document.getElementById('product-description');
+        if (descriptionEl) {
+            let descriptionHTML = '';
+
+            // Add main description
+            if (product.description && product.description.length > 0) {
+                descriptionHTML += `<p>${product.description}</p>`;
+            }
+
+            // Add specifications if available
+            if (product.specifications && product.specifications.length > 0) {
+                let specList = [];
+                if (typeof product.specifications === 'string') {
+                    specList = product.specifications.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                } else if (Array.isArray(product.specifications)) {
+                    specList = product.specifications.filter(s => s && String(s).length > 0);
+                } else if (typeof product.specifications === 'object') {
+                    specList = Object.values(product.specifications).filter(s => s && String(s).length > 0);
+                }
+
+                if (specList.length > 0) {
+                    descriptionHTML += '<ul class="list-disc pl-5 mt-2 space-y-1">';
+                    specList.forEach(spec => {
+                        descriptionHTML += `<li>${spec}</li>`;
+                    });
+                    descriptionHTML += '</ul>';
+                }
+            }
+
+            // Add note if needed
+            if (product.notes && product.notes.length > 0) {
+                descriptionHTML += `<p class="mt-4 text-xs text-gray-400 italic">*${product.notes}</p>`;
+            }
+
+            descriptionEl.innerHTML = descriptionHTML || '<p>Produk tidak memiliki deskripsi</p>';
+        }
+
+        // ===== UPDATE SUBTOTAL =====
+        const subtotalEl = document.getElementById('subtotal-price');
+        if (subtotalEl && product.price) {
+            const price = toNumber(product.price);
+            if (price > 0) {
+                subtotalEl.textContent = formatCurrency(price);
+            } else {
+                subtotalEl.textContent = 'Rp 0';
+            }
+        }
+
+        // ===== UPDATE IMAGES =====
+        const fallbackImage = "/images/lakopi.jpg";
+
+        // Update Thumbnails
+        if (product.image_urls && Array.isArray(product.image_urls) && product.image_urls.length > 0) {
+            const thumbnails = document.querySelectorAll('#thumbnails-container button');
+            product.image_urls.slice(0, 5).forEach((imageUrl, index) => {
+                if (thumbnails[index] && imageUrl) {
+                    const imgTag = thumbnails[index].querySelector('img');
+                    if (imgTag) {
+                        try {
+                            const normalizedUrl = normalizeImageUrl(imageUrl);
+                            imgTag.src = normalizedUrl;
+                            // Ensure onerror is set just in case
+                            imgTag.onerror = function() {
+                                this.onerror = null;
+                                this.src = fallbackImage;
+                            };
+                            console.log('Thumbnail ' + (index + 1) + ' loaded:', normalizedUrl);
+                        } catch (e) {
+                            console.warn('Error loading thumbnail ' + (index + 1), e);
+                            imgTag.src = fallbackImage;
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Main Image
+        let mainImageUrl = fallbackImage; // Default fallback
+        if (product.image_urls && Array.isArray(product.image_urls) && product.image_urls.length > 0 && product.image_urls[0]) {
+            mainImageUrl = normalizeImageUrl(product.image_urls[0]);
+        }
+
+        const mainImage = document.getElementById('main-product-image');
+        if (mainImage) {
+            try {
+                mainImage.src = mainImageUrl;
+                mainImage.onerror = function() {
+                    this.onerror = null;
+                    this.src = fallbackImage;
+                };
+                console.log('Main image loaded:', mainImageUrl);
+            } catch (e) {
+                console.warn('Error loading main image', e);
+                mainImage.src = fallbackImage;
+            }
+        }
+
+        // Setup quantity controls
+        setupQuantityControls();
+
+        // Store product data
+        sessionStorage.setItem('currentProduct', JSON.stringify(product));
+
+    } catch (err) {
+        console.error('Error loading product details:', err);
+        alert('Gagal memuat detail produk. Silakan coba lagi.');
+    }
+}
+
+// Setup Add to Cart and Buy buttons
+function setupAddToCart() {
+    console.log('=== setupAddToCart START ===');
+    const productId = sessionStorage.getItem('selectedProductId');
+    console.log('Product ID from sessionStorage:', productId);
+
+    const buttonContainer = document.querySelector('div.flex.flex-col.gap-3');
+    console.log('Button container found:', buttonContainer);
+
+    if (buttonContainer) {
+        const buttons = buttonContainer.querySelectorAll('button');
+        console.log('Buttons found:', buttons.length);
+
+        // First button = "Tambah ke Keranjang"
+        if (buttons[0]) {
+            buttons[0].addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                console.log('=== Add to Cart Button Clicked ===');
+                console.log('Product ID:', productId);
+                console.log('Quantity:', currentQuantity);
+
+                if (!productId) {
+                    alert('Error: Product ID not found');
+                    return;
+                }
+
+                // Simpan ke localStorage dengan quantity yang benar
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                console.log('Current cart:', cart);
+
+                const existingItem = cart.find(item => item.id == productId);
+
+                if (existingItem) {
+                    existingItem.quantity += currentQuantity;
+                    console.log('Updated existing item quantity to:', existingItem.quantity);
+                } else {
+                    cart.push({
+                        id: productId,
+                        quantity: currentQuantity
+                    });
+                    console.log('Added new item to cart with quantity:', currentQuantity);
+                }
+
+                localStorage.setItem('cart', JSON.stringify(cart));
+                console.log('Cart saved to localStorage:', cart);
+
+                // Dispatch cart update event for navbar badge
+                // dispatchCartUpdateEvent();
+
+                alert('Produk berhasil ditambahkan ke keranjang!');
+
+                // Reset quantity
+                currentQuantity = 1;
+                const quantityInput = document.querySelector('input[type="text"][value]');
+                if (quantityInput) {
+                    quantityInput.value = 1;
+                }
+
+                // Redirect ke keranjang
+                setTimeout(() => {
+                    console.log('Redirecting to cart...');
+                    window.location.href = "{{ route('keranjang') }}";
+                }, 500);
+            });
+        }
+
+        // Second button = "Beli Langsung"
+        if (buttons[1]) {
+            buttons[1].addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                console.log('=== Beli Langsung (Buy Now) Clicked ===');
+                console.log('Product ID:', productId);
+                console.log('Current Quantity:', currentQuantity);
+
+                if (!productId) {
+                    alert('Error: Product ID not found');
+                    console.error('Product ID is empty or undefined');
+                    return;
+                }
+
+                // Validate quantity
+                if (!currentQuantity || currentQuantity < 1) {
+                    alert('Jumlah barang harus minimal 1');
+                    return;
+                }
+
+                try {
+                    // Add to cart dengan quantity yang benar
+                    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    console.log('Current cart before update:', cart);
+
+                    const existingItem = cart.find(item => item.id == productId);
+
+                    if (existingItem) {
+                        console.log('Item sudah ada di cart, updating quantity');
+                        existingItem.quantity += currentQuantity;
+                    } else {
+                        console.log('Item baru, menambahkan ke cart');
+                        cart.push({
+                            id: productId,
+                            quantity: currentQuantity
+                        });
+                    }
+
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    console.log('✓ Cart updated successfully:', cart);
+
+                    // Show confirmation
+                    console.log('Redirecting to payment page in 300ms...');
+
+                    // Redirect to payment
+                    setTimeout(() => {
+                        window.location.href = "{{ route('pembayaran') }}";
+                    }, 300);
+                } catch (err) {
+                    console.error('Error in Beli Langsung:', err);
+                    alert('Error: ' + err.message);
+                }
+            });
+        }
+    }
+}
+
+// Setup Navigation Links
+function setupNavigation() {
+    // Setup gilingan option buttons
+    const gilinganBtns = document.querySelectorAll('.gilingan-btn');
+    gilinganBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Remove active state from all buttons
+            gilinganBtns.forEach(b => {
+                b.classList.remove('border-2', 'border-primary', 'bg-primary/10', 'text-primary', 'font-semibold');
+                b.classList.add('border', 'border-gray-200', 'dark:border-gray-700', 'text-gray-600', 'dark:text-gray-300', 'bg-white', 'dark:bg-surface-dark');
+            });
+
+            // Add active state to clicked button
+            this.classList.remove('border', 'border-gray-200', 'dark:border-gray-700', 'text-gray-600', 'dark:text-gray-300', 'bg-white', 'dark:bg-surface-dark');
+            this.classList.add('border-2', 'border-primary', 'bg-primary/10', 'text-primary', 'font-semibold');
+
+            // Update display text
+            const gilinganValue = this.getAttribute('data-gilingan');
+            const gilinganLabels = {
+                'biji-utuh': 'Biji Utuh',
+                'giling-halus': 'Giling Halus',
+                'giling-kasar': 'Giling Kasar'
+            };
+
+            const selectedEl = document.getElementById('selected-gilingan');
+            if (selectedEl) {
+                selectedEl.textContent = gilinganLabels[gilinganValue] || 'Biji Utuh';
+            }
+
+            // Store selected gilingan
+            sessionStorage.setItem('selectedGilingan', gilinganValue);
+            console.log('Selected gilingan:', gilinganValue);
+        });
+    });
+
+    // Load user profile from localStorage
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user && user.name) {
+        const nameEl = document.getElementById('profile-name');
+        if (nameEl) nameEl.textContent = user.name;
+    }
+    if (user && user.photo) {
+        const avatarEl = document.getElementById('profile-avatar');
+        if (avatarEl) avatarEl.style.backgroundImage = `url('${user.photo}')`;
+    }
+
+    // Cart button
+    const cartBtn = document.querySelector('button.size-10[class*="flex"]');
+    const cartIcon = cartBtn?.querySelector('.material-symbols-outlined');
+    if (cartIcon && cartIcon.textContent.includes('shopping_cart')) {
+        cartBtn?.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = "{{ route('keranjang') }}";
+        });
+    }
+
+    // Profile button
+    const profileBtn = document.getElementById('profile-button');
+    if (profileBtn) {
+        profileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = "{{ route('profil') }}";
+        });
+    }
+
+    // Logo
+    const logoBtn = document.querySelector('a.flex.items-center.gap-2[class*="group"]');
+    if (logoBtn) {
+        logoBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = "{{ route('home') }}";
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Check authentication
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = "{{ route('login') }}";
+        return;
+    }
+
+    loadProductDetails();
+    setupAddToCart();
+    setupNavigation();
+});
+</script>
+
+</body></html>

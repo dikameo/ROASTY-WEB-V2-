@@ -374,17 +374,33 @@ class OrderController extends Controller
      */
     public function destroy(string $id)
     {
+        Log::info('🗑️ Delete order request', ['id' => $id, 'id_type' => gettype($id)]);
+        
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $user->load('profile');
 
-        if ($user->profile?->role === 'admin' || $user->hasRole('admin')) {
+        // Check if admin
+        $isAdmin = $user->profile?->role === 'admin' || $user->hasRole('admin') || $user->role === 'admin';
+        
+        Log::info('Delete order - User check', ['user_id' => $user->id, 'is_admin' => $isAdmin]);
+
+        if ($isAdmin) {
             $order = Order::find($id);
+            Log::info('Admin order lookup', ['found' => !!$order, 'id' => $id]);
         } else {
             $order = Order::where('user_id', $user->id)->where('id', $id)->first();
+            Log::info('User order lookup', ['found' => !!$order, 'user_id' => $user->id, 'order_id' => $id]);
         }
 
         if (!$order) {
+            // Try to find any order with similar ID for debugging
+            $allOrders = Order::select('id')->limit(5)->get();
+            Log::warning('Order not found', [
+                'requested_id' => $id,
+                'sample_order_ids' => $allOrders->pluck('id')->toArray()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Order not found',
@@ -395,17 +411,13 @@ class OrderController extends Controller
             ], 404);
         }
 
-        // Only allow deleting if order is still pending (unless admin)
-        if (!($user->profile?->role === 'admin' || $user->hasRole('admin')) && $order->status !== 'pending') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cannot delete order',
-                'error' => [
-                    'code' => 'INVALID_STATUS',
-                    'details' => 'Only pending orders can be deleted'
-                ]
-            ], 400);
-        }
+        // Log delete action
+        Log::info('Delete order', [
+            'order_id' => $id,
+            'order_status' => $order->status,
+            'deleted_by' => $user->id,
+            'is_admin' => $isAdmin
+        ]);
 
         $order->delete();
 

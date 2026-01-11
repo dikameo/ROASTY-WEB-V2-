@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Roasty</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+            <div class="flex items-center space-x-2">
+                <span class="text-xl font-bold text-orange-600">Roasty Admin</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="adminName" class="text-sm text-gray-600">Admin</span>
+                <button onclick="logout()"
+                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Tabs Navigation -->
+        <div class="flex gap-4 mb-6 border-b">
+            <button onclick="switchTab('products')" id="tab-products"
+                class="px-4 py-2 font-medium border-b-2 border-orange-600 text-orange-600">
+                Kelola Produk
+            </button>
+            <button onclick="switchTab('orders')" id="tab-orders"
+                class="px-4 py-2 font-medium border-b-2 border-transparent text-gray-600 hover:text-gray-900">
+                Kelola Pesanan
+            </button>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="products-tab" class="space-y-6">
+            <!-- Add Product Form -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4">Tambah Produk Baru</h2>
+                <form id="addProductForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Produk</label>
+                            <input type="text" id="productName" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                placeholder="Nama produk">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Harga (Rp)</label>
+                            <input type="number" id="productPrice" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                placeholder="Harga">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+                        <textarea id="productDescription" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                            rows="3" placeholder="Deskripsi produk"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Produk</label>
+                        <input type="file" id="productImage" accept="image/*" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                        <p id="productImageName" class="text-sm text-gray-500 mt-1"></p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Stok</label>
+                            <input type="number" id="productStock" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                placeholder="Jumlah stok">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                            <input type="text" id="productCategory" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                placeholder="Kategori">
+                        </div>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 rounded-lg transition">
+                        Tambah Produk
+                    </button>
+                </form>
+            </div>
+
+            <!-- Products List -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="px-6 py-4 border-b">
+                    <h2 class="text-xl font-bold">Daftar Produk</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Gambar</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Nama</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Harga</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Stok</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Kategori</th>
+                                <th class="px-6 py-3 text-center text-sm font-medium text-gray-700">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsList" class="divide-y divide-gray-200">
+                            <!-- Products will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="orders-tab" class="hidden space-y-6">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="px-6 py-4 border-b">
+                    <h2 class="text-xl font-bold">Daftar Pesanan</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">ID Pesanan</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Pelanggan</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Total</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Waktu</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Status</th>
+                                <th class="px-6 py-3 text-center text-sm font-medium text-gray-700">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersList" class="divide-y divide-gray-200">
+                            <!-- Orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-2xl w-full p-6 space-y-4">
+            <h2 class="text-2xl font-bold">Edit Produk</h2>
+            <form id="editProductForm" class="space-y-4">
+                <input type="hidden" id="editProductId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Produk</label>
+                        <input type="text" id="editProductName" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Harga (Rp)</label>
+                        <input type="number" id="editProductPrice" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+                    <textarea id="editProductDescription" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                        rows="3"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Produk</label>
+                    <input type="file" id="editProductImage" accept="image/*"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                    <p id="editProductImageName" class="text-sm text-gray-500 mt-1"></p>
+                    <p id="editProductCurrentImage" class="text-sm text-gray-600 mt-1"></p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Stok</label>
+                        <input type="number" id="editProductStock" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                        <input type="text" id="editProductCategory" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <button type="submit"
+                        class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 rounded-lg transition">
+                        Simpan
+                    </button>
+                    <button type="button" onclick="closeEditModal()"
+                        class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 rounded-lg transition">
+                        Batal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ asset('config.js') }}"></script>
+    <script>
+        // API Configuration
+        const API_URL = CONFIG.API_BASE_URL;
+        let allProducts = [];
+        let allOrders = [];
+
+        // Normalize image URL helper function
+        function normalizeImageUrl(imageUrl) {
+            if (!imageUrl) return '';
+
+            imageUrl = String(imageUrl).trim();
+
+            // If it's a data URI, use directly (don't prepend anything)
+            if (imageUrl.startsWith('data:')) {
+                return imageUrl;
+            }
+
+            // If it's already a full HTTP URL, use as-is
+            if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+                return imageUrl;
+            }
+
+            // If it's a relative path from /storage, clean it and prepend assets URL
+            if (imageUrl.startsWith('/storage/') || imageUrl.startsWith('storage/')) {
+                const cleanUrl = imageUrl.replace(/^\/storage\//, '');
+                return `${CONFIG.assets}/${cleanUrl}`;
+            }
+
+            // Otherwise assume it's a relative path and prepend assets URL
+            return `${CONFIG.assets}/${imageUrl}`;
+        }
+
+        // Check auth
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            const user = userStr ? JSON.parse(userStr) : {};
+
+            console.log('=== ADMIN DASHBOARD AUTH CHECK ===');
+            console.log('Token:', token);
+            console.log('User data:', user);
+            console.log('User role:', user.role);
+
+            // Check if token exists
+            if (!token) {
+                console.log('❌ No token found - redirecting to login');
+                window.location.href = "{{ route('login') }}";
+                return;
+            }
+
+            // Check if user has admin role
+            if (!user.role || user.role.toLowerCase() !== 'admin') {
+                console.log('❌ User is not an admin - redirecting to home');
+                alert('Akses ditolak! Hanya admin yang dapat mengakses dashboard ini.');
+                window.location.href = "{{ route('home') }}";
+                return;
+            }
+
+            // If token exists and user is admin, allow access to dashboard
+            console.log('✅ Token found and user is admin - granting access to admin dashboard');
+            document.getElementById('adminName').textContent = `Hi, ${user.name || 'Admin'}`;
+            loadProducts();
+            loadOrders();
+        });
+
+        // Switch tabs
+        function switchTab(tab) {
+            document.getElementById('products-tab').classList.toggle('hidden', tab !== 'products');
+            document.getElementById('orders-tab').classList.toggle('hidden', tab !== 'orders');
+
+            if (tab === 'products') {
+                document.getElementById('tab-products').classList.remove('border-transparent', 'text-gray-600');
+                document.getElementById('tab-products').classList.add('border-orange-600', 'text-orange-600');
+                document.getElementById('tab-orders').classList.remove('border-orange-600', 'text-orange-600');
+                document.getElementById('tab-orders').classList.add('border-transparent', 'text-gray-600');
+            } else {
+                document.getElementById('tab-orders').classList.remove('border-transparent', 'text-gray-600');
+                document.getElementById('tab-orders').classList.add('border-orange-600', 'text-orange-600');
+                document.getElementById('tab-products').classList.remove('border-orange-600', 'text-orange-600');
+                document.getElementById('tab-products').classList.add('border-transparent', 'text-gray-600');
+            }
+        }
+
+        // Load products
+        async function loadProducts() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/products?limit=100`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                console.log('📦 Products API response:', data);
+
+                // Handle different response structures
+                // First check for Laravel pagination: { data: { current_page: 1, data: [...] } }
+                if (data.data && data.data.data && Array.isArray(data.data.data)) {
+                    allProducts = data.data.data;
+                    console.log('✅ Found paginated structure (data.data.data)');
+                }
+                // Direct array response
+                else if (Array.isArray(data)) {
+                    allProducts = data;
+                    console.log('✅ Found direct array response');
+                }
+                // Simple paginated: { data: [...] }
+                else if (Array.isArray(data.data)) {
+                    allProducts = data.data;
+                    console.log('✅ Found simple paginated structure (data.data)');
+                }
+                // Object structure
+                else if (data.data && typeof data.data === 'object') {
+                    allProducts = Object.values(data.data);
+                    console.log('✅ Found object structure');
+                } else {
+                    allProducts = [];
+                    console.warn('⚠️ Could not find products in response');
+                }
+                console.log('✅ Extracted products count:', allProducts.length);
+                console.log('✅ First few products:', allProducts.slice(0, 2));
+                renderProducts();
+            } catch (err) {
+                console.error('Error loading products:', err);
+                alert('Gagal memuat produk: ' + err.message);
+            }
+        }
+
+        // Render products
+        function renderProducts() {
+            const tbody = document.getElementById('productsList');
+            if (!Array.isArray(allProducts)) {
+                console.error('allProducts is not an array:', allProducts);
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">Error loading products</td></tr>';
+                return;
+            }
+            const validProducts = allProducts.filter(product => product && product.name);
+            console.log('Rendering', validProducts.length, 'products');
+
+            // Fallback image (relative path to ensure it works on both localhost and 127.0.0.1)
+            const fallbackImage = "/images/lakopi.jpg";
+
+            tbody.innerHTML = validProducts.map(product => {
+                let imageUrl = '';
+
+                // Get image URL from image_urls array (fetched from API)
+                if (product.image_urls && Array.isArray(product.image_urls) && product.image_urls.length > 0) {
+                    imageUrl = normalizeImageUrl(product.image_urls[0]);
+                }
+
+                // Use fallback image if no image available
+                if (!imageUrl) {
+                    imageUrl = fallbackImage;
+                }
+
+                return `
+            <tr>
+                <td class="px-6 py-4 text-sm">
+                    <img src="${imageUrl}" alt="${product.name}" class="w-16 h-16 object-cover rounded" onerror="this.onerror=null;this.src='${fallbackImage}'">
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900">${product.name}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">Rp ${parseInt(product.price).toLocaleString('id-ID')}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">${product.stock || 0}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">${product.category || '-'}</td>
+                <td class="px-6 py-4 text-center text-sm space-x-2">
+                    <button onclick="editProduct('${product.id}')" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                    <button onclick="deleteProduct('${product.id}')" class="text-red-600 hover:text-red-800 font-medium">Hapus</button>
+                </td>
+            </tr>
+        `;
+            }).join('');
+        }
+
+        // Add product
+        document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const imageFile = document.getElementById('productImage').files[0];
+
+            if (!imageFile) {
+                alert('Silahkan pilih gambar terlebih dahulu');
+                return;
+            }
+
+            if (!token) {
+                alert('Token tidak ditemukan. Silahkan login kembali.');
+                window.location.href = "{{ route('login') }}";
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('name', document.getElementById('productName').value);
+                formData.append('price', parseInt(document.getElementById('productPrice').value));
+                formData.append('category', document.getElementById('productCategory').value);
+                formData.append('description', document.getElementById('productDescription').value);
+                formData.append('stock', parseInt(document.getElementById('productStock').value));
+                formData.append('image', imageFile);
+
+                console.log('📤 Mengirim data produk ke:', `${API_URL}/products`);
+                console.log('🔐 Token ada:', token ? 'Ya' : 'Tidak');
+                console.log('📸 File gambar:', imageFile.name);
+
+                const res = await fetch(`${API_URL}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                console.log('📊 Status response:', res.status);
+                console.log('⚡ Response OK:', res.ok);
+                console.log('📝 Response headers:', Array.from(res.headers.entries()));
+
+                let responseData;
+                try {
+                    responseData = await res.json();
+                } catch (parseErr) {
+                    console.error('❌ Error parsing response:', parseErr);
+                    console.log('📄 Response text:', res.statusText);
+                    throw new Error(`Server error (${res.status}): ${res.statusText}`);
+                }
+
+                console.log('📦 Response data:', responseData);
+
+                if (!res.ok) {
+                    console.error('❌ Error details:', responseData);
+                    let errorMsg = 'Gagal menambah produk';
+
+                    if (responseData.error?.details) {
+                        errorMsg = typeof responseData.error.details === 'string'
+                            ? responseData.error.details
+                            : JSON.stringify(responseData.error.details);
+                    } else if (responseData.message) {
+                        errorMsg = responseData.message;
+                    }
+
+                    throw new Error(errorMsg);
+                }
+
+                alert('✅ Produk berhasil ditambahkan!');
+                document.getElementById('addProductForm').reset();
+                document.getElementById('productImageName').textContent = '';
+                loadProducts();
+            } catch (err) {
+                console.error('❌ Error lengkap:', err);
+                console.error('📍 Error stack:', err.stack);
+                alert('Error: ' + err.message);
+            }
+        });
+
+        // Show selected file name
+        document.getElementById('productImage').addEventListener('change', (e) => {
+            const fileName = e.target.files[0]?.name || '';
+            document.getElementById('productImageName').textContent = fileName ? `File dipilih: ${fileName}` : '';
+        });
+
+        // Edit product
+        function editProduct(id) {
+            console.log('Edit product ID:', id);
+            const product = allProducts.find(p => p.id == id || p.id === String(id));
+            if (!product) {
+                console.error('Product not found with ID:', id);
+                alert('Produk tidak ditemukan');
+                return;
+            }
+
+            console.log('Found product:', product);
+            document.getElementById('editProductId').value = id;
+            document.getElementById('editProductName').value = product.name;
+            document.getElementById('editProductPrice').value = product.price;
+            document.getElementById('editProductDescription').value = product.description || '';
+            document.getElementById('editProductStock').value = product.stock || 0;
+            document.getElementById('editProductCategory').value = product.category || '';
+            document.getElementById('editProductImage').value = '';
+            document.getElementById('editProductImageName').textContent = '';
+
+            // Handle both image_url (singular) and image_urls (array)
+            let currentImageUrl = product.image_url;
+            if (!currentImageUrl && product.image_urls && Array.isArray(product.image_urls) && product.image_urls.length > 0) {
+                currentImageUrl = product.image_urls[0];
+            }
+
+            if (currentImageUrl) {
+                const fileName = currentImageUrl.substring(currentImageUrl.lastIndexOf('/') + 1);
+                document.getElementById('editProductCurrentImage').textContent = `Gambar saat ini: ${fileName}`;
+            } else {
+                document.getElementById('editProductCurrentImage').textContent = '';
+            }
+
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        // Update product
+        document.getElementById('editProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const id = document.getElementById('editProductId').value;
+            const imageFile = document.getElementById('editProductImage').files[0];
+
+            console.log('🔐 Token:', token ? '✓ Present' : '✗ Missing');
+            console.log('📝 Product ID:', id);
+
+            try {
+                const formData = new FormData();
+                formData.append('_method', 'PUT'); // Laravel method spoofing
+                formData.append('name', document.getElementById('editProductName').value);
+                formData.append('price', parseInt(document.getElementById('editProductPrice').value));
+                formData.append('description', document.getElementById('editProductDescription').value);
+                formData.append('category', document.getElementById('editProductCategory').value);
+                formData.append('stock', parseInt(document.getElementById('editProductStock').value));
+
+                if (imageFile) {
+                    formData.append('image', imageFile);
+                    console.log('🖼️ New image file:', imageFile.name);
+                } else {
+                    console.log('📌 No new image selected, keeping existing');
+                }
+
+                const res = await fetch(`${API_URL}/products/${id}`, {
+                    method: 'POST', // Use POST with _method=PUT for FormData
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                console.log('📊 Response status:', res.status);
+
+                let data;
+                const contentType = res.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    data = await res.json();
+                } else {
+                    const text = await res.text();
+                    console.error('❌ Non-JSON response:', text);
+                    throw new Error(`Server Error (${res.status}): Terjadi kesalahan di server. Cek console untuk detail.`);
+                }
+
+                if (!res.ok) {
+                    console.error('❌ Error response:', data);
+                    throw new Error('Status ' + res.status + ': ' + (data.message || 'Gagal mengupdate produk'));
+                }
+                console.log('✅ Updated product:', data);
+                alert('Produk berhasil diupdate!');
+                closeEditModal();
+                loadProducts();
+            } catch (err) {
+                console.error('❌ Error:', err);
+                alert('Error: ' + err.message);
+            }
+        });
+
+        // Show selected file name on edit
+        document.getElementById('editProductImage').addEventListener('change', (e) => {
+            const fileName = e.target.files[0]?.name || '';
+            document.getElementById('editProductImageName').textContent = fileName ? `File baru dipilih: ${fileName}` : '';
+        });
+
+        // Delete product
+        async function deleteProduct(id) {
+            if (!confirm('Yakin ingin menghapus produk ini? Data akan hilang selamanya.')) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                console.log('🗑️ Deleting product ID:', id);
+
+                const res = await fetch(`${API_URL}/products/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('📊 Response status:', res.status);
+
+                if (!res.ok) {
+                    const error = await res.json();
+                    console.error('❌ Delete error:', error);
+                    throw new Error('Gagal menghapus produk: ' + (error.message || res.statusText));
+                }
+
+                console.log('✅ Product deleted successfully');
+                alert('✅ Produk berhasil dihapus!');
+                loadProducts();
+            } catch (err) {
+                console.error('❌ Error:', err);
+                alert('❌ Error: ' + err.message);
+            }
+        }
+
+        // Load orders - AUTO REFRESH setiap 5 detik
+        async function loadOrders() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/orders`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                console.log('📦 Orders API response:', data);
+
+                // Handle different response structures - check nested first!
+                if (Array.isArray(data)) {
+                    allOrders = data;
+                    console.log('✓ Using root array');
+                } else if (data.data && data.data.data && Array.isArray(data.data.data)) {
+                    // Handle Laravel pagination structure: { data: { data: [...], total: ... } }
+                    console.log('✓ Using data.data.data (paginated) - length:', data.data.data.length);
+                    allOrders = data.data.data;
+                } else if (Array.isArray(data.data)) {
+                    // Handle simple array response
+                    console.log('✓ Using data.data (array) - length:', data.data.length);
+                    allOrders = data.data;
+                } else if (data.data && typeof data.data === 'object') {
+                    // Handle object with values
+                    console.log('✓ Using Object.values(data.data)');
+                    allOrders = Object.values(data.data);
+                } else {
+                    console.warn('⚠️ No orders found in response');
+                    console.log('  - Response structure:', Object.keys(data));
+                    allOrders = [];
+                }
+                console.log('✅ Extracted orders:', allOrders.length, 'items');
+                renderOrders();
+            } catch (err) {
+                console.error('Error loading orders:', err);
+            }
+        }
+
+        // Render orders
+        function renderOrders() {
+            const tbody = document.getElementById('ordersList');
+            if (!Array.isArray(allOrders)) {
+                console.error('allOrders is not an array:', allOrders);
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">Error loading orders</td></tr>';
+                return;
+            }
+
+            const validOrders = allOrders.filter(order => order && order.id);
+            tbody.innerHTML = validOrders.map(order => {
+                // Format waktu
+                const orderDate = new Date(order.order_date || order.created_at);
+                const formattedTime = isNaN(orderDate) ? '-' : orderDate.toLocaleString('id-ID', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                return `
+            <tr>
+                <td class="px-6 py-4 text-sm text-gray-900 font-mono">#${order.id}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">${order.user?.name || '-'}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">Rp ${parseInt(order.total_price || order.total || 0).toLocaleString('id-ID')}</td>
+                <td class="px-6 py-4 text-sm text-gray-600">${formattedTime}</td>
+                <td class="px-6 py-4 text-sm">
+                    <span class="px-3 py-1 rounded-full text-xs font-medium ${order.status === 'completed' || order.status === 'paid' ? 'bg-green-100 text-green-800' :
+                        order.status === 'pending' || order.status === 'pendingPayment' ? 'bg-yellow-100 text-yellow-800' :
+                            order.status === 'cancelled' || order.status === 'expired' ? 'bg-red-100 text-red-800' :
+                                'bg-gray-100 text-gray-800'
+                    }">
+                        ${order.status || 'pending'}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-center text-sm space-x-2">
+                    <button onclick="confirmOrder('${order.id}')" class="text-green-600 hover:text-green-800 font-medium">Konfirmasi</button>
+                    <button onclick="deleteOrder('${order.id}')" class="text-red-600 hover:text-red-800 font-medium">Hapus</button>
+                </td>
+            </tr>
+        `}).join('');
+        }
+
+        // Confirm order (manual status update)
+        async function confirmOrder(id) {
+            console.log('✅ Confirm order called with ID:', id);
+            if (!confirm('Konfirmasi pembelian ini?')) return;
+
+            const token = localStorage.getItem('token');
+            const url = `${API_URL}/orders/${encodeURIComponent(id)}`;
+            console.log('🔗 Confirm URL:', url);
+            
+            try {
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: 'paid' })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.message || 'Gagal mengkonfirmasi pembelian');
+                }
+
+                alert('✅ Pembelian berhasil dikonfirmasi!');
+                loadOrders();
+            } catch (err) {
+                console.error('Error:', err);
+                alert('❌ Error: ' + err.message);
+            }
+        }
+
+        // Delete order
+        async function deleteOrder(id) {
+            console.log('🗑️ Delete order called with ID:', id, 'Type:', typeof id);
+            
+            if (!confirm('Yakin ingin menghapus pesanan ini? Data akan hilang selamanya.')) return;
+
+            const token = localStorage.getItem('token');
+            const url = `${API_URL}/orders/${encodeURIComponent(id)}`;
+            console.log('🔗 Delete URL:', url);
+            
+            try {
+                console.log('Delete order dengan ID:', id);
+
+                const res = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('Response status:', res.status);
+
+                if (!res.ok) {
+                    const error = await res.json();
+                    console.error('Error:', error);
+                    throw new Error('Gagal menghapus pesanan: ' + (error.message || res.statusText));
+                }
+
+                console.log('Order deleted successfully');
+                alert('✅ Pesanan berhasil dihapus!');
+                loadOrders();
+            } catch (err) {
+                console.error('Error:', err);
+                alert('❌ Error: ' + err.message);
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = "{{ route('login') }}";
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Roasty - Profil Pengguna</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f26c0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221710",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#2a1e16",
+                        "text-main-light": "#1c130d",
+                        "text-main-dark": "#f4ece7",
+                        "text-sub-light": "#9c6c49",
+                        "text-sub-dark": "#bda088",
+                        "border-light": "#f4ece7",
+                        "border-dark": "#3e2b22",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased transition-colors duration-200">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark shadow-sm">
+<div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16 gap-4 sm:gap-8">
+<!-- Logo -->
+<!-- Logo -->
+<a class="flex items-center gap-2 text-primary hover:opacity-90 transition-opacity" href="{{ route('home') }}">
+    <span class="material-symbols-outlined !text-[32px] fill-1">
+        local_cafe
+    </span>
+    <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+        Roasty
+    </h1>
+</a>
+
+<!-- Right Actions -->
+<div class="flex items-center gap-2 sm:gap-6">
+<nav class="hidden lg:flex items-center gap-6">
+</nav>
+<div class="flex items-center gap-2 border-l border-border-light dark:border-border-dark pl-2 sm:pl-6">
+<!-- Admin Button - Only for Admin Users -->
+<a id="admin-button" href="{{ route('admin.dashboard') }}" class="hidden items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-semibold whitespace-nowrap">
+<span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+<span class="hidden md:inline">Admin Panel</span>
+</a>
+
+<!-- User Navigation Icons -->
+<div id="user-icons" class="flex items-center gap-2">
+<!-- Cart Icon -->
+<button id="cart-button" class="hidden relative p-2 text-text-main-light dark:text-text-main-dark hover:bg-background-light dark:hover:bg-background-dark rounded-full transition-colors">
+<span class="material-symbols-outlined text-[24px]">shopping_cart</span>
+<span id="cart-badge" class="absolute top-1 right-1 h-5 w-5 rounded-full bg-primary text-white ring-2 ring-white dark:ring-surface-dark flex items-center justify-center text-[10px] font-bold hidden">0</span>
+</button>
+
+<!-- Notification Icon -->
+<button id="notification-button" class="hidden relative p-2 text-text-main-light dark:text-text-main-dark hover:bg-background-light dark:hover:bg-background-dark rounded-full transition-colors">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+<span id="notification-badge" class="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary hidden"></span>
+</button>
+</div>
+</div>
+
+<!-- Profile Avatar -->
+<div class="h-9 w-9 rounded-full bg-cover bg-center border-2 border-white dark:border-surface-dark shadow-sm cursor-pointer" id="profile-avatar" data-alt="User profile picture"></div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Layout -->
+<main class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<!-- Breadcrumbs -->
+<nav class="flex mb-6 text-sm font-medium text-text-sub-light dark:text-text-sub-dark">
+</nav>
+<div class="flex flex-col lg:flex-row gap-6">
+<!-- Sidebar -->
+<aside class="w-full lg:w-64 flex-shrink-0">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+<!-- User Mini Profile -->
+<div class="p-4 border-b border-border-light dark:border-border-dark flex items-center gap-3">
+<div class="h-12 w-12 rounded-full bg-cover bg-center" id="miniProfileAvatar" data-alt="Small user avatar"></div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-text-main-light dark:text-text-main-dark" id="miniProfileName">-</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-yellow-500 fill-current">stars</span>
+<span class="text-xs text-text-sub-light dark:text-text-sub-dark" id="miniProfileMember">-</span>
+</div>
+</div>
+</div>
+<!-- Navigation Menu -->
+<div class="p-2">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">person</span>
+<span class="text-sm">Biodata Diri</span>
+</a>
+<a id="addressesBtn" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-main-light dark:text-text-main-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors group cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-sub-light dark:text-text-sub-dark group-hover:text-primary">location_on</span>
+<span class="text-sm font-medium">Daftar Alamat</span>
+</a>
+<a id="orderHistoryBtn" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-main-light dark:text-text-main-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors group cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-sub-light dark:text-text-sub-dark group-hover:text-primary">inventory_2</span>
+<span class="text-sm font-medium">Riwayat Pesanan</span>
+</a>
+<div class="my-2 border-t border-border-light dark:border-border-dark"></div>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-main-light dark:text-text-main-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-sub-light dark:text-text-sub-dark group-hover:text-primary">settings</span>
+<span class="text-sm font-medium">Pengaturan</span>
+</a>
+<div class="my-2 border-t border-border-light dark:border-border-dark"></div>
+<button id="logoutBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-main-light dark:text-text-main-dark hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors group cursor-pointer border-0 bg-transparent">
+<span class="material-symbols-outlined text-[20px] text-red-500 group-hover:text-red-600">logout</span>
+<span class="text-sm font-medium text-red-500 group-hover:text-red-600">Logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 min-w-0 space-y-6">
+<!-- Profile Header Card -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+<div class="flex items-center gap-6">
+<div class="relative group cursor-pointer">
+<div class="h-24 w-24 rounded-full bg-cover bg-center border-4 border-background-light dark:border-background-dark shadow-sm" id="largeProfileAvatar" data-alt="Large user avatar"></div>
+<div class="absolute bottom-0 right-0 p-1.5 bg-primary rounded-full text-white shadow-sm border-2 border-white dark:border-surface-dark group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[16px] block">edit</span>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-text-main-light dark:text-text-main-dark" id="profileName">-</h2>
+<p class="text-text-sub-light dark:text-text-sub-dark text-sm mt-1" id="profileJoinDate">-</p>
+<div class="mt-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                    Akun Terverifikasi
+                                </div>
+</div>
+</div>
+<button class="w-full sm:w-auto px-4 py-2 bg-background-light dark:bg-background-dark hover:bg-gray-100 dark:hover:bg-gray-800 text-text-main-light dark:text-text-main-dark rounded-lg text-sm font-bold border border-border-light dark:border-border-dark transition-colors">
+                            Ubah Foto Profil
+                        </button>
+</div>
+</div>
+<!-- Form Section -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+<div class="px-6 py-4 border-b border-border-light dark:border-border-dark flex justify-between items-center">
+<h3 class="text-lg font-bold text-text-main-light dark:text-text-main-dark">Ubah Biodata Diri</h3>
+<span class="text-xs text-text-sub-light dark:text-text-sub-dark" id="lastUpdateTime">-</span>
+</div>
+<div class="p-6">
+<form action="#" class="space-y-6">
+<!-- Name & Username -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark" for="fullname">
+                                        Nama Lengkap
+                                    </label>
+<input class="block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm focus:ring-primary focus:border-primary px-4 py-2.5" id="fullname" placeholder="Masukkan nama lengkap" type="text"/>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Nama akan ditampilkan di profil publik.</p>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark" for="username">
+                                        Username
+                                    </label>
+<div class="flex rounded-lg shadow-sm">
+<span class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-border-light dark:border-border-dark bg-gray-50 dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark text-sm">
+                                            @
+                                        </span>
+<input class="flex-1 block w-full rounded-none rounded-r-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm focus:ring-primary focus:border-primary px-4 py-2.5" id="username" type="text"/>
+</div>
+</div>
+</div>
+<!-- Date of Birth & Gender -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark">
+                                        Tanggal Lahir
+                                    </label>
+<input class="block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm focus:ring-primary focus:border-primary px-4 py-2.5" id="birthdate" type="date"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark">
+                                        Jenis Kelamin
+                                    </label>
+<div class="flex gap-4">
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-primary focus:ring-primary border-gray-300 dark:border-gray-600 bg-transparent" id="genderMale" name="gender" type="radio" value="male"/>
+<span class="text-sm text-text-main-light dark:text-text-main-dark">Laki-laki</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-primary focus:ring-primary border-gray-300 dark:border-gray-600 bg-transparent" id="genderFemale" name="gender" type="radio" value="female"/>
+<span class="text-sm text-text-main-light dark:text-text-main-dark">Perempuan</span>
+</label>
+</div>
+</div>
+</div>
+<hr class="border-border-light dark:border-border-dark"/>
+<!-- Contact Info -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark">
+                                        Email
+                                    </label>
+<div class="relative">
+<input class="block w-full rounded-lg border-border-light dark:border-border-dark bg-gray-50 dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark text-sm px-4 py-2.5 cursor-not-allowed" id="email" disabled="" type="email"/>
+<span class="absolute right-3 top-2.5 text-xs font-bold text-green-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                                            Terverifikasi
+                                        </span>
+</div>
+<a class="text-xs font-medium text-primary hover:underline" href="#">Ubah Email</a>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark">
+                                        Nomor HP
+                                    </label>
+<div class="relative">
+<input class="block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm px-4 py-2.5" id="phone" type="text"/>
+</div>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Format: +62 XXX XXXX XXXX</p>
+</div>
+</div>
+</form>
+</div>
+<!-- Footer Actions -->
+<div class="px-6 py-4 bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark flex items-center justify-end gap-3">
+<button class="px-6 py-2.5 rounded-lg text-sm font-bold text-text-sub-light dark:text-text-sub-dark hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                            Batal
+                        </button>
+<button class="px-6 py-2.5 rounded-lg bg-primary hover:bg-orange-600 text-white text-sm font-bold shadow-sm shadow-orange-500/30 transition-all transform active:scale-95">
+                            Simpan Perubahan
+                        </button>
+</div>
+</div>
+<!-- Recent Order / Snippet Section (To fulfill requirement to see orders) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Primary Address Preview -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-base font-bold text-text-main-light dark:text-text-main-dark">Alamat Utama</h3>
+<button id="viewAllAddressesBtn" class="text-sm font-medium text-primary hover:underline cursor-pointer">Lihat Semua</button>
+</div>
+<div id="primaryAddress" class="p-4 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-text-sub-light mt-0.5">home</span>
+<div class="flex-1">
+<p class="text-sm font-bold text-text-main-light dark:text-text-main-dark" id="addressName">-</p>
+<p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-1 leading-relaxed" id="addressDetails">-</p>
+<button id="editPrimaryAddressBtn" class="text-xs font-medium text-primary hover:underline mt-2 cursor-pointer">Edit</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Last Order Preview -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-base font-bold text-text-main-light dark:text-text-main-dark">Pesanan Terakhir</h3>
+<button id="viewOrderHistoryBtn" class="text-sm font-medium text-primary hover:underline cursor-pointer">Riwayat</button>
+</div>
+<div id="lastOrder" class="p-4 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
+<div class="flex items-center gap-4">
+<div class="h-16 w-16 rounded-lg bg-white dark:bg-surface-dark p-1 border border-border-light dark:border-border-dark flex-shrink-0">
+<div class="w-full h-full bg-cover bg-center rounded" id="lastOrderImage" data-alt="Product image"></div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold text-text-main-light dark:text-text-main-dark truncate" id="lastOrderName">-</p>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark mt-0.5" id="lastOrderDate">-</p>
+<div class="mt-2 flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400" id="lastOrderStatus">-</span>
+<span class="text-xs font-semibold text-primary" id="lastOrderPrice">-</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Addresses Modal -->
+<div id="addressesModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/50 dark:bg-black/70">
+<div class="flex items-center justify-center min-h-screen px-4">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-border-light dark:border-border-dark">
+<!-- Modal Header -->
+<div class="sticky top-0 px-6 py-4 border-b border-border-light dark:border-border-dark flex justify-between items-center bg-surface-light dark:bg-surface-dark">
+<h2 class="text-lg font-bold text-text-main-light dark:text-text-main-dark">Daftar Alamat</h2>
+<button id="closeAddressesModal" class="text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="p-6 space-y-4">
+<button id="addNewAddressBtn" class="w-full px-4 py-2 bg-primary hover:bg-orange-600 text-white rounded-lg font-semibold text-sm transition-colors">
+<span class="material-symbols-outlined inline mr-2 text-[18px]">add</span>
+Tambah Alamat Baru
+</button>
+<div id="addressesList" class="space-y-3">
+<!-- Addresses will be populated here -->
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Add/Edit Address Modal -->
+<div id="addressFormModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/50 dark:bg-black/70">
+<div class="flex items-center justify-center min-h-screen px-4">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg max-w-xl w-full border border-border-light dark:border-border-dark">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b border-border-light dark:border-border-dark flex justify-between items-center">
+<h2 id="addressFormTitle" class="text-lg font-bold text-text-main-light dark:text-text-main-dark">Tambah Alamat Baru</h2>
+<button id="closeAddressFormModal" class="text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="p-6">
+<form id="addressForm" class="space-y-4">
+<input type="hidden" id="addressId" value="">
+<div>
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-2">Label</label>
+<input type="text" id="addressLabel" placeholder="e.g., Rumah, Kantor" class="block w-full rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm px-4 py-2.5 focus:ring-primary focus:border-primary"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-2">Nama Penerima</label>
+<input type="text" id="recipientName" placeholder="Nama lengkap penerima" class="block w-full rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm px-4 py-2.5 focus:ring-primary focus:border-primary"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-2">Nomor HP</label>
+<input type="tel" id="recipientPhone" placeholder="Nomor telepon" class="block w-full rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm px-4 py-2.5 focus:ring-primary focus:border-primary"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-2">Provinsi</label>
+<input type="text" id="province" placeholder="Provinsi" class="block w-full rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm px-4 py-2.5 focus:ring-primary focus:border-primary"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-2">Kota</label>
+<input type="text" id="city" placeholder="Kota" class="block w-full rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm px-4 py-2.5 focus:ring-primary focus:border-primary"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-2">Kode Pos</label>
+<input type="text" id="postalCode" placeholder="Kode pos" class="block w-full rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm px-4 py-2.5 focus:ring-primary focus:border-primary"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-2">Alamat Lengkap</label>
+<textarea id="address" placeholder="Alamat lengkap" class="block w-full rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark text-sm px-4 py-2.5 focus:ring-primary focus:border-primary min-h-24"></textarea>
+</div>
+<div class="flex items-center">
+<input type="checkbox" id="isPrimary" class="text-primary focus:ring-primary border-gray-300 dark:border-gray-600 bg-transparent rounded"/>
+<label for="isPrimary" class="ml-2 text-sm text-text-main-light dark:text-text-main-dark">Jadikan alamat utama</label>
+</div>
+</form>
+</div>
+<!-- Modal Footer -->
+<div class="px-6 py-4 bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark flex justify-end gap-3">
+<button id="cancelAddressForm" class="px-4 py-2 rounded-lg text-sm font-semibold text-text-sub-light dark:text-text-sub-dark hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
+<button id="saveAddressBtn" class="px-4 py-2 bg-primary hover:bg-orange-600 text-white rounded-lg font-semibold text-sm transition-colors">Simpan</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Order History Modal -->
+<div id="orderHistoryModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/50 dark:bg-black/70">
+<div class="flex items-center justify-center min-h-screen px-4">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-border-light dark:border-border-dark">
+<!-- Modal Header -->
+<div class="sticky top-0 px-6 py-4 border-b border-border-light dark:border-border-dark flex justify-between items-center bg-surface-light dark:bg-surface-dark">
+<h2 class="text-lg font-bold text-text-main-light dark:text-text-main-dark">Riwayat Pesanan</h2>
+<button id="closeOrderHistoryModal" class="text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="p-6">
+<div id="ordersList" class="space-y-4">
+<!-- Orders will be populated here -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+<script src="{{ asset('config.js') }}"></script>
+<script src="{{ asset('navbar-helper.js') }}"></script>
+<script>
+const API_URL = CONFIG.API_BASE_URL;
+let currentUserId = null;
+let allAddresses = [];
+let allOrders = [];
+
+// Helper function untuk fetch dengan token
+async function fetchWithAuth(url, options = {}) {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        throw new Error('Token not found');
+    }
+
+    const headers = {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        ...options.headers
+    };
+
+    const response = await fetch(url, {
+        ...options,
+        headers
+    });
+
+    return response;
+}
+
+// Format date untuk display
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('id-ID', options);
+}
+
+// Format currency
+function formatCurrency(amount) {
+    if (!amount) return 'Rp 0';
+    return 'Rp ' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+// Load user profile data
+async function loadProfile() {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        alert('Silakan login terlebih dahulu');
+        window.location.href = "{{ route('login') }}";
+        return;
+    }
+
+    try {
+        console.log('Token exists:', !!token);
+        console.log('Token length:', token.length);
+        console.log('API URL:', `${API_URL}/me`);
+
+        // Use /me endpoint instead of /profile for better compatibility
+        const res = await fetchWithAuth(`${API_URL}/me`, {
+            method: 'GET'
+        });
+
+        console.log('Response status:', res.status);
+        console.log('Response headers:', res.headers);
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.error('Error response:', errorData);
+
+            if (res.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                alert('Sesi Anda telah berakhir. Silakan login kembali.');
+                window.location.href = "{{ route('login') }}";
+            }
+            throw new Error('Gagal memuat profil: ' + (errorData.message || res.statusText));
+        }
+
+        const data = await res.json();
+        const profile = data.data || data;
+
+        console.log('Profile data:', profile);
+
+        // Handle nested structure from API
+        const profileData = profile.profile || profile;
+        const userData = profile.user || profile;
+
+        // Store current user ID
+        currentUserId = userData.id || userData.user_id;
+
+        // Get full name from user data or profile
+        const firstName = userData.first_name || userData.name?.split(' ')[0] || '';
+        const lastName = userData.last_name || userData.name?.split(' ').slice(1).join(' ') || '';
+        const fullName = `${firstName} ${lastName}`.trim() || userData.name || 'User';
+
+        // Update profile data di form
+        document.getElementById('fullname').value = fullName;
+        document.getElementById('username').value = userData.username || '';
+        document.getElementById('email').value = userData.email || '';
+        document.getElementById('phone').value = profileData?.phone || userData.phone || '';
+        document.getElementById('birthdate').value = profileData?.birth_date || userData.birth_date || '';
+
+        // Update gender
+        if (profileData?.gender || userData.gender) {
+            const genderVal = profileData?.gender || userData.gender;
+            const genderInput = document.querySelector(`input[name="gender"][value="${genderVal}"]`);
+            if (genderInput) {
+                genderInput.checked = true;
+            }
+        }
+
+        // Update mini profile di sidebar
+        document.getElementById('miniProfileName').textContent = fullName;
+        document.getElementById('miniProfileMember').textContent = profileData?.membership_level || userData.membership_level || 'Member';
+        if (profileData?.profile_image || userData.profile_image) {
+            document.getElementById('miniProfileAvatar').style.backgroundImage = `url('${profileData?.profile_image || userData.profile_image}')`;
+        }
+
+        // Update large profile avatar
+        if (profileData?.profile_image || userData.profile_image) {
+            document.getElementById('largeProfileAvatar').style.backgroundImage = `url('${profileData?.profile_image || userData.profile_image}')`;
+        }
+
+        // Update profile name
+        document.getElementById('profileName').textContent = fullName;
+        document.getElementById('profileJoinDate').textContent = `Bergabung sejak ${formatDate(userData.created_at || profileData?.created_at)}`;
+
+        // Update last update time
+        const lastUpdate = userData.updated_at || profileData?.updated_at ? formatDate(userData.updated_at || profileData?.updated_at) : '-';
+        document.getElementById('lastUpdateTime').textContent = `Terakhir diupdate: ${lastUpdate}`;
+
+        // Load addresses
+        await loadAddresses(token, userData.id);
+
+        // Load orders
+        await loadLastOrder(token);
+
+    } catch (err) {
+        console.error('Error loading profile:', err);
+        alert('Gagal memuat profil: ' + err.message);
+    }
+}
+
+// Load user addresses
+async function loadAddresses(token, userId) {
+    try {
+        const res = await fetchWithAuth(`${API_URL}/user-addresses`, {
+            method: 'GET'
+        });
+
+        if (!res.ok) {
+            console.error('Gagal memuat alamat');
+            return;
+        }
+
+        const data = await res.json();
+        allAddresses = data.data || data || [];
+
+        if (allAddresses.length > 0) {
+            const primaryAddress = allAddresses.find(addr => addr.is_primary) || allAddresses[0];
+
+            const addressNameEl = document.getElementById('addressName');
+            const addressDetailsEl = document.getElementById('addressDetails');
+
+            addressNameEl.textContent = `${primaryAddress.label || 'Alamat'} (${primaryAddress.recipient_name || '-'})`;
+
+            let addressText = `${primaryAddress.address || ''}<br/>`;
+            if (primaryAddress.province) {
+                addressText += `${primaryAddress.province}`;
+                if (primaryAddress.city) addressText += `, ${primaryAddress.city}`;
+                addressText += ' ' + (primaryAddress.postal_code || '') + '<br/>';
+            }
+            addressText += `<span class="text-xs">${primaryAddress.phone || ''}</span>`;
+
+            addressDetailsEl.innerHTML = addressText;
+        }
+    } catch (err) {
+        console.error('Error loading addresses:', err);
+    }
+}
+
+// Load last order
+async function loadLastOrder(token) {
+    try {
+        const res = await fetchWithAuth(`${API_URL}/orders?limit=1&sort=-created_at`, {
+            method: 'GET'
+        });
+
+        if (!res.ok) {
+            console.error('Gagal memuat pesanan');
+            return;
+        }
+
+        const data = await res.json();
+        const orders = data.data || data || [];
+
+        if (orders.length > 0) {
+            const order = orders[0];
+            const items = order.items || [];
+
+            if (items.length > 0) {
+                const firstItem = items[0];
+
+                document.getElementById('lastOrderName').textContent = firstItem.product_name || firstItem.name || '-';
+                document.getElementById('lastOrderDate').textContent = formatDate(order.created_at);
+                document.getElementById('lastOrderStatus').textContent = order.status || 'Pending';
+                document.getElementById('lastOrderPrice').textContent = formatCurrency(order.total_price || order.total);
+
+                if (firstItem.product_image || firstItem.image) {
+                    document.getElementById('lastOrderImage').style.backgroundImage = `url('${firstItem.product_image || firstItem.image}')`;
+                }
+            }
+        } else {
+            document.getElementById('lastOrder').innerHTML = '<p class="text-text-sub-light dark:text-text-sub-dark">Belum ada pesanan</p>';
+        }
+    } catch (err) {
+        console.error('Error loading orders:', err);
+    }
+}
+
+// Load all orders for history
+async function loadOrderHistory() {
+    try {
+        const res = await fetchWithAuth(`${API_URL}/orders?limit=100`, {
+            method: 'GET'
+        });
+
+        if (!res.ok) {
+            console.error('Gagal memuat riwayat pesanan');
+            allOrders = [];
+            renderOrderHistory();
+            return;
+        }
+
+        const data = await res.json();
+        // Handle different response formats
+        if (Array.isArray(data)) {
+            allOrders = data;
+        } else if (data.data && Array.isArray(data.data)) {
+            allOrders = data.data;
+        } else if (data.data && data.data.data && Array.isArray(data.data.data)) {
+            allOrders = data.data.data;
+        } else {
+            allOrders = [];
+        }
+
+        renderOrderHistory();
+    } catch (err) {
+        console.error('Error loading order history:', err);
+        allOrders = [];
+        renderOrderHistory();
+    }
+}
+
+// Render order history
+function renderOrderHistory() {
+    const ordersList = document.getElementById('ordersList');
+
+    if (allOrders.length === 0) {
+        ordersList.innerHTML = '<p class="text-center text-text-sub-light dark:text-text-sub-dark py-8">Belum ada pesanan</p>';
+        return;
+    }
+
+    ordersList.innerHTML = allOrders.map(order => `
+        <div class="border border-border-light dark:border-border-dark rounded-lg p-4 hover:bg-background-light dark:hover:bg-background-dark transition-colors">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <p class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Pesanan #${order.id}</p>
+                    <p class="text-xs text-text-sub-light dark:text-text-sub-dark">${formatDate(order.created_at)}</p>
+                </div>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${getStatusClass(order.status)}">
+                    ${order.status}
+                </span>
+            </div>
+            <div class="mb-3 space-y-2">
+                ${(order.items || []).map(item => `
+                    <div class="flex gap-3">
+                        <div class="h-12 w-12 rounded bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark flex-shrink-0 overflow-hidden">
+                            ${item.product_image ? `<img src="${item.product_image}" class="w-full h-full object-cover" alt="${item.product_name}"/>` : '<div class="w-full h-full flex items-center justify-center text-text-sub-light text-xs">-</div>'}
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-text-main-light dark:text-text-main-dark">${item.product_name || item.name || '-'}</p>
+                            <p class="text-xs text-text-sub-light dark:text-text-sub-dark">${item.quantity || 1} x ${formatCurrency(item.price || item.product_price)}</p>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="pt-3 border-t border-border-light dark:border-border-dark flex justify-between items-center">
+                <span class="text-sm text-text-sub-light dark:text-text-sub-dark">Total:</span>
+                <span class="text-sm font-bold text-primary">${formatCurrency(order.total_price || order.total)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Get status badge class
+function getStatusClass(status) {
+    const statusMap = {
+        'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400',
+        'processing': 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-400',
+        'completed': 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400',
+        'cancelled': 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-400',
+        'shipped': 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-400',
+    };
+    return statusMap[status?.toLowerCase()] || 'bg-gray-100 text-gray-800 dark:bg-gray-900/40 dark:text-gray-400';
+}
+
+// Load all addresses for the addresses modal
+async function loadAddressesForModal() {
+    try {
+        const res = await fetchWithAuth(`${API_URL}/user-addresses`, {
+            method: 'GET'
+        });
+
+        if (!res.ok) {
+            console.error('Gagal memuat alamat');
+            return;
+        }
+
+        const data = await res.json();
+        allAddresses = data.data || data || [];
+
+        renderAddressesList();
+    } catch (err) {
+        console.error('Error loading addresses:', err);
+    }
+}
+
+// Render addresses list
+function renderAddressesList() {
+    const addressesList = document.getElementById('addressesList');
+
+    if (allAddresses.length === 0) {
+        addressesList.innerHTML = '<p class="text-center text-text-sub-light dark:text-text-sub-dark py-8">Belum ada alamat</p>';
+        return;
+    }
+
+    addressesList.innerHTML = allAddresses.map(addr => `
+        <div class="border border-border-light dark:border-border-dark rounded-lg p-4 hover:bg-background-light dark:hover:bg-background-dark transition-colors">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <p class="text-sm font-bold text-text-main-light dark:text-text-main-dark">${addr.label || 'Alamat'}</p>
+                    <p class="text-xs text-text-sub-light dark:text-text-sub-dark">${addr.recipient_name}</p>
+                </div>
+                ${addr.is_primary ? '<span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-primary/20 text-primary">Utama</span>' : ''}
+            </div>
+            <p class="text-sm text-text-sub-light dark:text-text-sub-dark mb-2">${addr.address}</p>
+            <p class="text-xs text-text-sub-light dark:text-text-sub-dark mb-3">${addr.province || ''} ${addr.city ? ', ' + addr.city : ''} ${addr.postal_code || ''}</p>
+            <p class="text-xs text-text-sub-light dark:text-text-sub-dark mb-3">${addr.phone}</p>
+            <div class="flex gap-2">
+                <button class="px-3 py-1.5 text-sm font-semibold text-primary hover:bg-primary/10 rounded transition-colors edit-address-btn" data-id="${addr.id}">
+                    Edit
+                </button>
+                <button class="px-3 py-1.5 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors delete-address-btn" data-id="${addr.id}">
+                    Hapus
+                </button>
+                ${!addr.is_primary ? `<button class="px-3 py-1.5 text-sm font-semibold text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors set-primary-btn" data-id="${addr.id}">
+                    Jadikan Utama
+                </button>` : ''}
+            </div>
+        </div>
+    `).join('');
+
+    // Add event listeners for edit, delete, and set primary buttons
+    document.querySelectorAll('.edit-address-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const addressId = this.getAttribute('data-id');
+            editAddress(addressId);
+        });
+    });
+
+    document.querySelectorAll('.delete-address-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const addressId = this.getAttribute('data-id');
+            deleteAddress(addressId);
+        });
+    });
+
+    document.querySelectorAll('.set-primary-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const addressId = this.getAttribute('data-id');
+            setPrimaryAddress(addressId);
+        });
+    });
+}
+
+// Open address form for editing
+function editAddress(addressId) {
+    const address = allAddresses.find(a => a.id == addressId);
+
+    if (!address) return;
+
+    document.getElementById('addressFormTitle').textContent = 'Edit Alamat';
+    document.getElementById('addressId').value = address.id;
+    document.getElementById('addressLabel').value = address.label || '';
+    document.getElementById('recipientName').value = address.recipient_name || '';
+    document.getElementById('recipientPhone').value = address.phone || '';
+    document.getElementById('province').value = address.province || '';
+    document.getElementById('city').value = address.city || '';
+    document.getElementById('postalCode').value = address.postal_code || '';
+    document.getElementById('address').value = address.address || '';
+    document.getElementById('isPrimary').checked = address.is_primary || false;
+
+    document.getElementById('addressFormModal').classList.remove('hidden');
+}
+
+// Delete address
+async function deleteAddress(addressId) {
+    if (!confirm('Apakah Anda yakin ingin menghapus alamat ini?')) return;
+
+    try {
+        const res = await fetchWithAuth(`${API_URL}/user-addresses/${addressId}`, {
+            method: 'DELETE'
+        });
+
+        if (!res.ok) {
+            alert('Gagal menghapus alamat');
+            return;
+        }
+
+        alert('Alamat berhasil dihapus');
+        await loadAddressesForModal();
+        loadAddresses(localStorage.getItem('token'), currentUserId);
+    } catch (err) {
+        alert('Error: ' + err.message);
+    }
+}
+
+// Set address as primary
+async function setPrimaryAddress(addressId) {
+    try {
+        const res = await fetchWithAuth(`${API_URL}/user-addresses/${addressId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                is_primary: true
+            })
+        });
+
+        if (!res.ok) {
+            alert('Gagal mengubah alamat utama');
+            return;
+        }
+
+        alert('Alamat utama berhasil diubah');
+        await loadAddressesForModal();
+        loadAddresses(localStorage.getItem('token'), currentUserId);
+    } catch (err) {
+        alert('Error: ' + err.message);
+    }
+}
+
+// Save profile changes
+function setupSaveButton() {
+    const saveBtn = Array.from(document.querySelectorAll('button')).find(btn =>
+        btn.textContent.includes('Simpan Perubahan')
+    );
+
+    if (saveBtn) {
+        saveBtn.setAttribute('type', 'button');
+        saveBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            try {
+                // Collect form data
+                const fullName = document.getElementById('fullname').value.trim();
+                const nameParts = fullName.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || '';
+
+                const birthDateValue = document.getElementById('birthdate').value;
+                const phoneValue = document.getElementById('phone').value.trim();
+                const genderValue = document.querySelector('input[name="gender"]:checked')?.value;
+
+                // Build form data - only include non-empty values
+                const formData = {};
+                if (firstName) formData.first_name = firstName;
+                if (lastName) formData.last_name = lastName;
+                if (phoneValue) formData.phone = phoneValue;
+                if (birthDateValue) formData.birth_date = birthDateValue; // HTML date input is already Y-m-d format
+                if (genderValue) formData.gender = genderValue;
+
+                console.log('Sending profile update:', formData);
+
+                const res = await fetchWithAuth(`${API_URL}/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!res.ok) {
+                    const error = await res.json();
+                    console.error('Profile update error:', error);
+                    console.error('Validation details:', error.error?.details);
+                    throw new Error(error.message || 'Gagal menyimpan profil');
+                }
+
+                alert('Profil berhasil diperbarui!');
+                loadProfile();
+
+            } catch (err) {
+                alert('Error: ' + err.message);
+                console.error(err);
+            }
+        });
+    }
+}
+
+// Setup Cancel Button
+function setupCancelButton() {
+    const cancelBtn = Array.from(document.querySelectorAll('button')).find(btn =>
+        btn.textContent.includes('Batal')
+    );
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = "{{ route('home') }}";
+        });
+    }
+}
+
+// Setup Addresses Modal
+function setupAddressesModal() {
+    const viewAllAddressesBtn = document.getElementById('viewAllAddressesBtn');
+    const addressesBtn = document.getElementById('addressesBtn');
+    const closeAddressesModal = document.getElementById('closeAddressesModal');
+    const addressesModal = document.getElementById('addressesModal');
+
+    [viewAllAddressesBtn, addressesBtn].forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                loadAddressesForModal();
+                addressesModal.classList.remove('hidden');
+            });
+        }
+    });
+
+    if (closeAddressesModal) {
+        closeAddressesModal.addEventListener('click', function() {
+            addressesModal.classList.add('hidden');
+        });
+    }
+
+    addressesModal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+        }
+    });
+}
+
+// Setup Address Form Modal
+function setupAddressFormModal() {
+    const addNewAddressBtn = document.getElementById('addNewAddressBtn');
+    const closeAddressFormModal = document.getElementById('closeAddressFormModal');
+    const cancelAddressForm = document.getElementById('cancelAddressForm');
+    const saveAddressBtn = document.getElementById('saveAddressBtn');
+    const addressFormModal = document.getElementById('addressFormModal');
+    const addressForm = document.getElementById('addressForm');
+
+    if (addNewAddressBtn) {
+        addNewAddressBtn.addEventListener('click', function() {
+            document.getElementById('addressFormTitle').textContent = 'Tambah Alamat Baru';
+            addressForm.reset();
+            document.getElementById('addressId').value = '';
+            addressFormModal.classList.remove('hidden');
+        });
+    }
+
+    if (closeAddressFormModal) {
+        closeAddressFormModal.addEventListener('click', function() {
+            addressFormModal.classList.add('hidden');
+        });
+    }
+
+    if (cancelAddressForm) {
+        cancelAddressForm.addEventListener('click', function() {
+            addressFormModal.classList.add('hidden');
+        });
+    }
+
+    if (saveAddressBtn) {
+        saveAddressBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+
+            try {
+                const addressId = document.getElementById('addressId').value;
+                const formData = {
+                    label: document.getElementById('addressLabel').value,
+                    recipient_name: document.getElementById('recipientName').value,
+                    phone: document.getElementById('recipientPhone').value,
+                    province: document.getElementById('province').value,
+                    city: document.getElementById('city').value,
+                    postal_code: document.getElementById('postalCode').value,
+                    address: document.getElementById('address').value,
+                    is_primary: document.getElementById('isPrimary').checked
+                };
+
+                const url = addressId ? `${API_URL}/user-addresses/${addressId}` : `${API_URL}/user-addresses`;
+                const method = addressId ? 'PUT' : 'POST';
+
+                const res = await fetchWithAuth(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!res.ok) {
+                    const error = await res.json();
+                    throw new Error(error.message || 'Gagal menyimpan alamat');
+                }
+
+                alert('Alamat berhasil disimpan!');
+                addressFormModal.classList.add('hidden');
+                await loadAddressesForModal();
+                loadAddresses(localStorage.getItem('token'), currentUserId);
+            } catch (err) {
+                alert('Error: ' + err.message);
+                console.error(err);
+            }
+        });
+    }
+
+    addressFormModal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+        }
+    });
+}
+
+// Setup Order History Modal
+function setupOrderHistoryModal() {
+    const viewOrderHistoryBtn = document.getElementById('viewOrderHistoryBtn');
+    const orderHistoryBtn = document.getElementById('orderHistoryBtn');
+    const closeOrderHistoryModal = document.getElementById('closeOrderHistoryModal');
+    const orderHistoryModal = document.getElementById('orderHistoryModal');
+
+    [viewOrderHistoryBtn, orderHistoryBtn].forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                loadOrderHistory();
+                orderHistoryModal.classList.remove('hidden');
+            });
+        }
+    });
+
+    if (closeOrderHistoryModal) {
+        closeOrderHistoryModal.addEventListener('click', function() {
+            orderHistoryModal.classList.add('hidden');
+        });
+    }
+
+    orderHistoryModal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+        }
+    });
+}
+
+// Setup Navigation
+function setupNavigation() {
+    // Cart button
+    const cartBtn = document.querySelector('button[class*="p-2"] span.material-symbols-outlined');
+    if (cartBtn && cartBtn.textContent.includes('shopping_cart')) {
+        cartBtn.closest('button')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = "{{ route('keranjang') }}";
+        });
+    }
+}
+
+// Setup Logout
+function setupLogout() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                // Hapus token dari localStorage
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('cart');
+
+                // Redirect ke halaman login
+                window.location.href = "{{ route('login') }}";
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Check authentication
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = "{{ route('login') }}";
+        return;
+    }
+
+    // Setup logo click
+    const logoBtn = document.getElementById('logoBtn');
+    if (logoBtn) {
+        logoBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = "{{ route('home') }}";
+        });
+    }
+
+    loadProfile();
+    setupSaveButton();
+    setupCancelButton();
+    setupNavigation();
+    setupLogout();
+    setupAddressesModal();
+    setupAddressFormModal();
+    setupOrderHistoryModal();
+});
+</script>
+
+</body></html>

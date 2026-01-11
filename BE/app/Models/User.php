@@ -11,11 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Laravel\Sanctum\HasApiTokens;
 
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, HasApiTokens, HasUuids;
@@ -108,11 +106,6 @@ class User extends Authenticatable implements FilamentUser
     public function createdProducts(): HasMany
     {
         return $this->hasMany(Product::class, 'created_by');
-    }
-
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return $this->profile?->role === 'admin' || $this->hasRole('admin');
     }
 }
 
