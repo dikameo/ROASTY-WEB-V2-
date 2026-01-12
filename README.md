@@ -126,7 +126,7 @@ MAIL_FROM_ADDRESS=hello@example.com
 MAIL_FROM_NAME="CoffeeCommerce"
 
 # File Upload Configuration
-FILESYSTEM_DISK=public
+FILESYSTEM_DISK=s3
 MAX_FILE_SIZE=10240
 ALLOWED_FILE_TYPES=jpg,jpeg,png,pdf
 
@@ -141,6 +141,24 @@ QUEUE_CONNECTION=sync
 CACHE_DRIVER=file
 SESSION_DRIVER=file
 SESSION_LIFETIME=120
+AWS_ACCESS_KEY_ID=d4f56ce8479d4b50882b9d7974e1cd54
+AWS_SECRET_ACCESS_KEY=fbb1d054879177b32c87ff2b55f9d143a8bd09d04d5a77aa5c3584c075965baa
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=product-images
+AWS_USE_PATH_STYLE_ENDPOINT=false
+AWS_ENDPOINT=https://fiyodlfgfbcnatebudut.storage.supabase.co/storage/v1/s3
+AWS_URL=https://fiyodlfgfbcnatebudut.supabase.co/storage/v1/object/public/product-images
+
+# Supabase Configuration
+FILESYSTEM_DISK=s3
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=ap-southeast-1
+AWS_BUCKET=
+AWS_ENDPOINT=
+AWS_USE_PATH_STYLE_ENDPOINT=true
+AWS_URL=
+
 ```
 
 ### 4. Generate Application Key
